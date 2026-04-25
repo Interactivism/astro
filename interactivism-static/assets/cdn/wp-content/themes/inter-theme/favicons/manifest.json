@@ -1,0 +1,9 @@
+{
+  "name": "Interactivism",
+  "short_name": "Interactivism",
+  "icons": [],
+  "start_url": "/",
+  "display": "browser",
+  "theme_color": "#333333",
+  "background_color": "#ffffff"
+}
