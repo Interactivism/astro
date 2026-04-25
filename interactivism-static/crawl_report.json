@@ -1,0 +1,880 @@
+{
+  "pages_crawled": 73,
+  "asset_counts": {
+    "images": 1
+  },
+  "total_assets": 1,
+  "external_resources": [
+    {
+      "url": "https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css?ver=6.8.3",
+      "kind": "css"
+    },
+    {
+      "url": "https://cdn.datatables.net/responsive/2.3.0/css/responsive.dataTables.min.css?ver=6.8.3",
+      "kind": "css"
+    },
+    {
+      "url": "https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css?ver=1.8.1",
+      "kind": "css"
+    },
+    {
+      "url": "https://www.googletagmanager.com/gtag/js?id=G-HFJ46D62VR",
+      "kind": "js"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/plugins/google-analytics-for-wordpress/assets/js/frontend-gtag.min.js?ver=10.1.3",
+      "kind": "js"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/litespeed/js/dc1421ee4182568315a537a4b1a0083c.js?ver=749d2",
+      "kind": "js"
+    },
+    {
+      "url": "https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js?ver=1.0",
+      "kind": "js"
+    },
+    {
+      "url": "https://www.googletagmanager.com/gtag/js?id=GT-WR9Q6FJ",
+      "kind": "js"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/litespeed/js/27069312f2af95bb582495f62693d50c.js?ver=7153f",
+      "kind": "js"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/litespeed/js/43d406a21c8b8b4e51943dc05c242ce0.js?ver=4d497",
+      "kind": "js"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/litespeed/js/3a50747c30beffa209028d3214833e94.js?ver=215da",
+      "kind": "js"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/litespeed/js/ebe78e20788151b95bacdf00bc608df6.js?ver=21dfb",
+      "kind": "js"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/litespeed/js/c426239ddd8475bf839d22cf1bfff921.js?ver=2c357",
+      "kind": "js"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/litespeed/js/4709844667202977087653b33feb3640.js?ver=6f724",
+      "kind": "js"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/litespeed/js/896cb3855483f5ec6a8799fa91c9c880.js?ver=13505",
+      "kind": "js"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/litespeed/js/9bd70fe91b8ab33d315d634f7bb78b25.js?ver=d3e79",
+      "kind": "js"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/litespeed/js/30f49cb6a8afaf6eeef627da7e47aac9.js?ver=7aac9",
+      "kind": "js"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/litespeed/js/29a1a92c3207f04b37eeab5caca0e318.js?ver=0e318",
+      "kind": "js"
+    },
+    {
+      "url": "https://www.google.com/recaptcha/api.js?render=6LezdtoUAAAAAAmY_CT7cJ71OjQg-ifOOLSoka8U&ver=3.0",
+      "kind": "js"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/litespeed/js/8a472293c45dd8ddb58276799ee2e22c.js?ver=cbb43",
+      "kind": "js"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/litespeed/js/0316e0eb44ba48c8ca0a675f9d04b76d.js?ver=4b76d",
+      "kind": "js"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2016/02/slider-office.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2016/02/slider-office-300x213.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2016/02/slider-office-768x546.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2016/02/slider-office-1024x728.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2025/05/tvSci_homepage_slider.png",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2025/05/tvSci_homepage_slider-300x213.png",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2025/05/tvSci_homepage_slider-1024x728.png",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2025/05/tvSci_homepage_slider-768x546.png",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2023/02/home-screen-1.png",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2023/02/home-screen-1-300x213.png",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2023/02/home-screen-1-1024x728.png",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2023/02/home-screen-1-768x546.png",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2023/02/home-screen-1-1536x1092.png",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2023/02/home-screen-1-2048x1456.png",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2024/01/Vote-01-Homepage-Slider-1440x1024-2.png",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2024/01/Vote-01-Homepage-Slider-1440x1024-2-300x213.png",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2024/01/Vote-01-Homepage-Slider-1440x1024-2-1024x728.png",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2024/01/Vote-01-Homepage-Slider-1440x1024-2-768x546.png",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2024/01/Vote-01-Homepage-Slider-1440x1024-2-1536x1092.png",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2024/01/Vote-01-Homepage-Slider-1440x1024-2-2048x1456.png",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2016/10/slider-cisco.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2016/10/slider-cisco-300x213.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2016/10/slider-cisco-768x546.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2016/10/slider-cisco-1024x728.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2017/11/slider-singpoli-1.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2017/11/slider-singpoli-1-300x213.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2017/11/slider-singpoli-1-768x546.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2017/11/slider-singpoli-1-1024x728.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2016/10/slider-dsc.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2016/10/slider-dsc-300x213.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2016/10/slider-dsc-768x546.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2016/10/slider-dsc-1024x728.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2017/10/brainitch-slider.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2017/10/brainitch-slider-300x213.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2017/10/brainitch-slider-768x546.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2017/10/brainitch-slider-1024x728.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2017/10/slider-startitup.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2017/10/slider-startitup-300x213.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2017/10/slider-startitup-768x546.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2017/10/slider-startitup-1024x728.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2016/10/slider-scratch.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2016/10/slider-scratch-300x213.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2016/10/slider-scratch-768x546.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2016/10/slider-scratch-1024x728.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2016/10/slider-reachlocal.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2016/10/slider-reachlocal-300x213.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2016/10/slider-reachlocal-768x546.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2016/10/slider-reachlocal-1024x728.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2016/10/slider-meta.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2016/10/slider-meta-300x213.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2016/10/slider-meta-768x546.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2016/10/slider-meta-1024x728.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2016/10/slider-tinyrobot.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2016/10/slider-tinyrobot-300x213.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2016/10/slider-tinyrobot-768x546.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2016/10/slider-tinyrobot-1024x728.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2016/10/slider-level.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2016/10/slider-level-300x213.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2016/10/slider-level-768x546.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2016/10/slider-level-1024x728.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2016/02/slider-rolr.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2016/02/slider-rolr-300x213.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2016/02/slider-rolr-768x546.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2016/02/slider-rolr-1024x728.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2016/10/slider-scoutables.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2016/10/slider-scoutables-300x213.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2016/10/slider-scoutables-768x546.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2016/10/slider-scoutables-1024x728.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2016/10/slider-boom.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2016/10/slider-boom-300x213.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2016/10/slider-boom-768x546.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2016/10/slider-boom-1024x728.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2013/09/slider-fanbread.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2013/09/slider-fanbread-300x213.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2013/09/slider-fanbread-768x546.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2013/09/slider-fanbread-1024x728.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://dc.ads.linkedin.com/collect/?pid=155764&fmt=gif",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/themes/inter-theme/favicons/apple-touch-icon.png",
+      "kind": "icon"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/themes/inter-theme/favicons/favicon-32x32.png",
+      "kind": "icon"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/themes/inter-theme/favicons/favicon-16x16.png",
+      "kind": "icon"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2016/01/services-marquee-1.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2025/05/tvSci_thumbnail.png",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2024/01/Vote-02-Thumbnail-820x400-1.png",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2023/02/featured.png",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2019/04/Hitachi_Thumbnail.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2018/06/LZ_NexGen_820x400.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2017/11/thumbnail-singpoli.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2017/10/thumbnail-startitup.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2017/08/thumbnail-legalzoom.png",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2016/05/featured-boom.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2017/08/thumbnail-brainitch.png",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2017/03/featured.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2016/05/featured-tinyrobot.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2017/04/drucker-feature-1.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2016/08/level-april.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2016/05/featured-scratch.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2016/05/featured-reachlocal.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2016/05/featured-rolr.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2016/05/featured-scoutables.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2015/12/featured-meta-3.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2015/06/featured-shindigz.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2014/05/featured-stylesaint.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2016/05/featured-cisco.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2013/09/featured-fanbread.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2013/08/featured-haulstars.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2013/06/featured.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2013/04/featured-periodical.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2012/02/featured-meundies.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2012/06/featured-loveit.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2012/06/featured-eventup.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2016/05/featured-dsc.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2012/03/featured-dogvacay.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2016/01/clients-marquee.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2025/12/vibe-coding_820x400.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2020/05/do-something-great_thumb.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2019/12/thumbnail-heliogen.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2019/03/la-skyline_thumb.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2019/01/Reframe_BlogBanner.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2018/11/Blog-Curiosity-820x400.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2017/07/CiscoMetacloud.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2017/10/derby_thumb.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2017/09/TBD2_thumb.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2017/07/TBD_thumbnail.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2017/04/office-hours_featured.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2017/06/featured_LAdesignweek-1.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2017/05/ETLA-Interactivism-Header.png",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2017/04/pasadena-angels_featured.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2017/04/tech-on-tap_featured.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2017/04/process_thumb.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2017/03/Coffee_featured.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2017/03/SoloHack.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2016/11/winter-solstice.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2016/12/featured-event-roiofux.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2016/02/Erik_2017-05-12.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2016/02/Erik_2017-05-12-150x150.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2016/02/Erik_2017-05-12-300x300.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2016/02/Petra_2019-10-30-1.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2016/02/Petra_2019-10-30-1-150x150.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2016/02/Petra_2019-10-30-1-300x300.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2016/02/Josh_2017-05-12.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2016/02/Josh_2017-05-12-150x150.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2016/02/Josh_2017-05-12-300x300.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2021/10/Catherine_Carr.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2021/10/Catherine_Carr-300x300.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2021/10/Catherine_Carr-150x150.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2020/11/Ricky-Barbosa-1024x1024.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2020/11/Ricky-Barbosa-150x150.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2020/11/Ricky-Barbosa-300x300.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2020/11/Ricky-Barbosa-768x768.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2020/11/Ricky-Barbosa.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2016/01/team-marquee.jpg",
+      "kind": "image"
+    },
+    {
+      "url": "https://use.fontawesome.com/releases/v5.15.4/css/all.css?ver=6.8.3",
+      "kind": "css"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/litespeed/js/068ecf25f67e6345c27d7ce6b26b3016.js?ver=b3016",
+      "kind": "js"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/litespeed/js/726aecb3063fd22e378640d88d67a463.js?ver=5b4b9",
+      "kind": "js"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/litespeed/js/d9923abf37ce15e4c17b065d54c6cc7f.js?ver=f8de2",
+      "kind": "js"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/litespeed/js/9d9686704e01e4c3ec4ad40dd070b692.js?ver=0b692",
+      "kind": "js"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/litespeed/js/5f777ff7116c0680c8f323f5ad971ae1.js?ver=71ae1",
+      "kind": "js"
+    },
+    {
+      "url": "https://maps.googleapis.com/maps/api/js?v=quarterly&language=en&key=AIzaSyCr7FVSF3HkY6luS0LkVj5gfWJW5Jd9tFY&callback=__wpgmzaMapEngineLoadedCallback&libraries=geometry%2Cplaces%2Cvisualization%2Cmarker&ver=6.8.3",
+      "kind": "js"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/litespeed/js/99c5f6a2925421ef94dbbc204e76f924.js?ver=6e5ea",
+      "kind": "js"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/litespeed/js/3666f520a366c72ab5056e0c7f3d7c17.js?ver=12e90",
+      "kind": "js"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/litespeed/js/73dc82c261ae3053356ea8d126113705.js?ver=3a8a6",
+      "kind": "js"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/litespeed/js/847aadf6b050d28e508c8e99ba24c260.js?ver=3ec97",
+      "kind": "js"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/litespeed/js/42feb7794deb4c5b0a716691b9442c91.js?ver=37d5b",
+      "kind": "js"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/litespeed/js/0a26c64784f47ea9fd69706f218ce8c3.js?ver=626eb",
+      "kind": "js"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/litespeed/js/5df916b66db36c8dbca7fee9629f375d.js?ver=cf641",
+      "kind": "js"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/litespeed/js/e86bcaccc6ace4c143da09ee6b4a9014.js?ver=a893e",
+      "kind": "js"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/litespeed/js/374cb53105a91c0a89ebc79503dfcac6.js?ver=2e30b",
+      "kind": "js"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/litespeed/js/eee933159f26644606bb33e561dbfe66.js?ver=0e8d9",
+      "kind": "js"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/litespeed/js/ee474a9b1a43f961d3f22602d65f7b3b.js?ver=e1a4b",
+      "kind": "js"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/litespeed/js/91e8cb39441593166c04acccbc367e0d.js?ver=48e11",
+      "kind": "js"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/litespeed/js/e5e8d64e03c173a4d4512f3b02a9e33c.js?ver=d7308",
+      "kind": "js"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/litespeed/js/07f41335f51628741ce627bb7a9d5298.js?ver=ca744",
+      "kind": "js"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/litespeed/js/b85e269033049d5b73f0064a42f12534.js?ver=3e550",
+      "kind": "js"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/plugins/wp-google-maps-pro/images/icons/directions_car.png",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/plugins/wp-google-maps-pro/images/icons/directions_walking.png",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/plugins/wp-google-maps-pro/images/icons/directions_transit.png",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/plugins/wp-google-maps-pro/images/icons/directions_bike.png",
+      "kind": "image"
+    },
+    {
+      "url": "https://cdn-605d8764c1ac1905d046e8cc.closte.com/wp-content/uploads/2016/01/Contact_Map.png",
+      "kind": "image"
+    }
+  ],
+  "pages": [
+    "https://interactivism.com/",
+    "https://interactivism.com/blog/",
+    "https://interactivism.com/blog/april-office-hours/",
+    "https://interactivism.com/blog/connect-17-urb-e-derby/",
+    "https://interactivism.com/blog/designing-for-curiosity-using-a-5-dimensional-curiosity-matrix-to-better-understand-user-motivations-and-behaviors/",
+    "https://interactivism.com/blog/designing-immersive-experiences/",
+    "https://interactivism.com/blog/designing-successful-startups/",
+    "https://interactivism.com/blog/enterprise-tech-la-launch-event-enterprise-vs-consumer-software/",
+    "https://interactivism.com/blog/how-to-use-vibe-coding-in-user-centered-product-design/",
+    "https://interactivism.com/blog/inside-the-minds-of-brilliant-designers/",
+    "https://interactivism.com/blog/interactivism-client-heliogen-makes-solar-tech-breakthrough/",
+    "https://interactivism.com/blog/interactivism-has-no-association-with-online-techinteractivism-com/",
+    "https://interactivism.com/blog/interactivism-recognized-as-a-top-ux-ui-design-agency/",
+    "https://interactivism.com/blog/investing-in-ux-design/",
+    "https://interactivism.com/blog/life-goes-on/",
+    "https://interactivism.com/blog/march-office-hours/",
+    "https://interactivism.com/blog/may-office-hours/",
+    "https://interactivism.com/blog/reframe/",
+    "https://interactivism.com/blog/sola-hack-3rd-annual-design-thinking-and-social-entrepreneurship-hackathon-for-south-la/",
+    "https://interactivism.com/blog/the-roi-of-design-in-tech/",
+    "https://interactivism.com/blog/the-roi-of-ux/",
+    "https://interactivism.com/blog/ux-design-for-enterprise-lessons-from-an-experienced-ux-design-team/",
+    "https://interactivism.com/blog/ux-design-is-smart-business/",
+    "https://interactivism.com/blog/why-good-ux-design-is-smart-business/",
+    "https://interactivism.com/blog/winter-social/",
+    "https://interactivism.com/blog/you-cant-afford-not-to-hire-ux-designers/",
+    "https://interactivism.com/clients/",
+    "https://interactivism.com/contact",
+    "https://interactivism.com/contact/",
+    "https://interactivism.com/cookie-policy/",
+    "https://interactivism.com/reviews/",
+    "https://interactivism.com/services/",
+    "https://interactivism.com/services/development/",
+    "https://interactivism.com/services/human-ai-experience/",
+    "https://interactivism.com/services/research/",
+    "https://interactivism.com/services/strategy-growth/",
+    "https://interactivism.com/services/training/",
+    "https://interactivism.com/services/ux-design/",
+    "https://interactivism.com/team/",
+    "https://interactivism.com/work",
+    "https://interactivism.com/work/boom/",
+    "https://interactivism.com/work/brainitch/",
+    "https://interactivism.com/work/designing-the-future-of-hitachi/",
+    "https://interactivism.com/work/dog-vacay/",
+    "https://interactivism.com/work/dollar-shave-club/",
+    "https://interactivism.com/work/drucker/",
+    "https://interactivism.com/work/eventup/",
+    "https://interactivism.com/work/fanbread/",
+    "https://interactivism.com/work/field-day/",
+    "https://interactivism.com/work/haulstars/",
+    "https://interactivism.com/work/launching-the-next-layer-1-blockchain/",
+    "https://interactivism.com/work/legalzoom/",
+    "https://interactivism.com/work/level/",
+    "https://interactivism.com/work/loveit/",
+    "https://interactivism.com/work/meta/",
+    "https://interactivism.com/work/metacloud/",
+    "https://interactivism.com/work/meundies/",
+    "https://interactivism.com/work/next-generation-legal-solutions/",
+    "https://interactivism.com/work/periodical/",
+    "https://interactivism.com/work/reach-local-edge/",
+    "https://interactivism.com/work/reach-local/",
+    "https://interactivism.com/work/rebranding-democracy/",
+    "https://interactivism.com/work/rolr/",
+    "https://interactivism.com/work/scoutables/",
+    "https://interactivism.com/work/scratch/",
+    "https://interactivism.com/work/shindigz/",
+    "https://interactivism.com/work/singpoli/",
+    "https://interactivism.com/work/start-it-up/",
+    "https://interactivism.com/work/style-saint/",
+    "https://interactivism.com/work/tandem/",
+    "https://interactivism.com/work/tiny-robot/",
+    "https://interactivism.com/work/tvscientific-bringing-performance-to-connected-tv-advertising/",
+    "https://interactivism.com/work/velocify/"
+  ]
+}
