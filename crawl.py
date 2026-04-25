@@ -26,6 +26,7 @@ import mimetypes
 import urllib.parse
 from pathlib import Path
 from collections import defaultdict
+from typing import Optional
 
 import requests
 from bs4 import BeautifulSoup
@@ -67,7 +68,7 @@ session = requests.Session()
 session.headers.update(HEADERS)
 
 
-def normalise_url(url: str, base: str) -> str | None:
+def normalise_url(url: str, base: str) -> Optional[str]:
     """Resolve a URL relative to base, return None if it should be skipped."""
     url = url.strip()
     if not url or url.startswith(("mailto:", "tel:", "javascript:", "#")):
@@ -149,7 +150,7 @@ def relative_path(from_file: Path, to_file: Path) -> str:
         return str(to_file)
 
 
-def fetch(url: str, binary: bool = False) -> bytes | str | None:
+def fetch(url: str, binary: bool = False) -> Optional[bytes]:
     """Fetch a URL, return content or None on error."""
     try:
         resp = session.get(url, timeout=30, allow_redirects=True)
@@ -184,7 +185,7 @@ def rewrite_css_urls(css_text: str, css_url: str, url_map: dict) -> str:
 def rewrite_html_assets(soup: BeautifulSoup, page_local: Path, url_map: dict) -> BeautifulSoup:
     """Rewrite all asset/href references in an HTML page to local paths."""
 
-    def local_rel(abs_url: str) -> str | None:
+    def local_rel(abs_url: str) -> Optional[str]:
         if abs_url in url_map:
             return os.path.relpath(url_map[abs_url], page_local.parent)
         return None
