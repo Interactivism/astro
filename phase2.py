@@ -230,14 +230,19 @@ class Phase2:
         for tag in soup.find_all(True):
             for attr in ("href", "src", "data-src", "data-lazy-src", "data-bg"):
                 v = tag.get(attr, "")
-                if v and not v.startswith((".", "/", "#", "index")):
-                    raw_urls.add(v)
+                # Keep protocol-relative (//...) and absolute (https://...) URLs
+                # Skip clearly-local paths: relative (./), root-relative (/work/),
+                # fragments (#), already-rewritten local refs, data: URIs
+                if v and not v.startswith("data:") and not v.startswith("#"):
+                    # Protocol-relative starts with // → keep; single / → skip (local)
+                    if v.startswith("//") or "://" in v:
+                        raw_urls.add(v)
             for sa in ("srcset", "data-srcset"):
                 v = tag.get(sa, "")
                 if v:
                     for entry in v.split(","):
                         p = entry.strip().split()
-                        if p:
+                        if p and (p[0].startswith("//") or "://" in p[0]):
                             raw_urls.add(p[0])
 
         # Inline style url()
