@@ -219,7 +219,9 @@ class Phase2:
                 self.url_map[canon] = local
                 self.to_download[canon] = dl_url
 
+        closte_count = sum(1 for u in self.to_download if CLOSTE_HOST in u)
         print(f"  {len(self.to_download)} unique assets queued for download")
+        print(f"  {closte_count} are from the closte.com CDN (JS/CSS/images)")
 
     def _scan_html(self, html_file: Path):
         html = html_file.read_text(errors="replace")
