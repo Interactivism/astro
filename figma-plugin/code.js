@@ -1,5 +1,3 @@
-figma.showUI(__html__, { visible: false });
-
 (async () => {
   // ─── Config ────────────────────────────────────────────────
   const BASE = 16; // 1rem = 16px
