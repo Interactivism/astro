@@ -1,0 +1,7 @@
+{
+  "name": "Interactivism Style Sheet",
+  "id": "interactivism-style-sheet",
+  "api": "1.0.0",
+  "main": "code.js",
+  "editorType": ["figma"]
+}
