@@ -1,6 +1,7 @@
 (async () => {
   // ── Pre-load all fonts first ────────────────────────────────
   const FONTS = [
+    ["Playfair Display", "SemiBold"],
     ["Source Sans Pro", "Light"],
     ["Source Sans Pro", "Regular"],
     ["Source Sans Pro", "SemiBold"],
@@ -149,19 +150,20 @@
   add(root, makeLine(W - PAD*2), PAD, y); y += 1;
 
   const TYPE_SCALE = [
-    ["Hero / Display",  90, 96,  "Source Sans Pro","Regular",  C.dark1, "Designing for the Human–AI Era"],
-    ["H1 Large",        60, 68,  "Source Sans Pro","Regular",  C.dark1, "Human-AI Experience"],
-    ["H1 Page",         40, 50,  "Source Sans Pro","Regular",  C.dark1, "Our Services"],
-    ["H2",              34, 42,  "Source Sans Pro","Regular",  C.dark1, "AI Product Strategy"],
-    ["H3",              30, 38,  "Source Sans Pro","Regular",  C.dark1, "Research & Discovery"],
-    ["Content Intro",   48, 72,  "Source Sans Pro","Light",    C.dark2, "We help organizations design better experiences."],
-    ["Body Copy",       22, 36,  "Roboto Slab",   "Light",    C.dark2, "Our work bridges the gap between emerging technology and the people who use it."],
-    ["Body Small",      18, 30,  "Roboto Slab",   "Light",    C.dark2, "We believe great design starts with deep understanding of user needs."],
-    ["Nav Link",        24, 24,  "Source Sans Pro","SemiBold", C.dark1, "SERVICES"],
-    ["Button Label",    28, 28,  "Source Sans Pro","SemiBold", C.dark1, "GET IN TOUCH"],
-    ["Tag / Label",     16, 16,  "Source Sans Pro","SemiBold", C.dark1, "CASE STUDY"],
-    ["Caption",         18, 28,  "Source Sans Pro","Regular",  C.dark2, "Interactivism helps teams design smarter."],
-    ["Meta / Small",    14, 22,  "Source Sans Pro","Regular",  C.dark3, "March 2025 · 5 min read"],
+    // name,                 px, lh,  family,              style,       color,   sample
+    ["H1 · Desktop",         56, 60,  "Playfair Display",  "SemiBold",  C.dark1, "Human-AI Experience"],
+    ["H1 · Mobile",          34, 42,  "Playfair Display",  "SemiBold",  C.dark1, "Human-AI Experience"],
+    ["H2",                   34, 42,  "Source Sans Pro",   "Regular",   C.dark1, "AI Product Strategy"],
+    ["H3",                   30, 38,  "Source Sans Pro",   "Regular",   C.dark1, "Research & Discovery"],
+    ["Hero Slide Title",     90, 96,  "Source Sans Pro",   "Regular",   C.dark1, "Designing for the Human–AI Era"],
+    ["Content Intro",        48, 72,  "Source Sans Pro",   "Light",     C.dark2, "We help organizations design better experiences."],
+    ["Body Copy",            22, 36,  "Roboto Slab",       "Light",     C.dark2, "Our work bridges the gap between emerging technology and the people who use it."],
+    ["Body Small",           18, 30,  "Roboto Slab",       "Light",     C.dark2, "We believe great design starts with deep understanding of user needs."],
+    ["Nav Link",             24, 24,  "Source Sans Pro",   "SemiBold",  C.dark1, "SERVICES"],
+    ["Button Label",         28, 28,  "Source Sans Pro",   "SemiBold",  C.dark1, "GET IN TOUCH"],
+    ["Tag / Label",          16, 16,  "Source Sans Pro",   "SemiBold",  C.dark1, "CASE STUDY"],
+    ["Caption",              18, 28,  "Source Sans Pro",   "Regular",   C.dark2, "Interactivism helps teams design smarter."],
+    ["Meta / Small",         14, 22,  "Source Sans Pro",   "Regular",   C.dark3, "March 2025 · 5 min read"],
   ];
 
   const META_X = PAD;
