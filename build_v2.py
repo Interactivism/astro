@@ -17,7 +17,7 @@ BASE_URL_V2 = "https://interactivism.github.io/refresh/interactivism-static-v2"
 
 DM_CSS = """
 <style id="dm-font-preview">
-  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Source+Sans+3:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap');
 
   /* ── h1, h2 → DM Serif Display ────────────────────────── */
   h1, h2,
@@ -31,10 +31,10 @@ DM_CSS = """
     font-weight: 400 !important;
   }
 
-  /* ── h3 → Source Sans 3 Bold ───────────────────────────── */
+  /* ── h3 → Source Sans 3 Medium ─────────────────────────── */
   h3, h4, h5, h6 {
     font-family: 'Source Sans 3', sans-serif !important;
-    font-weight: 700 !important;
+    font-weight: 500 !important;
   }
 
   /* ── Body / UI / Labels → Source Sans 3 ───────────────── */
