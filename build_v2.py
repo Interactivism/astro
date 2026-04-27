@@ -12,7 +12,8 @@ from bs4 import BeautifulSoup
 
 SRC  = Path("interactivism-static")
 DEST = Path("interactivism-static-v2")
-BASE_URL = "https://interactivism.github.io/refresh/interactivism-static"
+BASE_URL    = "https://interactivism.github.io/refresh/interactivism-static"
+BASE_URL_V2 = "https://interactivism.github.io/refresh/interactivism-static-v2"
 
 DM_CSS = """
 <style id="dm-font-preview">
@@ -52,14 +53,17 @@ DM_CSS = """
 </style>
 """
 
-def abs_url(rel: str, page_path: Path) -> str:
-    """Resolve a relative URL from a page to an absolute GitHub Pages URL."""
+def abs_url(rel: str, page_path: Path, v2: bool = False) -> str:
+    """Resolve a relative URL to an absolute GitHub Pages URL.
+    v2=True  → points to interactivism-static-v2 (for page links)
+    v2=False → points to interactivism-static   (for assets)
+    """
     if rel.startswith(("http", "//", "data:", "#", "mailto:")):
         return rel
-    # Compute the path of the asset relative to SRC root
     page_dir = page_path.parent.relative_to(SRC)
     resolved = (SRC / page_dir / rel).resolve().relative_to(SRC.resolve())
-    return f"{BASE_URL}/{resolved}"
+    base = BASE_URL_V2 if v2 else BASE_URL
+    return f"{base}/{resolved}"
 
 def rewrite_attrs(soup, page_path, tag, attr):
     for el in soup.find_all(tag, **{attr: True}):
@@ -91,11 +95,11 @@ def process_html(src_file: Path, dest_file: Path):
             new_parts.append(" ".join(tokens))
         img["srcset"] = ", ".join(new_parts)
 
-    # Rewrite internal page links (href pointing to .html or directories)
+    # Rewrite internal page links → v2
     for a in soup.find_all("a", href=True):
         href = a["href"]
         if href and not href.startswith(("http", "//", "#", "mailto:", "tel:")):
-            a["href"] = abs_url(href, src_file)
+            a["href"] = abs_url(href, src_file, v2=True)
 
     # Inject DM font CSS just before </head>
     head = soup.find("head")
