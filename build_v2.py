@@ -90,10 +90,9 @@ def process_html(src_file: Path, dest_file: Path):
 
     soup = BeautifulSoup(html, "lxml")
 
-    # Add Content-subnav-heading class to h2 inside .Content-subnav
+    # Add Content-subnav-heading class to all h2s inside .Content-subnav
     for subnav in soup.find_all(class_="Content-subnav"):
-        h2 = subnav.find("h2")
-        if h2:
+        for h2 in subnav.find_all("h2"):
             classes = h2.get("class") or []
             if "Content-subnav-heading" not in classes:
                 h2["class"] = classes + ["Content-subnav-heading"]
