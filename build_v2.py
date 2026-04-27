@@ -37,9 +37,10 @@ DM_CSS = """
     font-weight: 500 !important;
   }
 
-  /* ── Subnav heading + Member name → Source Sans 3 Medium ── */
+  /* ── Subnav heading + Member name + Work list header → Source Sans 3 Medium ── */
   h2.Content-subnav-heading,
-  h2.Member-name {
+  h2.Member-name,
+  h2.Work-list_header {
     font-family: 'Source Sans 3', sans-serif !important;
     font-weight: 500 !important;
   }
