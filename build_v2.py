@@ -37,6 +37,13 @@ DM_CSS = """
     font-weight: 500 !important;
   }
 
+  /* ── Subnav heading + Member name → Source Sans 3 Medium ── */
+  h2.Content-subnav-heading,
+  h2.Member-name {
+    font-family: 'Source Sans 3', sans-serif !important;
+    font-weight: 500 !important;
+  }
+
   /* ── Body / UI / Labels → Source Sans 3 ───────────────── */
   body, p, a, li, dt, dd, td, th, blockquote, figcaption,
   input, textarea, select, button, label,
@@ -82,6 +89,14 @@ def process_html(src_file: Path, dest_file: Path):
         html = f.read()
 
     soup = BeautifulSoup(html, "lxml")
+
+    # Add Content-subnav-heading class to h2 inside .Content-subnav
+    for subnav in soup.find_all(class_="Content-subnav"):
+        h2 = subnav.find("h2")
+        if h2:
+            classes = h2.get("class") or []
+            if "Content-subnav-heading" not in classes:
+                h2["class"] = classes + ["Content-subnav-heading"]
 
     # Rewrite asset references to absolute URLs
     rewrite_attrs(soup, src_file, "link",   "href")
