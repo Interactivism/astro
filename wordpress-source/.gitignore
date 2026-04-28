@@ -1,0 +1,24 @@
+# WordPress core — not custom code, reference by version instead
+wp-admin/
+wp-includes/
+wp-*.php
+xmlrpc.php
+license.txt
+readme.html
+
+# Sensitive config — use wp-config-sample.php as a template
+wp-config.php
+
+# Runtime / cache / logs
+wp-content/cache/
+wp-content/upgrade/
+wp-content/backup-db/
+wp-content/advanced-cache.php
+wp-content/wp-cache-config.php
+wp-content/object-cache.php
+*.log
+debug.log
+
+# OS noise
+.DS_Store
+Thumbs.db

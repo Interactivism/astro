@@ -1,107 +1,64 @@
 # WordPress Source Clone — Staging Instructions
 
-These instructions cover collecting the three source artifacts from Closte and
-staging them in this repository so the full WordPress content is preserved
-alongside the existing static crawl.
+Goal: get the live WordPress source (theme, plugins, uploads, database) into
+`wordpress-source/` on the `claude/clone-wordpress-github-Tqtpr` branch.
+
+The XML export is already committed. Three artifacts remain.
 
 ---
 
-## Step 1 — WordPress XML Export (all content)
+## Artifact 1 — wp-content/ (theme + plugins + uploads)
 
-1. Log in to Closte → open WordPress admin for interactivism.com
-2. Go to **Tools → Export**
-3. Select **All content**
-4. Click **Download Export File** — you'll get a `.xml` file
+In **Closte File Manager**:
+1. Navigate to your site root (the folder containing `wp-config.php`)
+2. Right-click `wp-content` → **Compress / Download as zip**
+3. Save the zip
 
-**Stage it:**
-```bash
-cp ~/Downloads/interactivism.wordpress.*.xml wordpress-source/xml-export/
-```
+Upload via Dropbox (or directly to GitHub):
+- Extract and place contents at `wordpress-source/wp-content/`
+- The result should be:
+  ```
+  wordpress-source/wp-content/
+    themes/
+    plugins/
+    uploads/
+  ```
 
-**Parse it (generates structured JSON with every post, page, media URL):**
-```bash
-python3 parse_wp_export.py wordpress-source/xml-export/<filename>.xml \
-    --out wordpress-source/xml-export/parsed.json
-```
-
-The `parsed.json` will contain:
-- Every post and page (title, slug, date, full HTML content, excerpt)
-- Every attachment with its original URL
-- All media URLs found inside post content
-- Categories, tags, authors, custom fields
-- A summary count of everything
+> **Git LFS:** `uploads/` binary files are tracked via LFS (see `.gitattributes`).
+> Run `git lfs install` before committing if you haven't already.
 
 ---
 
-## Step 2 — Full Media Library
+## Artifact 2 — Database dump
 
-In Closte, open **File Manager** (or connect via SFTP):
+In **Closte → phpMyAdmin** (or Database tools):
+1. Select the interactivism database
+2. Click **Export** → Quick → Format: SQL → **Go**
+3. Save the `.sql` file
 
-1. Navigate to `wp-content/uploads/`
-2. Select the entire `uploads/` folder and download as a `.zip`
-3. Extract the zip so you have the year/month folder structure:
-
+Place it at:
 ```
-uploads/
-  2022/
-    01/
-      image.jpg
-  2023/
-    ...
+wordpress-source/database/interactivism.sql
 ```
 
-**Stage it:**
-```bash
-# Extract into wordpress-source/uploads/ preserving the year/month tree
-unzip uploads.zip -d wordpress-source/
-# or if the zip contains "uploads/" at its root:
-unzip uploads.zip -d wordpress-source/uploads/ --junk-paths   # adjust as needed
-```
-
-> **Git LFS note:** The `.gitattributes` in `wordpress-source/` routes all
-> image, video, PDF, and font files in `uploads/` through Git LFS automatically.
-> Make sure `git lfs install` has been run on your machine before committing.
+> The SQL dump contains user data and site URLs. Claude will scrub credentials
+> and add a URL-replacement script before the final commit.
 
 ---
 
-## Step 3 — Active Theme Files
+## Artifact 3 — wp-config.php (optional)
 
-In Closte File Manager:
-
-1. Navigate to `wp-content/themes/`
-2. Identify the active theme (check **Appearance → Themes** in WP admin)
-3. Download the active theme folder as a `.zip`
-
-**Stage it:**
-```bash
-unzip <theme-name>.zip -d wordpress-source/theme/
-```
+Download `wp-config.php` from the site root via File Manager.
+Place at `wordpress-source/wp-config.php` temporarily — Claude will extract
+the DB prefix and any non-credential constants, then discard the file before
+committing.
 
 ---
 
-## Commit and Push
+## Commit and push (after all artifacts are in place)
 
 ```bash
-cd refresh   # repo root
 git add wordpress-source/
-git commit -m "feat: WordPress source clone — XML export, uploads, theme"
+git commit -m "feat: WordPress source clone — wp-content, database, config"
 git push -u origin claude/clone-wordpress-github-Tqtpr
 ```
-
-> If `git lfs install` hasn't been run yet, do that first:
-> ```bash
-> git lfs install
-> git add wordpress-source/
-> git commit -m "feat: WordPress source clone — XML export, uploads, theme"
-> git push -u origin claude/clone-wordpress-github-Tqtpr
-> ```
-
----
-
-## What comes next
-
-Once the XML export is parsed, Claude can:
-- Cross-reference the 73 crawled pages against the full post list to find gaps
-- Pull any missing page content directly from `parsed.json`
-- Use the uploads media inventory to verify every image referenced in the static site is present
-- Use the theme PHP templates as the authoritative source for layout logic
