@@ -1,0 +1,35 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Contact"
+  description="Start a conversation about your product. We typically respond within one business day."
+>
+  <div class="px-6 py-16 lg:py-24 max-w-content mx-auto">
+    <p class="font-mono text-xs text-muted mb-4 uppercase tracking-widest">Get in touch</p>
+    <h1 class="text-5xl font-display leading-display text-headline mb-6">
+      Let's talk about<br />your product.
+    </h1>
+    <p class="text-lg text-body max-w-prose mb-12">
+      Tell us what you're working on. We'll get back to you within one business day.
+    </p>
+
+    <!-- Contact form placeholder — wired to Netlify Forms in a later session -->
+    <div class="max-w-prose space-y-6">
+      <div class="bg-surface-alt rounded-md px-6 py-8 text-muted font-mono text-sm">
+        Contact form — coming in a later session (Netlify Forms).
+      </div>
+
+      <div class="pt-4 space-y-2">
+        <p class="text-sm text-muted">Prefer direct contact?</p>
+        <a
+          href="mailto:hello@interactivism.com"
+          class="text-base font-medium text-headline hover:text-muted transition duration-fast underline decoration-accent decoration-2 underline-offset-2"
+        >
+          hello@interactivism.com
+        </a>
+      </div>
+    </div>
+  </div>
+</BaseLayout>

@@ -1,0 +1,107 @@
+---
+/**
+ * Base layout for every page on the site.
+ * Provides: <head> with SEO/OG/favicon, skip link, Header, main slot, mobile Footer.
+ *
+ * Props:
+ *   title       — page title (prepended to "— Interactivism")
+ *   description — meta description + OG description (falls back to site default)
+ *   ogImage     — OG image path from public/ root (falls back to /og-default.png)
+ *   ogType      — 'website' (default) or 'article' (blog posts, case studies)
+ *   canonical   — explicit canonical URL (falls back to current page URL)
+ */
+import Header from '../components/layout/Header.astro';
+import Footer from '../components/layout/Footer.astro';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+  ogImage?: string;
+  ogType?: 'website' | 'article';
+  canonical?: string;
+}
+
+const {
+  title,
+  description = 'Digital product design & development studio. Pasadena, CA.',
+  ogImage = '/og-default.png',
+  ogType = 'website',
+  canonical,
+} = Astro.props;
+
+const siteUrl = 'https://interactivism.com';
+const pageUrl = canonical ?? `${siteUrl}${Astro.url.pathname}`;
+const pageTitle = `${title} — Interactivism`;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    {canonical && <link rel="canonical" href={canonical} />}
+
+    <!-- Open Graph -->
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={`${siteUrl}${ogImage}`} />
+    <meta property="og:url" content={pageUrl} />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:site_name" content="Interactivism" />
+    <meta property="og:locale" content="en_US" />
+
+    <!-- Twitter / X card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={`${siteUrl}${ogImage}`} />
+
+    <!-- Favicon kit (source of truth: DESIGN.md "Favicon and web manifest") -->
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#F3ED07" />
+
+    <!--
+      Google Analytics — add GA4 measurement ID to enable.
+      Replace G-XXXXXXXXXX with the real ID before launch.
+
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-XXXXXXXXXX');
+      </script>
+    -->
+  </head>
+
+  <body>
+    <!-- Skip to main content — first focusable element, visually hidden until focused -->
+    <a
+      href="#main-content"
+      class="sr-only focus-visible:not-sr-only focus-visible:fixed focus-visible:top-4 focus-visible:left-4 focus-visible:z-[100] focus-visible:bg-accent focus-visible:text-headline focus-visible:font-medium focus-visible:px-4 focus-visible:py-2 focus-visible:rounded-md"
+    >
+      Skip to main content
+    </a>
+
+    <Header />
+
+    <main id="main-content" class="lg:ml-[360px]">
+      <slot />
+    </main>
+
+    <!--
+      Mobile footer — shown below main content on mobile/tablet.
+      On desktop the footer lives inside the sidenav (Header.astro).
+    -->
+    <footer class="lg:hidden border-t border-subtle">
+      <Footer />
+    </footer>
+  </body>
+</html>

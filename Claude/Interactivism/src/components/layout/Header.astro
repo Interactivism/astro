@@ -1,0 +1,220 @@
+---
+/**
+ * Site header — two distinct treatments by viewport.
+ *
+ * Desktop (lg+): fixed sidenav, 360px wide, bg-surface-alt.
+ *   Contains branding, nav, and Footer (social + copyright).
+ *   Main content shifts right via lg:ml-[360px] in BaseLayout.
+ *
+ * Mobile (<lg): transparent floating header with logo-tile left,
+ *   hamburger right. Tap → full-screen overlay nav.
+ */
+import { Menu, X } from '@lucide/astro';
+import Footer from './Footer.astro';
+
+const pathname = Astro.url.pathname;
+
+const navItems = [
+  { label: 'Services', href: '/services/' },
+  { label: 'Work', href: '/work/' },
+  { label: 'Clients', href: '/clients/' },
+  { label: 'Blog', href: '/blog/' },
+  { label: 'Team', href: '/team/' },
+  { label: 'Contact', href: '/contact/' },
+] as const;
+
+function isActive(href: string): boolean {
+  if (href === '/') return pathname === '/';
+  return pathname.startsWith(href);
+}
+---
+
+<!-- ============================================================
+     Desktop sidenav — hidden below lg
+     ============================================================ -->
+<aside
+  class="hidden lg:flex flex-col fixed left-0 top-0 h-full w-[360px] bg-surface-alt z-40 overflow-y-auto"
+  aria-label="Site navigation"
+>
+  <!-- Logo: 200×200. logo-light = white wordmark on transparent bg.
+       On pages with a positioned hero behind the sidenav, the wordmark
+       glyphs visually punch through to the image. -->
+  <a
+    href="/"
+    class="block w-[200px] h-[200px] shrink-0"
+    aria-label="Interactivism — home"
+  >
+    <img
+      src="/brand/logo-light.svg"
+      alt=""
+      width="200"
+      height="200"
+      class="w-full h-full"
+    />
+  </a>
+
+  <!-- Nav -->
+  <nav class="flex-1 px-10 pt-10" aria-label="Primary navigation">
+    <ul class="flex flex-col" role="list">
+      {
+        navItems.map(({ label, href }) => {
+          const active = isActive(href);
+          return (
+            <li>
+              <a
+                href={href}
+                aria-current={active ? 'page' : undefined}
+                class:list={[
+                  'flex items-center py-3 font-body font-medium text-base text-headline',
+                  'border-b border-subtle transition duration-fast hover:text-muted',
+                  active && 'border-b-2 border-accent',
+                ]}
+              >
+                {label}
+              </a>
+            </li>
+          );
+        })
+      }
+    </ul>
+  </nav>
+
+  <!-- Footer block: pushed to bottom of sidenav column -->
+  <div class="mt-auto border-t border-subtle">
+    <Footer />
+  </div>
+</aside>
+
+<!-- ============================================================
+     Mobile floating header — visible below lg only
+     ============================================================ -->
+<div
+  class="lg:hidden fixed top-0 left-0 right-0 z-50 flex items-start justify-between p-4 pointer-events-none"
+>
+  <!-- logo-tile is a self-contained black brand block (48×48) -->
+  <a
+    href="/"
+    aria-label="Interactivism — home"
+    class="pointer-events-auto block w-12 h-12"
+  >
+    <img src="/brand/logo-tile.svg" alt="" width="48" height="48" class="w-full h-full" />
+  </a>
+
+  <!-- Hamburger: 60×60 touch target, semi-transparent background circle -->
+  <button
+    id="mobile-nav-toggle"
+    type="button"
+    aria-expanded="false"
+    aria-controls="mobile-nav-overlay"
+    aria-label="Open navigation menu"
+    class="pointer-events-auto w-[60px] h-[60px] flex items-center justify-center rounded-full text-ink-900 transition duration-fast"
+    style="background-color: rgba(254, 254, 254, 0.25);"
+  >
+    <Menu size={24} aria-hidden="true" />
+  </button>
+</div>
+
+<!-- ============================================================
+     Mobile nav overlay.
+     Initial state: hidden via Tailwind's `hidden` class (display:none).
+     JS toggles between `hidden` and `flex` — never both at once —
+     so the flex display class never conflicts with hidden.
+     ============================================================ -->
+<div
+  id="mobile-nav-overlay"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Navigation menu"
+  class="hidden lg:hidden fixed inset-0 z-[60] flex-col bg-surface-milk p-6 pt-4"
+>
+  <!-- Overlay top row: logo + close -->
+  <div class="flex items-start justify-between mb-10">
+    <a href="/" aria-label="Interactivism — home" class="block w-12 h-12">
+      <img src="/brand/logo-tile.svg" alt="" width="48" height="48" class="w-full h-full" />
+    </a>
+    <button
+      id="mobile-nav-close"
+      type="button"
+      aria-label="Close navigation menu"
+      class="w-[60px] h-[60px] flex items-center justify-center text-ink-900 transition duration-fast hover:text-muted"
+    >
+      <X size={24} aria-hidden="true" />
+    </button>
+  </div>
+
+  <!-- Nav items: large, stacked, 44px+ tap targets -->
+  <nav aria-label="Primary navigation">
+    <ul class="flex flex-col" role="list">
+      {
+        navItems.map(({ label, href }) => {
+          const active = isActive(href);
+          return (
+            <li>
+              <a
+                href={href}
+                aria-current={active ? 'page' : undefined}
+                class:list={[
+                  'flex items-center min-h-[44px] py-3 border-b border-subtle',
+                  'font-display text-4xl leading-display text-headline',
+                  'transition duration-fast hover:text-muted',
+                  active && 'border-b-2 border-accent',
+                ]}
+              >
+                {label}
+              </a>
+            </li>
+          );
+        })
+      }
+    </ul>
+  </nav>
+
+  <!-- Footer in overlay -->
+  <div class="mt-auto">
+    <Footer />
+  </div>
+</div>
+
+<script>
+  const toggle = document.getElementById(
+    'mobile-nav-toggle',
+  ) as HTMLButtonElement | null;
+  const closeBtn = document.getElementById(
+    'mobile-nav-close',
+  ) as HTMLButtonElement | null;
+  const overlay = document.getElementById(
+    'mobile-nav-overlay',
+  ) as HTMLElement | null;
+
+  if (toggle && closeBtn && overlay) {
+    function openNav() {
+      // Swap hidden → flex. Never have both at once (CSS cascade conflict).
+      overlay!.classList.remove('hidden');
+      overlay!.classList.add('flex');
+      toggle!.setAttribute('aria-expanded', 'true');
+      document.body.style.overflow = 'hidden';
+      closeBtn!.focus();
+    }
+
+    function closeNav() {
+      overlay!.classList.remove('flex');
+      overlay!.classList.add('hidden');
+      toggle!.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+      toggle!.focus();
+    }
+
+    toggle.addEventListener('click', openNav);
+    closeBtn.addEventListener('click', closeNav);
+
+    // Escape closes overlay
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && overlay!.classList.contains('flex')) closeNav();
+    });
+
+    // Clicking a link inside the overlay closes it
+    overlay.querySelectorAll('a').forEach((link) => {
+      link.addEventListener('click', () => closeNav());
+    });
+  }
+</script>
