@@ -1,0 +1,268 @@
+---
+/**
+ * Homepage hero slider.
+ *
+ * Slide 1 is always the studio hero (headline + CTA).
+ * Slides 2–N are case study work slides (image + client tag + title + CTAs).
+ *
+ * Accessibility guarantees:
+ *  - No auto-advance.
+ *  - Arrow keys advance slides when the region has focus.
+ *  - Swipe left/right on touch devices.
+ *  - Hidden slides: aria-hidden="true", all focusable children tabindex="-1".
+ *  - On slide change: focus moves to the new slide's heading.
+ *  - prefers-reduced-motion: transitions are instant.
+ */
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+
+interface HeroCta {
+  label: string;
+  href: string;
+}
+interface HeroData {
+  headline: string;
+  image: string;
+  cta: HeroCta;
+}
+
+interface Props {
+  hero: HeroData;
+  caseStudies: CollectionEntry<'caseStudies'>[];
+}
+
+const { hero, caseStudies } = Astro.props;
+const totalSlides = 1 + caseStudies.length;
+---
+
+<section
+  id="hero-slider"
+  role="region"
+  aria-label="Featured work"
+  aria-roledescription="carousel"
+  class="relative w-full h-screen overflow-hidden focus:outline-none"
+  tabindex="0"
+>
+  <!-- ============================================================
+       Slides
+       Initial state: slide 0 visible (opacity-100), rest opacity-0.
+       JS swaps opacity-100/opacity-0 and manages aria-hidden.
+       ============================================================ -->
+
+  <!-- Slide 1: Hero / studio positioning -->
+  <div
+    data-slide="0"
+    role="group"
+    aria-roledescription="slide"
+    aria-label="Slide 1 of {totalSlides}: Studio positioning"
+    class="absolute inset-0 transition-opacity duration-500 opacity-100"
+  >
+    <!-- Background image -->
+    <img
+      src={hero.image}
+      alt=""
+      class="absolute inset-0 w-full h-full object-cover"
+      loading="eager"
+      fetchpriority="high"
+    />
+    <!-- Gradient overlay -->
+    <div class="absolute inset-0 bg-gradient-to-t from-ink-900/80 via-ink-900/20 to-transparent" />
+
+    <!-- Content -->
+    <div class="absolute inset-0 flex flex-col justify-end px-6 pb-24 lg:px-16 lg:pb-28 max-w-content">
+      <h1
+        class="font-display text-5xl lg:text-6xl leading-display text-inverse mb-8 max-w-[18ch] focus:outline-none"
+        tabindex="-1"
+      >
+        {hero.headline}
+      </h1>
+      <div>
+        <a
+          href={hero.cta.href}
+          class="inline-flex items-center justify-center h-12 px-6 bg-accent text-headline font-body font-medium text-base rounded-sm hover:bg-accent-hover active:bg-accent-pressed transition duration-fast"
+        >
+          {hero.cta.label}
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slides 2–N: Work slides -->
+  {
+    caseStudies.map((cs, i) => {
+      const slideIndex = i + 1;
+      const slug = cs.id;
+      return (
+        <div
+          data-slide={slideIndex}
+          role="group"
+          aria-roledescription="slide"
+          aria-label={`Slide ${slideIndex + 1} of ${totalSlides}: ${cs.data.client}`}
+          aria-hidden="true"
+          class="absolute inset-0 transition-opacity duration-500 opacity-0"
+        >
+          <!-- Background image -->
+          <Image
+            src={cs.data.heroImage}
+            alt=""
+            class="absolute inset-0 w-full h-full object-cover"
+            width={1920}
+            height={1080}
+            loading={slideIndex === 1 ? 'eager' : 'lazy'}
+          />
+          <!-- Gradient overlay -->
+          <div class="absolute inset-0 bg-gradient-to-t from-ink-900/80 via-ink-900/20 to-transparent" />
+
+          <!-- Client tag superimposed flush-left, space-8 from content bottom -->
+          <div class="absolute inset-0 flex flex-col justify-end px-6 pb-24 lg:px-16 lg:pb-28">
+            <p class="font-mono text-xs text-inverse/70 uppercase tracking-widest mb-3">
+              {cs.data.client}
+            </p>
+            <h2
+              class="font-display text-4xl lg:text-5xl leading-display text-inverse mb-8 max-w-[22ch] focus:outline-none"
+              tabindex="-1"
+            >
+              {cs.data.title}
+            </h2>
+            <div class="flex items-center gap-4 flex-wrap">
+              <a
+                href="/contact/"
+                tabindex="-1"
+                class="inline-flex items-center justify-center h-12 px-6 bg-accent text-headline font-body font-medium text-base rounded-sm hover:bg-accent-hover active:bg-accent-pressed transition duration-fast"
+              >
+                Let's Talk
+              </a>
+              <a
+                href={`/work/${slug}/`}
+                tabindex="-1"
+                class="inline-flex items-center justify-center h-12 px-6 border border-inverse/40 text-inverse font-body font-medium text-base rounded-sm hover:border-inverse/80 transition duration-fast"
+              >
+                View Project
+              </a>
+            </div>
+          </div>
+        </div>
+      );
+    })
+  }
+
+  <!-- ============================================================
+       Pagination: ← | current / total | →
+       ============================================================ -->
+  <div
+    class="absolute bottom-6 left-0 right-0 flex items-center justify-center gap-6 z-10 px-6"
+    aria-label="Slide navigation"
+  >
+    <button
+      id="slider-prev"
+      type="button"
+      aria-label="Previous slide"
+      class="w-10 h-10 flex items-center justify-center text-inverse/70 hover:text-inverse transition duration-fast focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent rounded-sm"
+    >
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M15 18l-6-6 6-6" />
+      </svg>
+    </button>
+
+    <span
+      id="slider-counter"
+      class="font-mono text-xs text-inverse/70 tabular-nums min-w-[3rem] text-center"
+      aria-live="polite"
+      aria-atomic="true"
+    >
+      1 / {totalSlides}
+    </span>
+
+    <button
+      id="slider-next"
+      type="button"
+      aria-label="Next slide"
+      class="w-10 h-10 flex items-center justify-center text-inverse/70 hover:text-inverse transition duration-fast focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent rounded-sm"
+    >
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M9 18l6-6-6-6" />
+      </svg>
+    </button>
+  </div>
+</section>
+
+<script>
+  const region = document.getElementById('hero-slider') as HTMLElement | null;
+  const prevBtn = document.getElementById('slider-prev') as HTMLButtonElement | null;
+  const nextBtn = document.getElementById('slider-next') as HTMLButtonElement | null;
+  const counter = document.getElementById('slider-counter') as HTMLElement | null;
+  const slides = Array.from(
+    document.querySelectorAll<HTMLElement>('[data-slide]')
+  );
+  const total = slides.length;
+  let current = 0;
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduceMotion) {
+    slides.forEach((s) => {
+      s.style.transitionDuration = '0ms';
+    });
+  }
+
+  function setFocusable(slide: HTMLElement, focusable: boolean) {
+    slide.querySelectorAll<HTMLElement>('a, button').forEach((el) => {
+      if (focusable) {
+        el.removeAttribute('tabindex');
+      } else {
+        el.setAttribute('tabindex', '-1');
+      }
+    });
+  }
+
+  function goTo(n: number) {
+    const prevSlide = slides[current];
+    current = ((n % total) + total) % total;
+    const nextSlide = slides[current];
+
+    // Deactivate previous slide
+    prevSlide.classList.remove('opacity-100');
+    prevSlide.classList.add('opacity-0');
+    prevSlide.setAttribute('aria-hidden', 'true');
+    setFocusable(prevSlide, false);
+
+    // Activate next slide
+    nextSlide.classList.remove('opacity-0');
+    nextSlide.classList.add('opacity-100');
+    nextSlide.removeAttribute('aria-hidden');
+    setFocusable(nextSlide, true);
+
+    if (counter) counter.textContent = `${current + 1} / ${total}`;
+
+    // Focus management: move focus to the heading of the new slide
+    const heading = nextSlide.querySelector<HTMLElement>('h1, h2');
+    if (heading) {
+      heading.focus({ preventScroll: true });
+    }
+  }
+
+  prevBtn?.addEventListener('click', () => goTo(current - 1));
+  nextBtn?.addEventListener('click', () => goTo(current + 1));
+
+  // Arrow keys when slider region has focus
+  region?.addEventListener('keydown', (e: KeyboardEvent) => {
+    if (e.key === 'ArrowLeft') {
+      e.preventDefault();
+      goTo(current - 1);
+    } else if (e.key === 'ArrowRight') {
+      e.preventDefault();
+      goTo(current + 1);
+    }
+  });
+
+  // Swipe support
+  let touchStartX = 0;
+  region?.addEventListener('touchstart', (e: TouchEvent) => {
+    touchStartX = e.touches[0].clientX;
+  }, { passive: true });
+  region?.addEventListener('touchend', (e: TouchEvent) => {
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    if (Math.abs(dx) > 50) {
+      goTo(dx < 0 ? current + 1 : current - 1);
+    }
+  }, { passive: true });
+</script>
