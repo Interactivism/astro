@@ -85,6 +85,7 @@ export default {
         '4xl': '2.5rem',  // 40px — h1 default
         '5xl': '3.5rem',  // 56px — page-level headline
         '6xl': '4.5rem',  // 72px — hero headline
+        '7xl': '5.5rem',  // 88px — full-bleed slider headline (desktop)
       },
 
       lineHeight: {

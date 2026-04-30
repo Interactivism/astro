@@ -1,13 +1,10 @@
 ---
-import { Image } from 'astro:assets';
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Slider from '../components/home/Slider.astro';
-import CtaBand from '../components/home/CtaBand.astro';
 import homepageData from '../data/homepage.json';
 
-// Resolve featured case studies — skip missing or non-published slugs
-// so a stale homepage.json never breaks the build.
+// Resolve featured case studies — skip missing or non-published slugs.
 const allCaseStudies = await getCollection('caseStudies');
 const now = new Date();
 const publishedBySlug = new Map(
@@ -23,70 +20,8 @@ const featuredCaseStudies = homepageData.featuredCaseStudies
 <BaseLayout
   title="Digital product design &amp; development"
   description="Interactivism is a digital product design and development studio in Pasadena, CA. We help teams build products that are engaging, efficient, and easy to use."
+  fullBleed
+  bodyClass="overflow-hidden"
 >
-  <!-- Hero Slider — full viewport height, sits flush at top of main -->
   <Slider hero={homepageData.hero} caseStudies={featuredCaseStudies} />
-
-  <!-- Selected Work -->
-  {featuredCaseStudies.length > 0 && (
-    <section class="py-16 lg:py-24 px-6 border-t border-subtle" aria-label="Selected work">
-      <div class="max-w-content mx-auto">
-        <p class="font-mono text-xs text-muted uppercase tracking-widest mb-4">Selected work</p>
-        <h2 class="font-display text-4xl lg:text-5xl leading-display text-headline mb-12">
-          Work we're proud of.
-        </h2>
-
-        <ul
-          class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12"
-          role="list"
-        >
-          {featuredCaseStudies.map((cs) => (
-            <li>
-              <article>
-                <a href={`/work/${cs.id}/`} class="group block">
-                  <!-- 16:9 image with client tag overlay -->
-                  <div class="relative aspect-video overflow-hidden bg-surface-alt">
-                    <Image
-                      src={cs.data.heroImage}
-                      alt=""
-                      class="w-full h-full object-cover group-hover:scale-[1.02] transition duration"
-                      width={800}
-                      height={450}
-                      loading="lazy"
-                    />
-                    <!-- Client tag: flush-left, 2rem from bottom -->
-                    <div class="absolute left-0 bottom-8 bg-surface-milk font-mono text-xs uppercase tracking-widest px-3 py-1 text-muted">
-                      {cs.data.client}
-                    </div>
-                  </div>
-
-                  <div class="mt-5">
-                    <h3 class="font-display text-2xl leading-display text-headline group-hover:text-muted transition duration-fast">
-                      {cs.data.title}
-                    </h3>
-                    <p class="mt-2 text-sm text-muted">{cs.data.summary}</p>
-                  </div>
-                </a>
-              </article>
-            </li>
-          ))}
-        </ul>
-
-        <div class="mt-12">
-          <a
-            href="/work/"
-            class="inline-flex items-center gap-2 font-body font-medium text-base text-headline underline decoration-accent decoration-2 underline-offset-2 hover:text-muted transition duration-fast"
-          >
-            View all work
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M5 12h14M12 5l7 7-7 7" />
-            </svg>
-          </a>
-        </div>
-      </div>
-    </section>
-  )}
-
-  <!-- CTA Band -->
-  <CtaBand />
 </BaseLayout>

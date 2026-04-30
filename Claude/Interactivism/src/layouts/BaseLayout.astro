@@ -20,6 +20,9 @@ interface Props {
   ogImage?: string;
   ogType?: 'website' | 'article';
   canonical?: string;
+  fullBleed?: boolean;
+  /** Extra classes applied to <body>. Use "overflow-hidden" on full-bleed pages. */
+  bodyClass?: string;
 }
 
 const {
@@ -28,6 +31,8 @@ const {
   ogImage = '/og-default.png',
   ogType = 'website',
   canonical,
+  fullBleed = false,
+  bodyClass = '',
 } = Astro.props;
 
 const siteUrl = 'https://interactivism.com';
@@ -81,7 +86,7 @@ const pageTitle = `${title} — Interactivism`;
     -->
   </head>
 
-  <body>
+  <body class={bodyClass || undefined}>
     <!-- Skip to main content — first focusable element, visually hidden until focused -->
     <a
       href="#main-content"
@@ -92,7 +97,7 @@ const pageTitle = `${title} — Interactivism`;
 
     <Header />
 
-    <main id="main-content" class="lg:ml-[360px]">
+    <main id="main-content" class:list={[!fullBleed && 'lg:ml-[360px]']}>
       <slot />
     </main>
 
@@ -100,8 +105,10 @@ const pageTitle = `${title} — Interactivism`;
       Mobile footer — shown below main content on mobile/tablet.
       On desktop the footer lives inside the sidenav (Header.astro).
     -->
-    <footer class="lg:hidden border-t border-subtle">
-      <Footer />
-    </footer>
+    {!fullBleed && (
+      <footer class="lg:hidden border-t border-subtle">
+        <Footer />
+      </footer>
+    )}
   </body>
 </html>
