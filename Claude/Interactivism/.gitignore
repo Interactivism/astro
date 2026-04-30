@@ -1,0 +1,22 @@
+# Build output
+dist/
+.output/
+
+# Dependencies
+node_modules/
+
+# Astro
+.astro/
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Editor
+.DS_Store
+*.swp
+*.swo
+
+# Logs
+npm-debug.log*

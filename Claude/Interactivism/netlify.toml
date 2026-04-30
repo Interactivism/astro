@@ -1,0 +1,46 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# Service rename redirects (three-level → two-level consolidation)
+[[redirects]]
+  from = "/services/ux-design/"
+  to = "/services/product-design/"
+  status = 301
+
+[[redirects]]
+  from = "/services/strategy-growth/"
+  to = "/services/product-strategy/"
+  status = 301
+
+[[redirects]]
+  from = "/services/research/"
+  to = "/services/user-research/"
+  status = 301
+
+[[redirects]]
+  from = "/services/training/"
+  to = "/services/"
+  status = 301
+
+# Sub-category → consolidated service page anchors
+# (populated during migration from live-site URL inventory)
+# Pattern: /services/ux-design/information-architecture/ → /services/product-design/#information-architecture
+
+# WordPress date-based blog URLs → new slugs
+# Pattern: /YYYY/MM/DD/post-title/ → /blog/post-title/
+# (populated during content migration)
+
+# WordPress category/tag archives → blog index
+[[redirects]]
+  from = "/category/*"
+  to = "/blog/"
+  status = 301
+
+[[redirects]]
+  from = "/tag/*"
+  to = "/blog/"
+  status = 301
