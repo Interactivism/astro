@@ -22,6 +22,9 @@ export default {
         },
         'brand-yellow': '#F3ED07',
 
+        // inverse — white for use on dark backgrounds (bg-inverse, border-inverse, text-inverse)
+        inverse: '#FEFEFE',
+
         // Status colors
         success: '#27AE74',
         info: '#3498EF',
