@@ -34,11 +34,11 @@ export default {
         // --- Semantic: surfaces ---
         // bg-surface         → page background (paper-0)
         // bg-surface-alt     → sidenav, form inputs (paper-100)
-        // bg-surface-milk    → mobile nav overlay (paper-0 @ 85%)
+        // bg-surface-milk    → mobile nav overlay (paper-0 @ 95%)
         surface: {
           DEFAULT: '#FEFEFE',
           alt: '#F1EFEF',
-          milk: 'rgba(254, 254, 254, 0.85)',
+          milk: 'rgba(254, 254, 254, 0.95)',
         },
 
         // --- Semantic: accent ---

@@ -97,7 +97,16 @@ const pageTitle = `${title} — Interactivism`;
 
     <Header />
 
-    <main id="main-content" class:list={[!fullBleed && 'lg:ml-[360px]']}>
+    <main id="main-content" class:list={['relative', !fullBleed && 'lg:ml-[360px]']}>
+      <!-- Mobile logo: scrolls with page content; absolute within relative main -->
+      <a
+        href="/"
+        aria-label="Interactivism — home"
+        class="lg:hidden absolute top-4 left-4 z-30 block w-20 h-20"
+      >
+        <img src="/brand/logo-tile.svg" alt="" width="80" height="80" class="w-full h-full" />
+      </a>
+      {!fullBleed && <div class="lg:hidden h-24" aria-hidden="true" />}
       <slot />
     </main>
 
@@ -106,7 +115,7 @@ const pageTitle = `${title} — Interactivism`;
       On desktop the footer lives inside the sidenav (Header.astro).
     -->
     {!fullBleed && (
-      <footer class="lg:hidden border-t border-subtle">
+      <footer class="lg:hidden border-t border-subtle px-6">
         <Footer />
       </footer>
     )}

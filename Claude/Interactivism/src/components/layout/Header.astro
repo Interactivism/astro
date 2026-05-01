@@ -2,14 +2,17 @@
 /**
  * Site header — two distinct treatments by viewport.
  *
- * Desktop (lg+): fixed sidenav, 360px wide, bg-surface-alt.
- *   Contains branding, nav, and Footer (social + copyright).
- *   Main content shifts right via lg:ml-[360px] in BaseLayout.
+ * Desktop (lg+): fixed sidenav, 360px wide.
+ *   - Top 360px: knockout block — four surface-alt panels around a transparent
+ *     200×200 center (80px margin all sides) where logo-light renders.
+ *     The page background (slider, marquee) shows through the transparent area.
+ *   - Below: nav + footer, both with surface-alt bg, left-aligned to logo edge (pl-20).
  *
- * Mobile (<lg): transparent floating header with logo-tile left,
- *   hamburger right. Tap → full-screen overlay nav.
+ * Mobile (<lg): no floating header — logo lives in BaseLayout <main> and scrolls
+ *   with page content. Only a standalone fixed hamburger button (z-[70]) appears
+ *   top-right. Tap → full-screen overlay with logo at same top-left position,
+ *   nav centered vertically + horizontally, footer at bottom.
  */
-import { Menu, X } from '@lucide/astro';
 import Footer from './Footer.astro';
 
 const pathname = Astro.url.pathname;
@@ -33,28 +36,24 @@ function isActive(href: string): boolean {
      Desktop sidenav — hidden below lg
      ============================================================ -->
 <aside
-  class="hidden lg:flex flex-col fixed left-0 top-0 h-full w-[360px] bg-surface-alt z-40 overflow-y-auto"
+  class="hidden lg:flex flex-col fixed left-0 top-0 h-full w-[360px] z-40 overflow-y-auto"
   aria-label="Site navigation"
 >
-  <!-- Logo: 200×200. logo-light = white wordmark on transparent bg.
-       On pages with a positioned hero behind the sidenav, the wordmark
-       glyphs visually punch through to the image. -->
-  <a
-    href="/"
-    class="block w-[200px] h-[200px] shrink-0"
-    aria-label="Interactivism — home"
-  >
-    <img
-      src="/brand/logo-light.svg"
-      alt=""
-      width="200"
-      height="200"
-      class="w-full h-full"
-    />
-  </a>
+  <!-- Knockout block: 360×360 container.
+       Four surface-alt panels leave a transparent 200×200 center (inset 80px = 5rem).
+       logo-light renders at absolute inset-20 so the page behind shows through. -->
+  <div class="relative shrink-0" style="height:360px">
+    <div class="absolute top-0 left-0 right-0 h-20 bg-surface-alt" />
+    <div class="absolute bottom-0 left-0 right-0 h-20 bg-surface-alt" />
+    <div class="absolute top-20 bottom-20 left-0 w-20 bg-surface-alt" />
+    <div class="absolute top-20 bottom-20 right-0 w-20 bg-surface-alt" />
+    <a href="/" aria-label="Interactivism — home" class="absolute inset-20 z-10 block">
+      <img src="/brand/logo-light.svg" alt="" class="w-full h-full" />
+    </a>
+  </div>
 
-  <!-- Nav -->
-  <nav class="flex-1 px-10 pt-10" aria-label="Primary navigation">
+  <!-- Nav: surface-alt bg, left edge aligns with logo left edge (pl-20 = 80px) -->
+  <nav class="flex-1 bg-surface-alt pl-20 pr-10 pt-8" aria-label="Primary navigation">
     <ul class="flex flex-col" role="list">
       {
         navItems.map(({ label, href }) => {
@@ -65,7 +64,7 @@ function isActive(href: string): boolean {
                 href={href}
                 aria-current={active ? 'page' : undefined}
                 class:list={[
-                  'flex items-center py-3 font-body font-medium text-base text-headline',
+                  'flex items-center py-3 font-body font-medium text-2xl text-headline',
                   'border-b border-subtle transition duration-fast hover:text-muted',
                   active && 'border-b-2 border-accent',
                 ]}
@@ -79,83 +78,91 @@ function isActive(href: string): boolean {
     </ul>
   </nav>
 
-  <!-- Footer block: pushed to bottom of sidenav column -->
-  <div class="mt-auto border-t border-subtle">
+  <!-- Footer: left edge aligns with logo left edge (pl-20 = 80px) -->
+  <div class="bg-surface-alt border-t border-subtle pl-20 pr-10">
     <Footer />
   </div>
 </aside>
 
 <!-- ============================================================
-     Mobile floating header — visible below lg only
+     Mobile hamburger — standalone fixed, z-[70] above overlay
+     Icon crossfades between menu and X on open/close
      ============================================================ -->
-<div
-  class="lg:hidden fixed top-0 left-0 right-0 z-50 flex items-start justify-between p-4 pointer-events-none"
+<button
+  id="mobile-nav-toggle"
+  type="button"
+  aria-expanded="false"
+  aria-controls="mobile-nav-overlay"
+  aria-label="Open navigation menu"
+  class="lg:hidden fixed top-4 right-4 z-[70] w-[60px] h-[60px] flex items-center justify-center rounded-[8px] text-ink-900 transition duration-fast"
+  style="background-color: rgba(254, 254, 254, 0.25);"
 >
-  <!-- logo-tile is a self-contained black brand block (48×48) -->
-  <a
-    href="/"
-    aria-label="Interactivism — home"
-    class="pointer-events-auto block w-12 h-12"
-  >
-    <img src="/brand/logo-tile.svg" alt="" width="48" height="48" class="w-full h-full" />
-  </a>
-
-  <!-- Hamburger: 60×60 touch target, semi-transparent background circle -->
-  <button
-    id="mobile-nav-toggle"
-    type="button"
-    aria-expanded="false"
-    aria-controls="mobile-nav-overlay"
-    aria-label="Open navigation menu"
-    class="pointer-events-auto w-[60px] h-[60px] flex items-center justify-center rounded-full text-ink-900 transition duration-fast"
-    style="background-color: rgba(254, 254, 254, 0.25);"
-  >
-    <Menu size={24} aria-hidden="true" />
-  </button>
-</div>
+  <span class="relative w-6 h-6">
+    <svg
+      id="icon-menu"
+      class="absolute inset-0 transition-opacity duration-150"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.5"
+      stroke-linecap="round"
+      aria-hidden="true"
+    >
+      <line x1="3" y1="6" x2="21" y2="6" />
+      <line x1="3" y1="12" x2="21" y2="12" />
+      <line x1="3" y1="18" x2="21" y2="18" />
+    </svg>
+    <svg
+      id="icon-close"
+      class="absolute inset-0 opacity-0 transition-opacity duration-150"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.5"
+      stroke-linecap="round"
+      aria-hidden="true"
+    >
+      <line x1="18" y1="6" x2="6" y2="18" />
+      <line x1="6" y1="6" x2="18" y2="18" />
+    </svg>
+  </span>
+</button>
 
 <!-- ============================================================
-     Mobile nav overlay.
-     Initial state: hidden via Tailwind's `hidden` class (display:none).
-     JS toggles between `hidden` and `flex` — never both at once —
-     so the flex display class never conflicts with hidden.
+     Mobile nav overlay — z-[60], below hamburger
+     Logo at top-4 left-4 mirrors the page logo position.
+     Nav centered vertically + horizontally in the overlay.
      ============================================================ -->
 <div
   id="mobile-nav-overlay"
   role="dialog"
   aria-modal="true"
   aria-label="Navigation menu"
-  class="hidden lg:hidden fixed inset-0 z-[60] flex-col bg-surface-milk p-6 pt-4"
+  class="hidden lg:hidden fixed inset-0 z-[60] flex-col bg-surface-milk"
 >
-  <!-- Overlay top row: logo + close -->
-  <div class="flex items-start justify-between mb-10">
-    <a href="/" aria-label="Interactivism — home" class="block w-12 h-12">
-      <img src="/brand/logo-tile.svg" alt="" width="48" height="48" class="w-full h-full" />
-    </a>
-    <button
-      id="mobile-nav-close"
-      type="button"
-      aria-label="Close navigation menu"
-      class="w-[60px] h-[60px] flex items-center justify-center text-ink-900 transition duration-fast hover:text-muted"
-    >
-      <X size={24} aria-hidden="true" />
-    </button>
-  </div>
+  <!-- Logo: same absolute position as the page logo in BaseLayout -->
+  <a href="/" aria-label="Interactivism — home" class="absolute top-4 left-4 z-10 block w-20 h-20">
+    <img src="/brand/logo-tile.svg" alt="" width="80" height="80" class="w-full h-full" />
+  </a>
 
-  <!-- Nav items: large, stacked, 44px+ tap targets -->
-  <nav aria-label="Primary navigation">
-    <ul class="flex flex-col" role="list">
+  <!-- Nav: centered vertically + horizontally -->
+  <nav class="flex-1 flex items-center justify-center" aria-label="Primary navigation">
+    <ul class="flex flex-col items-center w-full" role="list">
       {
         navItems.map(({ label, href }) => {
           const active = isActive(href);
           return (
-            <li>
+            <li class="w-full text-center">
               <a
                 href={href}
                 aria-current={active ? 'page' : undefined}
                 class:list={[
-                  'flex items-center min-h-[44px] py-3 border-b border-subtle',
-                  'font-display text-4xl leading-display text-headline',
+                  'flex items-center justify-center min-h-[44px] py-3',
+                  'font-body font-medium text-2xl text-headline',
                   'transition duration-fast hover:text-muted',
                   active && 'border-b-2 border-accent',
                 ]}
@@ -169,50 +176,48 @@ function isActive(href: string): boolean {
     </ul>
   </nav>
 
-  <!-- Footer in overlay -->
-  <div class="mt-auto">
+  <!-- Footer at bottom of overlay -->
+  <div class="px-6 pb-8 border-t border-subtle">
     <Footer />
   </div>
 </div>
 
 <script>
-  const toggle = document.getElementById(
-    'mobile-nav-toggle',
-  ) as HTMLButtonElement | null;
-  const closeBtn = document.getElementById(
-    'mobile-nav-close',
-  ) as HTMLButtonElement | null;
-  const overlay = document.getElementById(
-    'mobile-nav-overlay',
-  ) as HTMLElement | null;
+  const toggle   = document.getElementById('mobile-nav-toggle') as HTMLButtonElement | null;
+  const overlay  = document.getElementById('mobile-nav-overlay') as HTMLElement | null;
+  const iconMenu  = document.getElementById('icon-menu') as SVGElement | null;
+  const iconClose = document.getElementById('icon-close') as SVGElement | null;
 
-  if (toggle && closeBtn && overlay) {
+  if (toggle && overlay) {
     function openNav() {
-      // Swap hidden → flex. Never have both at once (CSS cascade conflict).
       overlay!.classList.remove('hidden');
       overlay!.classList.add('flex');
       toggle!.setAttribute('aria-expanded', 'true');
+      toggle!.setAttribute('aria-label', 'Close navigation menu');
+      iconMenu?.classList.add('opacity-0');
+      iconClose?.classList.remove('opacity-0');
       document.body.style.overflow = 'hidden';
-      closeBtn!.focus();
     }
 
     function closeNav() {
       overlay!.classList.remove('flex');
       overlay!.classList.add('hidden');
       toggle!.setAttribute('aria-expanded', 'false');
+      toggle!.setAttribute('aria-label', 'Open navigation menu');
+      iconMenu?.classList.remove('opacity-0');
+      iconClose?.classList.add('opacity-0');
       document.body.style.overflow = '';
       toggle!.focus();
     }
 
-    toggle.addEventListener('click', openNav);
-    closeBtn.addEventListener('click', closeNav);
+    toggle.addEventListener('click', () => {
+      overlay!.classList.contains('flex') ? closeNav() : openNav();
+    });
 
-    // Escape closes overlay
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && overlay!.classList.contains('flex')) closeNav();
     });
 
-    // Clicking a link inside the overlay closes it
     overlay.querySelectorAll('a').forEach((link) => {
       link.addEventListener('click', () => closeNav());
     });
