@@ -94,7 +94,7 @@ function isActive(href: string): boolean {
   aria-expanded="false"
   aria-controls="mobile-nav-overlay"
   aria-label="Open navigation menu"
-  class="lg:hidden fixed top-4 right-4 z-[70] w-[60px] h-[60px] flex items-center justify-center rounded-[8px] text-ink-900 transition duration-fast"
+  class="lg:hidden fixed top-6 right-6 z-[70] w-[40px] h-[40px] flex items-center justify-center rounded-sm text-ink-900 transition duration-fast"
   style="background-color: rgba(254, 254, 254, 0.25);"
 >
   <span class="relative w-6 h-6">
@@ -145,7 +145,7 @@ function isActive(href: string): boolean {
   class="hidden lg:hidden fixed inset-0 z-[60] flex-col bg-surface-milk"
 >
   <!-- Logo: same absolute position as the page logo in BaseLayout -->
-  <a href="/" aria-label="Interactivism — home" class="absolute top-4 left-4 z-10 block w-20 h-20">
+  <a href="/" aria-label="Interactivism — home" class="absolute top-6 left-6 z-10 block w-20 h-20">
     <img src="/brand/logo-tile.svg" alt="" width="80" height="80" class="w-full h-full" />
   </a>
 
@@ -162,9 +162,8 @@ function isActive(href: string): boolean {
                 aria-current={active ? 'page' : undefined}
                 class:list={[
                   'flex items-center justify-center min-h-[44px] py-3',
-                  'font-body font-medium text-2xl text-headline',
-                  'transition duration-fast hover:text-muted',
-                  active && 'border-b-2 border-accent',
+                  'font-body font-medium text-2xl transition duration-fast',
+                  active ? 'text-muted' : 'text-headline hover:text-muted',
                 ]}
               >
                 {label}
