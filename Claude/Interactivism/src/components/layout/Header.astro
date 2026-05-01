@@ -65,8 +65,8 @@ function isActive(href: string): boolean {
                 aria-current={active ? 'page' : undefined}
                 class:list={[
                   'flex items-center py-3 font-body font-medium text-2xl text-headline',
-                  'border-b border-subtle transition duration-fast hover:text-muted',
-                  active && 'border-b-2 border-accent',
+                  'transition duration-fast hover:text-muted',
+                  active && 'text-muted',
                 ]}
               >
                 {label}
