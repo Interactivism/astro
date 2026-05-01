@@ -10,16 +10,21 @@ const year = new Date().getFullYear();
 ---
 
 <div class="py-8 space-y-3">
-  <!-- Row 1: phone · address -->
-  <p class="text-sm text-muted leading-snug">
-    <a href="tel:+13233255080" class="hover:text-headline transition duration-fast">
+  <!-- Contact info: phone + address stacked vertically -->
+  <div class="space-y-1">
+    <a
+      href="tel:+13233255080"
+      class="block text-sm text-muted hover:text-headline transition duration-fast"
+    >
       +1-323-325-5080
     </a>
-    <span class="mx-1 opacity-40">&middot;</span>
-    40 E. Colorado Blvd, Suite A, Pasadena, CA 91105
-  </p>
+    <p class="text-sm text-muted leading-snug">
+      40 E. Colorado Blvd, Suite A<br />
+      Pasadena, CA 91105
+    </p>
+  </div>
 
-  <!-- Row 2: social icons + copyright -->
+  <!-- Row 2: social icons + copyright, vertically centered -->
   <div class="flex items-center justify-between">
     <div class="flex items-center gap-4">
       <!-- Instagram -->
@@ -90,6 +95,6 @@ const year = new Date().getFullYear();
       </a>
     </div>
 
-    <p class="text-xs text-muted">&copy; {year} Interactivism</p>
+    <p class="text-sm text-muted self-center leading-none mb-0">&copy; {year} Interactivism</p>
   </div>
 </div>
