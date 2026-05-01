@@ -75,20 +75,18 @@ const tagClass      = 'inline-flex items-center bg-ink-900 text-inverse font-mon
     <div class="absolute inset-0 bg-gradient-to-b from-ink-900/55 via-transparent to-transparent pointer-events-none" />
     <div class="absolute inset-0 bg-gradient-to-t from-ink-900/70 via-ink-900/10 to-transparent pointer-events-none" />
 
-    <!-- Top: tag + headline -->
-    <div class={`absolute top-0 left-0 right-0 pt-24 lg:pt-16 px-6 ${desktopPad}`}>
+    <!-- Bottom: tag + headline + CTA stacked, left-aligned -->
+    <div class={`absolute bottom-0 left-0 right-0 pb-20 lg:pb-12 px-6 ${desktopPad}`}>
       <div class={tagClass}>{heroTag}</div>
       <h1 class={headlineClass} tabindex="-1">{hero.headline}</h1>
-    </div>
-
-    <!-- Bottom: CTA (pagination sits outside slides, right-aligned) -->
-    <div class={`absolute bottom-0 left-0 right-0 pb-20 lg:pb-12 px-6 ${desktopPad}`}>
-      <a
-        href={hero.cta.href}
-        class="inline-flex items-center justify-center h-12 px-6 bg-accent text-headline font-body font-medium text-base rounded-sm hover:bg-accent-hover active:bg-accent-pressed transition duration-fast"
-      >
-        {hero.cta.label}
-      </a>
+      <div class="mt-6">
+        <a
+          href={hero.cta.href}
+          class="inline-flex items-center justify-center h-12 px-6 bg-accent text-headline font-body font-medium text-base rounded-sm hover:bg-accent-hover active:bg-accent-pressed transition duration-fast"
+        >
+          {hero.cta.label}
+        </a>
+      </div>
     </div>
   </div>
 
@@ -118,15 +116,11 @@ const tagClass      = 'inline-flex items-center bg-ink-900 text-inverse font-mon
           <div class="absolute inset-0 bg-gradient-to-b from-ink-900/55 via-transparent to-transparent pointer-events-none" />
           <div class="absolute inset-0 bg-gradient-to-t from-ink-900/70 via-ink-900/10 to-transparent pointer-events-none" />
 
-          <!-- Top: tag + headline -->
-          <div class={`absolute top-0 left-0 right-0 pt-24 lg:pt-16 px-6 ${desktopPad}`}>
+          <!-- Bottom: tag + headline + CTAs stacked, left-aligned -->
+          <div class={`absolute bottom-0 left-0 right-0 pb-20 lg:pb-12 px-6 ${desktopPad}`}>
             <div class={tagClass}>{cs.data.client}</div>
             <h2 class={headlineClass} tabindex="-1">{cs.data.title}</h2>
-          </div>
-
-          <!-- Bottom: CTAs -->
-          <div class={`absolute bottom-0 left-0 right-0 pb-20 lg:pb-12 px-6 ${desktopPad}`}>
-            <div class="flex items-center gap-4 flex-wrap">
+            <div class="mt-6 flex items-center gap-4 flex-wrap">
               <a
                 href="/contact/"
                 tabindex="-1"
