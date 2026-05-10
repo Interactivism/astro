@@ -1,6 +1,6 @@
 ---
 /**
- * Slideshow — inline image carousel for case study pages.
+ * Slideshow — inline image/video carousel for case study pages.
  *
  * Layout:
  *   ┌──────────────────────────────────────┐
@@ -21,6 +21,10 @@
  * Accepts two image formats:
  *   - ImageMetadata  hand-authored MDX or frontmatter gallery array
  *   - string         Keystatic CMS-authored (absolute path like /images/...)
+ *
+ * Video slides: pass a string path ending in .mp4 or .webm. The component
+ * renders a <video autoplay loop muted playsinline> and automatically includes
+ * both .webm and .mp4 sources for broad browser support.
  */
 import { Image } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
@@ -28,6 +32,16 @@ import type { ImageMetadata } from 'astro';
 interface Slide {
   image: ImageMetadata | string;
   caption?: string;
+}
+
+// Derive companion source URLs for video slides
+function videoSources(src: string): { webm: string; mp4: string } {
+  const base = src.replace(/\.(mp4|webm)$/i, '');
+  return { webm: `${base}.webm`, mp4: `${base}.mp4` };
+}
+
+function isVideo(src: ImageMetadata | string): src is string {
+  return typeof src === 'string' && /\.(mp4|webm)$/i.test(src);
 }
 
 interface Props {
@@ -64,7 +78,19 @@ const uid = `ss-${Math.random().toString(36).slice(2, 9)}`;
           i === 0 ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none',
         ]}
       >
-        {typeof slide.image === 'string' ? (
+        {isVideo(slide.image) ? (
+          <video
+            autoplay
+            loop
+            muted
+            playsinline
+            class="w-full h-full object-contain"
+            aria-label={slide.caption ?? 'Animated demonstration'}
+          >
+            <source src={videoSources(slide.image).webm} type="video/webm" />
+            <source src={videoSources(slide.image).mp4}  type="video/mp4" />
+          </video>
+        ) : typeof slide.image === 'string' ? (
           <img
             src={slide.image}
             alt={slide.caption ?? ''}
