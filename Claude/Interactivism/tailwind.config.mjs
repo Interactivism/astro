@@ -20,7 +20,7 @@ export default {
           0: '#FEFEFE',   // page background
           100: '#F1EFEF', // alternative background
         },
-        'brand-yellow': '#F3ED07',
+        'brand-yellow': '#F2DB07',
 
         // inverse — white for use on dark backgrounds (bg-inverse, border-inverse, text-inverse)
         inverse: '#FEFEFE',
@@ -43,13 +43,13 @@ export default {
 
         // --- Semantic: accent ---
         // bg-accent          → primary button, link underline (brand-yellow)
-        // bg-accent-hover    → brand-yellow darkened ~12% lightness
+        // bg-accent-hover    → brand-yellow hue-shifted +4° toward green-yellow (54° → 58°)
         // bg-accent-pressed  → brand-yellow darkened ~20% lightness
         // bg-accent-subtle   → secondary button bg (ink-900 @ 25%)
         accent: {
-          DEFAULT: '#F3ED07',
-          hover: '#B7B106',
-          pressed: '#8F8B04',
+          DEFAULT: '#F2DB07',
+          hover: '#F3ED07',    // brand-yellow hue-shifted +4° (HSL 54° → 58°, same L=49%)
+          pressed: '#8F8B04',  // brand-yellow darkened ~20% lightness
           subtle: 'rgba(13, 13, 13, 0.25)',
         },
       },
@@ -77,18 +77,25 @@ export default {
 
       fontFamily: {
         display: ['"DM Serif Display"', 'Georgia', 'serif'],
-        body: ['"Source Sans 3"', 'system-ui', 'sans-serif'],
+        body: ['"DM Sans"', 'system-ui', 'sans-serif'],
         mono: ['"IBM Plex Mono"', 'ui-monospace', 'monospace'],
       },
 
-      // Override Tailwind's 4xl/5xl/6xl — our scale differs from the defaults.
-      // Tailwind defaults: 4xl=2.25rem, 5xl=3rem, 6xl=3.75rem
-      // Ours:             4xl=2.5rem,  5xl=3.5rem, 6xl=4.5rem
+      // Full type scale — all steps overridden from Tailwind defaults.
+      // xs=14  sm=16  base=18  lg=20  xl=24  2xl=30  3xl=40
+      // 4xl=56  5xl=72  6xl=96  7xl=112
       fontSize: {
-        '4xl': '2.5rem',  // 40px — h1 default
-        '5xl': '3.5rem',  // 56px — page-level headline
-        '6xl': '4.5rem',  // 72px — hero headline
-        '7xl': '5.5rem',  // 88px — full-bleed slider headline (desktop)
+        'xs':   '0.875rem', // 14px — metadata, eyebrow labels
+        'sm':   '1rem',     // 16px — captions, fine print
+        'base': '1.125rem', // 18px — body default
+        'lg':   '1.25rem',  // 20px — large body, intro paragraphs
+        'xl':   '1.5rem',   // 24px — subheadings (h4), nav, buttons
+        '2xl':  '1.875rem', // 30px — h3
+        '3xl':  '2.5rem',   // 40px — h2
+        '4xl':  '3.5rem',   // 56px — h1 default
+        '5xl':  '4.5rem',   // 72px — page-level headline
+        '6xl':  '6rem',     // 96px — hero headline
+        '7xl':  '7rem',     // 112px — full-bleed slider headline (desktop)
       },
 
       lineHeight: {
