@@ -12,6 +12,7 @@
  */
 import Header from '../components/layout/Header.astro';
 import Footer from '../components/layout/Footer.astro';
+import type { LogoVariant } from '../lib/imageBrightness';
 import '../styles/global.css';
 
 interface Props {
@@ -21,8 +22,20 @@ interface Props {
   ogType?: 'website' | 'article';
   canonical?: string;
   fullBleed?: boolean;
+  /**
+   * Set true when the page begins with a <Marquee> component.
+   * Suppresses the mobile logo spacer so the marquee starts flush at the top
+   * (the mobile logo overlaps the marquee's top-left corner instead).
+   */
+  hasMarquee?: boolean;
   /** Extra classes applied to <body>. Use "overflow-hidden" on full-bleed pages. */
   bodyClass?: string;
+  /**
+   * Which logo variant renders in the desktop sidenav knockout.
+   * Computed at build time from the page's background image brightness.
+   * Defaults to 'light' (white wordmark). Slider overrides at runtime.
+   */
+  logoVariant?: LogoVariant;
 }
 
 const {
@@ -32,8 +45,14 @@ const {
   ogType = 'website',
   canonical,
   fullBleed = false,
+  hasMarquee = false,
   bodyClass = '',
+  logoVariant: logoVariantProp,
 } = Astro.props;
+
+// Pages without a marquee use the tile logo in the sidenav.
+// Pages with a marquee derive the variant from image brightness analysis.
+const logoVariant: LogoVariant = logoVariantProp ?? (hasMarquee ? 'light' : 'tile');
 
 const siteUrl = 'https://interactivism.com';
 const pageUrl = canonical ?? `${siteUrl}${Astro.url.pathname}`;
@@ -70,7 +89,7 @@ const pageTitle = `${title} — Interactivism`;
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
-    <meta name="theme-color" content="#F3ED07" />
+    <meta name="theme-color" content="#F2DB07" />
 
     <!--
       Google Analytics — add GA4 measurement ID to enable.
@@ -95,7 +114,7 @@ const pageTitle = `${title} — Interactivism`;
       Skip to main content
     </a>
 
-    <Header />
+    <Header logoVariant={logoVariant} />
 
     <main id="main-content" class:list={['relative', !fullBleed && 'lg:ml-[360px]']}>
       <!-- Mobile logo: scrolls with page content; absolute within relative main -->
@@ -106,7 +125,7 @@ const pageTitle = `${title} — Interactivism`;
       >
         <img src="/brand/logo-tile.svg" alt="" width="80" height="80" class="w-full h-full" />
       </a>
-      {!fullBleed && <div class="lg:hidden h-[120px]" aria-hidden="true" />}
+      {!fullBleed && !hasMarquee && <div class="lg:hidden h-[120px]" aria-hidden="true" />}
       <slot />
     </main>
 

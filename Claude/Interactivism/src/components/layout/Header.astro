@@ -14,6 +14,14 @@
  *   nav centered vertically + horizontally, footer at bottom.
  */
 import Footer from './Footer.astro';
+import type { LogoVariant } from '../../lib/imageBrightness';
+
+interface Props {
+  /** Controls which logo SVG renders in the desktop sidenav knockout area.
+   *  Client-side JS (Slider) may update #sidenav-logo at runtime. */
+  logoVariant?: LogoVariant;
+}
+const { logoVariant = 'light' } = Astro.props;
 
 const pathname = Astro.url.pathname;
 
@@ -48,12 +56,12 @@ function isActive(href: string): boolean {
     <div class="absolute top-20 bottom-20 left-0 w-20 bg-surface-alt" />
     <div class="absolute top-20 bottom-20 right-0 w-20 bg-surface-alt" />
     <a href="/" aria-label="Interactivism — home" class="absolute inset-20 z-10 block">
-      <img src="/brand/logo-light.svg" alt="" class="w-full h-full" />
+      <img id="sidenav-logo" src={`/brand/logo-${logoVariant}.svg`} alt="" class="w-full h-full" />
     </a>
   </div>
 
   <!-- Nav: surface-alt bg, left edge aligns with logo left edge (pl-20 = 80px) -->
-  <nav class="flex-1 bg-surface-alt pl-20 pr-10 pt-8" aria-label="Primary navigation">
+  <nav class="flex-1 bg-surface-alt pl-20 pr-10" aria-label="Primary navigation">
     <ul class="flex flex-col" role="list">
       {
         navItems.map(({ label, href }) => {
@@ -64,9 +72,9 @@ function isActive(href: string): boolean {
                 href={href}
                 aria-current={active ? 'page' : undefined}
                 class:list={[
-                  'flex items-center py-3 font-body font-medium text-2xl text-headline',
-                  'transition duration-fast hover:text-muted',
-                  active && 'text-muted',
+                  'flex items-center py-3 font-body font-medium text-xl uppercase',
+                  'transition duration-fast',
+                  active ? 'text-[#9B9B9B]' : 'text-headline hover:text-muted',
                 ]}
               >
                 {label}
@@ -94,19 +102,19 @@ function isActive(href: string): boolean {
   aria-expanded="false"
   aria-controls="mobile-nav-overlay"
   aria-label="Open navigation menu"
-  class="lg:hidden fixed top-6 right-6 z-[70] w-[40px] h-[40px] flex items-center justify-center rounded-sm text-ink-900 transition duration-fast"
+  class="lg:hidden fixed top-6 right-6 z-[70] w-[54px] h-[54px] flex items-center justify-center rounded-sm text-ink-900 transition duration-fast"
   style="background-color: rgba(254, 254, 254, 0.25);"
 >
-  <span class="relative w-6 h-6">
+  <span class="relative w-8 h-8">
     <svg
       id="icon-menu"
       class="absolute inset-0 transition-opacity duration-150"
-      width="24"
-      height="24"
+      width="32"
+      height="32"
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      stroke-width="1.5"
+      stroke-width="2"
       stroke-linecap="round"
       aria-hidden="true"
     >
@@ -117,12 +125,12 @@ function isActive(href: string): boolean {
     <svg
       id="icon-close"
       class="absolute inset-0 opacity-0 transition-opacity duration-150"
-      width="24"
-      height="24"
+      width="32"
+      height="32"
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      stroke-width="1.5"
+      stroke-width="2"
       stroke-linecap="round"
       aria-hidden="true"
     >
@@ -162,8 +170,8 @@ function isActive(href: string): boolean {
                 aria-current={active ? 'page' : undefined}
                 class:list={[
                   'flex items-center justify-center min-h-[44px] py-3',
-                  'font-body font-medium text-2xl transition duration-fast',
-                  active ? 'text-muted' : 'text-headline hover:text-muted',
+                  'font-body font-medium text-xl uppercase transition duration-fast',
+                  active ? 'text-[#9B9B9B]' : 'text-headline hover:text-muted',
                 ]}
               >
                 {label}

@@ -5,7 +5,10 @@
 [build.environment]
   NODE_VERSION = "20"
 
-# Service rename redirects (three-level → two-level consolidation)
+# ============================================================
+# Services — top-level renames
+# ============================================================
+
 [[redirects]]
   from = "/services/ux-design/"
   to = "/services/product-design/"
@@ -21,20 +24,298 @@
   to = "/services/user-research/"
   status = 301
 
+# Case-sensitive variant that appears in the live sitemap
+[[redirects]]
+  from = "/services/Research/"
+  to = "/services/user-research/"
+  status = 301
+
 [[redirects]]
   from = "/services/training/"
   to = "/services/"
   status = 301
 
-# Sub-category → consolidated service page anchors
-# (populated during migration from live-site URL inventory)
-# Pattern: /services/ux-design/information-architecture/ → /services/product-design/#information-architecture
+# ============================================================
+# Services — sub-category pages (three-level → two-level)
+# Specific rules first, wildcards last.
+# ============================================================
 
-# WordPress date-based blog URLs → new slugs
-# Pattern: /YYYY/MM/DD/post-title/ → /blog/post-title/
-# (populated during content migration)
+# /services/ux-design/* — most map to product-design
+[[redirects]]
+  from = "/services/ux-design/information-architecture/"
+  to = "/services/product-design/"
+  status = 301
 
-# WordPress category/tag archives → blog index
+[[redirects]]
+  from = "/services/ux-design/interaction-design/"
+  to = "/services/product-design/"
+  status = 301
+
+[[redirects]]
+  from = "/services/ux-design/user-interface-design/"
+  to = "/services/product-design/"
+  status = 301
+
+[[redirects]]
+  from = "/services/ux-design/data-visualization/"
+  to = "/services/product-design/"
+  status = 301
+
+[[redirects]]
+  from = "/services/ux-design/prototyping/"
+  to = "/services/product-design/"
+  status = 301
+
+# Branding sub-page now lives under brand-development
+[[redirects]]
+  from = "/services/ux-design/identity-branding/"
+  to = "/services/brand-development/"
+  status = 301
+
+# SEO was a product strategy capability, not a design sub-service
+[[redirects]]
+  from = "/services/ux-design/seo/"
+  to = "/services/product-strategy/"
+  status = 301
+
+# Emerging tech → human-ai-experience
+[[redirects]]
+  from = "/services/ux-design/emerging-technologies/"
+  to = "/services/human-ai-experience/"
+  status = 301
+
+# Catch-all for any remaining /services/ux-design/* sub-pages
+[[redirects]]
+  from = "/services/ux-design/*"
+  to = "/services/product-design/"
+  status = 301
+
+# /services/human-ai-experience/* sub-pages
+[[redirects]]
+  from = "/services/human-ai-experience/*"
+  to = "/services/human-ai-experience/"
+  status = 301
+
+# /services/research/* sub-pages
+[[redirects]]
+  from = "/services/research/*"
+  to = "/services/user-research/"
+  status = 301
+
+# /services/development/* sub-pages
+[[redirects]]
+  from = "/services/development/*"
+  to = "/services/development/"
+  status = 301
+
+# /services/strategy-growth/* sub-pages
+[[redirects]]
+  from = "/services/strategy-growth/*"
+  to = "/services/product-strategy/"
+  status = 301
+
+# /services/training/* sub-pages (training not in new site)
+[[redirects]]
+  from = "/services/training/*"
+  to = "/services/"
+  status = 301
+
+# ============================================================
+# Work — slug changes
+# ============================================================
+
+[[redirects]]
+  from = "/work/tvscientific-bringing-performance-to-connected-tv-advertising/"
+  to = "/work/tvscientific/"
+  status = 301
+
+[[redirects]]
+  from = "/work/rebranding-democracy/"
+  to = "/work/vote/"
+  status = 301
+
+[[redirects]]
+  from = "/work/launching-the-next-layer-1-blockchain/"
+  to = "/work/xx-network/"
+  status = 301
+
+[[redirects]]
+  from = "/work/designing-the-future-of-hitachi/"
+  to = "/work/hitachi/"
+  status = 301
+
+[[redirects]]
+  from = "/work/next-generation-legal-solutions/"
+  to = "/work/legalzoom/"
+  status = 301
+
+[[redirects]]
+  from = "/work/legalzoom/"
+  to = "/work/legalzoom-seo/"
+  status = 301
+
+# Work category and tag archives → work index
+[[redirects]]
+  from = "/work/category/*"
+  to = "/work/"
+  status = 301
+
+[[redirects]]
+  from = "/work/tag/*"
+  to = "/work/"
+  status = 301
+
+# ============================================================
+# Blog — unmigrated posts → blog index
+# (posts that exist on live site but were not carried forward)
+# ============================================================
+
+[[redirects]]
+  from = "/blog/connect-17-urb-e-derby/"
+  to = "/blog/"
+  status = 301
+
+[[redirects]]
+  from = "/blog/designing-successful-startups/"
+  to = "/blog/"
+  status = 301
+
+[[redirects]]
+  from = "/blog/the-roi-of-design-in-tech/"
+  to = "/blog/"
+  status = 301
+
+[[redirects]]
+  from = "/blog/you-cant-afford-not-to-hire-ux-designers/"
+  to = "/blog/"
+  status = 301
+
+[[redirects]]
+  from = "/blog/designing-immersive-experiences/"
+  to = "/blog/"
+  status = 301
+
+[[redirects]]
+  from = "/blog/enterprise-tech-la-launch-event-enterprise-vs-consumer-software/"
+  to = "/blog/"
+  status = 301
+
+[[redirects]]
+  from = "/blog/investing-in-ux-design/"
+  to = "/blog/"
+  status = 301
+
+[[redirects]]
+  from = "/blog/may-office-hours/"
+  to = "/blog/"
+  status = 301
+
+[[redirects]]
+  from = "/blog/ux-design-is-smart-business/"
+  to = "/blog/"
+  status = 301
+
+[[redirects]]
+  from = "/blog/inside-the-minds-of-brilliant-designers/"
+  to = "/blog/"
+  status = 301
+
+[[redirects]]
+  from = "/blog/april-office-hours/"
+  to = "/blog/"
+  status = 301
+
+[[redirects]]
+  from = "/blog/why-good-ux-design-is-smart-business/"
+  to = "/blog/"
+  status = 301
+
+[[redirects]]
+  from = "/blog/sola-hack-3rd-annual-design-thinking-and-social-entrepreneurship-hackathon-for-south-la/"
+  to = "/blog/"
+  status = 301
+
+[[redirects]]
+  from = "/blog/march-office-hours/"
+  to = "/blog/"
+  status = 301
+
+[[redirects]]
+  from = "/blog/winter-social/"
+  to = "/blog/"
+  status = 301
+
+[[redirects]]
+  from = "/blog/the-roi-of-ux/"
+  to = "/blog/"
+  status = 301
+
+# Blog category and tag archives → blog index
+[[redirects]]
+  from = "/blog/category/*"
+  to = "/blog/"
+  status = 301
+
+[[redirects]]
+  from = "/blog/tag/*"
+  to = "/blog/"
+  status = 301
+
+# ============================================================
+# Team — WordPress custom post type → new URLs
+# ============================================================
+
+[[redirects]]
+  from = "/team_members/erik-wingren/"
+  to = "/team/erik-wingren/"
+  status = 301
+
+[[redirects]]
+  from = "/team_members/petra-wennberg/"
+  to = "/team/petra-wennberg/"
+  status = 301
+
+[[redirects]]
+  from = "/team_members/josh-kunin/"
+  to = "/team/josh-kunin/"
+  status = 301
+
+[[redirects]]
+  from = "/team_members/catherine-carr/"
+  to = "/team/catherine-carr/"
+  status = 301
+
+[[redirects]]
+  from = "/team_members/ricky-barbosa/"
+  to = "/team/ricky-barbosa/"
+  status = 301
+
+# ============================================================
+# Miscellaneous WordPress pages
+# ============================================================
+
+# /reviews/ → /team/ (nearest equivalent — client testimonials)
+[[redirects]]
+  from = "/reviews/"
+  to = "/team/"
+  status = 301
+
+# Landing page that has no equivalent
+[[redirects]]
+  from = "/turnkey-ux-design-and-dev/"
+  to = "/services/"
+  status = 301
+
+# Cookie policy — no new equivalent
+[[redirects]]
+  from = "/cookie-policy/"
+  to = "/"
+  status = 301
+
+# ============================================================
+# WordPress top-level archives → home
+# ============================================================
+
 [[redirects]]
   from = "/category/*"
   to = "/blog/"
@@ -42,5 +323,5 @@
 
 [[redirects]]
   from = "/tag/*"
-  to = "/blog/"
+  to = "/"
   status = 301

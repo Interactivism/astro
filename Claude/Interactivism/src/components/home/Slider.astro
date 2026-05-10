@@ -42,7 +42,12 @@ const heroTag = hero.tag ?? 'Interactivism';
 const desktopPad = 'lg:pl-[440px] lg:pr-20';
 
 // Shared headline / tag classes so both h1 and h2 look identical
-const headlineClass = 'font-display text-5xl lg:text-7xl leading-display text-inverse max-w-[18ch] focus:outline-none';
+// Font size is fluid via CSS min() + clamp():
+//   min(9vh, 11vw) picks whichever viewport dimension is more constraining —
+//   height on short desktops (e.g. 1440×900), width on narrow phones (390px).
+//   clamp() floors at 2.5rem (40px) and caps at 7rem (112px).
+const headlineClass = 'font-display leading-display text-inverse max-w-[18ch] focus:outline-none';
+const headlineStyle = 'font-size: clamp(2.5rem, min(9vh, 11vw), 7rem)';
 const tagClass      = 'inline-flex items-center bg-ink-900 text-inverse font-mono text-base uppercase tracking-widest px-4 py-1.5 mb-5';
 ---
 
@@ -63,7 +68,7 @@ const tagClass      = 'inline-flex items-center bg-ink-900 text-inverse font-mon
     role="group"
     aria-roledescription="slide"
     aria-label={`Slide 1 of ${totalSlides}`}
-    class="absolute inset-0 opacity-100 transition-opacity duration-500"
+    class="absolute inset-0 opacity-100 transition-opacity duration-500 pointer-events-auto"
   >
     <img
       src={hero.image}
@@ -78,11 +83,11 @@ const tagClass      = 'inline-flex items-center bg-ink-900 text-inverse font-mon
     <!-- Bottom: tag + headline + CTA stacked, left-aligned -->
     <div class={`absolute bottom-0 left-0 right-0 pb-20 lg:pb-16 px-6 ${desktopPad}`}>
       <div class={tagClass}>{heroTag}</div>
-      <h1 class={headlineClass} tabindex="-1">{hero.headline}</h1>
-      <div class="mt-10 lg:mt-20">
+      <h1 class={headlineClass} style={headlineStyle} tabindex="-1">{hero.headline}</h1>
+      <div class="mt-8 lg:mt-12">
         <a
           href={hero.cta.href}
-          class="inline-flex items-center justify-center h-14 px-8 bg-accent text-headline font-body font-medium text-2xl rounded-sm hover:bg-accent-hover active:bg-accent-pressed transition duration-fast"
+          class="inline-flex items-center justify-center h-14 px-8 bg-accent text-headline font-body font-medium text-xl uppercase rounded-sm hover:bg-accent-hover active:bg-accent-pressed transition duration-fast"
         >
           {hero.cta.label}
         </a>
@@ -103,7 +108,7 @@ const tagClass      = 'inline-flex items-center bg-ink-900 text-inverse font-mon
           aria-roledescription="slide"
           aria-label={`Slide ${idx + 1} of ${totalSlides}: ${cs.data.client}`}
           aria-hidden="true"
-          class="absolute inset-0 opacity-0 transition-opacity duration-500"
+          class="absolute inset-0 opacity-0 pointer-events-none transition-opacity duration-500"
         >
           <Image
             src={cs.data.heroImage}
@@ -119,19 +124,19 @@ const tagClass      = 'inline-flex items-center bg-ink-900 text-inverse font-mon
           <!-- Bottom: tag + headline + CTAs stacked, left-aligned -->
           <div class={`absolute bottom-0 left-0 right-0 pb-20 lg:pb-16 px-6 ${desktopPad}`}>
             <div class={tagClass}>{cs.data.client}</div>
-            <h2 class={headlineClass} tabindex="-1">{cs.data.title}</h2>
-            <div class="mt-10 lg:mt-20 flex items-center gap-4 flex-wrap">
+            <h2 class={headlineClass} style={headlineStyle} tabindex="-1">{cs.data.title}</h2>
+            <div class="mt-8 lg:mt-12 flex items-center gap-4 flex-wrap">
               <a
                 href="/contact/"
                 tabindex="-1"
-                class="inline-flex items-center justify-center h-14 px-8 bg-accent text-headline font-body font-medium text-2xl rounded-sm hover:bg-accent-hover active:bg-accent-pressed transition duration-fast"
+                class="inline-flex items-center justify-center h-14 px-8 bg-accent text-headline font-body font-medium text-xl uppercase rounded-sm hover:bg-accent-hover active:bg-accent-pressed transition duration-fast"
               >
                 Let's Talk
               </a>
               <a
                 href={`/work/${cs.id}/`}
                 tabindex="-1"
-                class="inline-flex items-center justify-center h-14 px-8 bg-paper-0/[66%] text-headline font-body font-medium text-2xl rounded-sm hover:bg-paper-0/90 transition duration-fast"
+                class="inline-flex items-center justify-center h-14 px-8 bg-paper-0/[66%] text-headline font-body font-medium text-xl uppercase rounded-sm hover:bg-paper-0/90 transition duration-fast"
               >
                 View Project
               </a>
@@ -214,6 +219,76 @@ const tagClass      = 'inline-flex items-center bg-ink-900 text-inverse font-mon
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (reduceMotion) slides.forEach(s => { s.style.transitionDuration = '0ms'; });
 
+  // ── Logo variant (desktop only) ────────────────────────────────
+  // Samples the logo region (80×80 inset, 200×200px crop) of the active
+  // slide's background image and switches #sidenav-logo between
+  // logo-light.svg and logo-dark.svg for contrast.
+  // Only runs on lg+ where the sidenav logo is visible.
+
+  const sidnavLogo = document.getElementById('sidenav-logo') as HTMLImageElement | null;
+
+  /**
+   * Object-cover coordinate mapping.
+   * Returns the source rect (in natural image pixels) that corresponds to
+   * the viewport rect (vx, vy, vw, vh) when the image is rendered with
+   * object-cover behaviour at full viewport size.
+   */
+  function objectCoverSrcRect(
+    natW: number, natH: number,
+    viewW: number, viewH: number,
+    vx: number, vy: number, vw: number, vh: number
+  ) {
+    const scale  = Math.max(viewW / natW, viewH / natH);
+    const offsetX = (natW * scale - viewW) / 2;  // may be 0
+    const offsetY = (natH * scale - viewH) / 2;
+    return {
+      sx: (vx + offsetX) / scale,
+      sy: (vy + offsetY) / scale,
+      sw: vw / scale,
+      sh: vh / scale,
+    };
+  }
+
+  function sampleLogoVariant(img: HTMLImageElement): 'light' | 'dark' {
+    try {
+      const canvas = document.createElement('canvas');
+      canvas.width  = 200;
+      canvas.height = 200;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return 'light';
+
+      const { sx, sy, sw, sh } = objectCoverSrcRect(
+        img.naturalWidth, img.naturalHeight,
+        window.innerWidth, window.innerHeight,
+        80, 80, 200, 200
+      );
+      ctx.drawImage(img, sx, sy, sw, sh, 0, 0, 200, 200);
+
+      const data = ctx.getImageData(0, 0, 200, 200).data;
+      let sum = 0;
+      for (let i = 0; i < data.length; i += 4) {
+        sum += 0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2];
+      }
+      return (sum / (data.length / 4)) >= 197 ? 'dark' : 'light';
+    } catch {
+      return 'light';
+    }
+  }
+
+  /**
+   * Schedules a logo variant update for `img`.
+   * If the image is already decoded, samples immediately; otherwise waits for load.
+   * The 250ms delay places the swap at the midpoint of the 500ms opacity fade
+   * so the switch is effectively invisible.
+   */
+  function scheduleLogo(img: HTMLImageElement, delay = 250) {
+    if (!sidnavLogo) return;
+    const run = () => setTimeout(() => {
+      if (sidnavLogo) sidnavLogo.src = `/brand/logo-${sampleLogoVariant(img)}.svg`;
+    }, delay);
+    img.complete && img.naturalWidth > 0 ? run() : img.addEventListener('load', run, { once: true });
+  }
+
   // ── Helpers ────────────────────────────────────────────────────
 
   function setFocusable(slide: HTMLElement, allow: boolean) {
@@ -242,15 +317,21 @@ const tagClass      = 'inline-flex items-center bg-ink-900 text-inverse font-mon
     const next = slides[current];
 
     prev.classList.replace('opacity-100', 'opacity-0');
+    prev.classList.add('pointer-events-none');
     prev.setAttribute('aria-hidden', 'true');
     setFocusable(prev, false);
 
     next.classList.replace('opacity-0', 'opacity-100');
+    next.classList.remove('pointer-events-none');
     next.removeAttribute('aria-hidden');
     setFocusable(next, true);
 
     if (counter) counter.textContent = `${current + 1} / ${total}`;
     syncDots(current);
+
+    // Update sidenav logo variant at the mid-point of the opacity fade.
+    const nextImg = next.querySelector<HTMLImageElement>('img');
+    if (nextImg) scheduleLogo(nextImg);
 
     next.querySelector<HTMLElement>('h1, h2')?.focus({ preventScroll: true });
     resetAdvance();
@@ -266,15 +347,21 @@ const tagClass      = 'inline-flex items-center bg-ink-900 text-inverse font-mon
     const next = slides[current];
 
     prev.classList.replace('opacity-100', 'opacity-0');
+    prev.classList.add('pointer-events-none');
     prev.setAttribute('aria-hidden', 'true');
     setFocusable(prev, false);
 
     next.classList.replace('opacity-0', 'opacity-100');
+    next.classList.remove('pointer-events-none');
     next.removeAttribute('aria-hidden');
     setFocusable(next, true);
 
     if (counter) counter.textContent = `${current + 1} / ${total}`;
     syncDots(current);
+
+    // Update sidenav logo variant at the mid-point of the opacity fade.
+    const nextImg = next.querySelector<HTMLImageElement>('img');
+    if (nextImg) scheduleLogo(nextImg);
 
     timer = setTimeout(tick, 5000);
   }

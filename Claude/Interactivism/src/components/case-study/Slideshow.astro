@@ -1,0 +1,201 @@
+---
+/**
+ * Slideshow — inline image carousel for case study pages.
+ *
+ * Layout:
+ *   ┌──────────────────────────────────────┐
+ *   │            image (4:3 fixed)         │
+ *   │                                      │
+ *   │         [ • ○ ○ ○ ]   ← dots, btm   │
+ *   └──────────────────────────────────────┘
+ *   Caption text, flush left       [←] [→]
+ *
+ * Design decisions:
+ *   - Fixed 4:3 aspect-ratio container — height never shifts between slides
+ *   - object-fit: contain + surface-alt bg — portrait images letterbox, no crop
+ *   - Opacity crossfade (not display:none) — no reflow on transition
+ *   - pointer-events-none on inactive slides — no ghost click-through
+ *   - Dots overlaid at bottom-center of the image inside a frosted pill
+ *   - Prev/next arrows below the image alongside the caption
+ *
+ * Accepts two image formats:
+ *   - ImageMetadata  hand-authored MDX or frontmatter gallery array
+ *   - string         Keystatic CMS-authored (absolute path like /images/...)
+ */
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+interface Slide {
+  image: ImageMetadata | string;
+  caption?: string;
+}
+
+interface Props {
+  slides: Slide[];
+  /** Accessible label for the carousel region. */
+  label?: string;
+}
+
+const { slides, label = 'Image gallery' } = Astro.props;
+const total = slides.length;
+const uid = `ss-${Math.random().toString(36).slice(2, 9)}`;
+---
+
+<div
+  id={uid}
+  class="not-prose my-12 lg:my-16"
+  role="region"
+  aria-label={label}
+  aria-roledescription="carousel"
+>
+
+  <!-- ── Fixed-ratio image area ──────────────────────────────────── -->
+  <div class="relative aspect-[4/3] bg-surface-alt overflow-hidden">
+
+    {slides.map((slide, i) => (
+      <div
+        data-slide={i}
+        role="group"
+        aria-roledescription="slide"
+        aria-label={`${i + 1} of ${total}${slide.caption ? `: ${slide.caption}` : ''}`}
+        aria-hidden={i !== 0 ? 'true' : undefined}
+        class:list={[
+          'absolute inset-0 transition-opacity duration-300',
+          i === 0 ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none',
+        ]}
+      >
+        {typeof slide.image === 'string' ? (
+          <img
+            src={slide.image}
+            alt={slide.caption ?? ''}
+            class="w-full h-full object-contain"
+            loading={i === 0 ? 'eager' : 'lazy'}
+          />
+        ) : (
+          <Image
+            src={slide.image}
+            alt={slide.caption ?? ''}
+            width={slide.image.width}
+            height={slide.image.height}
+            class="w-full h-full object-contain"
+          />
+        )}
+      </div>
+    ))}
+
+    <!-- ── Dot indicators — overlaid at bottom center ─────────────── -->
+    {total > 1 && (
+      <div
+        class="absolute bottom-3 left-1/2 -translate-x-1/2 z-10
+               flex items-center gap-1.5
+               bg-ink-900/30 backdrop-blur-sm
+               px-2.5 py-1.5 rounded-full"
+        aria-hidden="true"
+      >
+        {slides.map((_, i) => (
+          <div
+            data-dot={i}
+            class:list={[
+              'h-1.5 rounded-full transition-all duration-200',
+              i === 0 ? 'w-4 bg-paper-0' : 'w-1.5 bg-paper-0/50',
+            ]}
+          />
+        ))}
+      </div>
+    )}
+  </div>
+
+  <!-- ── Caption + prev/next arrows ─────────────────────────────── -->
+  <div class="flex items-center justify-between gap-4 mt-3">
+
+    <!-- Caption — flush left, always present to hold layout -->
+    <p data-caption class="text-sm text-muted italic min-h-[1.25rem] flex-1">
+      {slides[0]?.caption ?? ''}
+    </p>
+
+    <!-- Prev / Next arrow buttons -->
+    {total > 1 && (
+      <div class="flex items-center gap-1 shrink-0" aria-label="Slideshow navigation">
+        <button
+          data-prev
+          type="button"
+          aria-label="Previous image"
+          class="w-8 h-8 flex items-center justify-center
+                 border border-subtle hover:border-ink-300
+                 text-muted hover:text-headline
+                 transition duration-fast rounded-sm
+                 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink-900"
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <path d="M15 18l-6-6 6-6"/>
+          </svg>
+        </button>
+        <button
+          data-next
+          type="button"
+          aria-label="Next image"
+          class="w-8 h-8 flex items-center justify-center
+                 border border-subtle hover:border-ink-300
+                 text-muted hover:text-headline
+                 transition duration-fast rounded-sm
+                 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink-900"
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <path d="M9 18l6-6-6-6"/>
+          </svg>
+        </button>
+      </div>
+    )}
+  </div>
+</div>
+
+<script define:vars={{ uid, total, captions: slides.map((s) => s.caption ?? '') }}>
+  const root = document.getElementById(uid);
+  if (!root || total <= 1) return;
+
+  const slideEls  = Array.from(root.querySelectorAll('[data-slide]'));
+  const dots      = Array.from(root.querySelectorAll('[data-dot]'));
+  const prevBtn   = root.querySelector('[data-prev]');
+  const nextBtn   = root.querySelector('[data-next]');
+  const captionEl = root.querySelector('[data-caption]');
+  let current = 0;
+
+  function goTo(n) {
+    // Deactivate current
+    slideEls[current].classList.replace('opacity-100',        'opacity-0');
+    slideEls[current].classList.replace('pointer-events-auto', 'pointer-events-none');
+    slideEls[current].setAttribute('aria-hidden', 'true');
+    dots[current].classList.replace('w-4',      'w-1.5');
+    dots[current].classList.replace('bg-paper-0', 'bg-paper-0/50');
+
+    current = ((n % total) + total) % total;
+
+    // Activate next
+    slideEls[current].classList.replace('opacity-0',           'opacity-100');
+    slideEls[current].classList.replace('pointer-events-none', 'pointer-events-auto');
+    slideEls[current].removeAttribute('aria-hidden');
+    dots[current].classList.replace('w-1.5',       'w-4');
+    dots[current].classList.replace('bg-paper-0/50', 'bg-paper-0');
+
+    if (captionEl) captionEl.textContent = captions[current];
+  }
+
+  prevBtn?.addEventListener('click', () => goTo(current - 1));
+  nextBtn?.addEventListener('click', () => goTo(current + 1));
+
+  // Keyboard
+  root.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft')  { e.preventDefault(); goTo(current - 1); }
+    if (e.key === 'ArrowRight') { e.preventDefault(); goTo(current + 1); }
+  });
+
+  // Touch swipe
+  let touchStartX = 0;
+  root.addEventListener('touchstart', (e) => {
+    touchStartX = e.touches[0].clientX;
+  }, { passive: true });
+  root.addEventListener('touchend', (e) => {
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    if (Math.abs(dx) > 50) goTo(dx < 0 ? current + 1 : current - 1);
+  }, { passive: true });
+</script>

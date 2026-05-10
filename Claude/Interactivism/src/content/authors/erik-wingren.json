@@ -1,13 +1,10 @@
 {
-  "id": "erik-wingren",
   "name": "Erik Wingren",
-  "role": "Co-founder",
-  "bio": "Erik Wingren is co-founder and design director at Interactivism. He leads strategy, design, and client relationships at the studio. Over fifteen years, he has directed product design for clients ranging from NASA to Dollar Shave Club, with a focus on making complex systems feel simple.",
-  "avatar": "./erik-wingren.jpg",
+  "role": "Co-founder & Partner",
+  "order": 1,
+  "bio": "Erik brings 20+ years of experience designing and shipping digital products and services, giving him a rare ability to contribute meaningfully at every stage — from early research through final delivery.\n\nWith a degree in anthropology, and graduate studies in creative business management and organizational development, Erik started his career in Design Research, but has expanded his toolbox over the years to span the full width of User Experience Design.\n\nBefore founding Interactivism in 2012, Erik worked in and around the LA startup / technology scene with companies like Idealab, Iconmobile, Sony Design Center, Myspace, and Science where he designed the UX for the launches of Dollar Shave Club, Dog Vacay, and MeUndies.\n\nAs a consultant, Erik helps clients develop brand and product propositions that are informed and inspired by real people's needs, behaviors, and motivations.",
+  "avatar": "../../content/authors/erik-wingren/avatar.jpg",
   "social": {
-    "linkedin": "https://www.linkedin.com/in/ewingren",
-    "medium": null,
-    "instagram": null,
-    "website": null
+    "linkedin": "https://www.linkedin.com/in/erikwingren/"
   }
 }

@@ -1,17 +1,44 @@
 ---
-// Repeated section pattern. Lives at the bottom of all pages except /contact/.
+// Unique ID to scope JS when multiple instances exist on the same page.
+const uid = `cta-${Math.random().toString(36).slice(2, 9)}`;
+
+const headlines = [
+  { id: 'next-level',        text: 'Are you ready to take your product to the next level?' },
+  { id: 'user-time',         text: 'When was the last time you spent time with your users?' },
+  { id: 'roadmap',           text: 'Want to knock out some of your top roadmap items?' },
+  { id: 'next-big-thing',    text: "What's the next next big thing?" },
+  { id: 'holding-back',      text: "Ready to find out what's holding your product back?" },
+  { id: 'one-insight',       text: "What if your next big win is one insight away?" },
+  { id: 'engaging',          text: "Is your product as engaging, efficient, and easy-to-use as you'd like it to be?" },
+  { id: 'fresh-perspective', text: 'Where could a fresh perspective take your product?' },
+];
 ---
 
-<section class="py-20 lg:py-28 px-6 border-t border-subtle">
-  <div class="max-w-content mx-auto flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8">
-    <h2 class="font-display text-4xl lg:text-5xl leading-display text-headline max-w-[20ch]">
-      Are you ready to take your product to the next level?
-    </h2>
+<section id={uid} class="py-20 lg:py-28 border-t border-subtle">
+  <div class="px-6 max-w-content mx-auto flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
+    <h4 data-cta-headline class="font-display text-3xl lg:text-4xl leading-display text-headline lg:max-w-[60%]">
+      {headlines[0].text}
+    </h4>
     <a
       href="/contact/"
-      class="inline-flex items-center justify-center h-12 px-6 bg-accent text-headline font-body font-medium text-base rounded-sm hover:bg-accent-hover active:bg-accent-pressed transition duration-fast shrink-0"
+      data-cta-link
+      class="inline-flex items-center justify-center h-14 px-8 bg-accent text-headline font-body font-medium text-xl uppercase rounded-sm hover:bg-accent-hover active:bg-accent-pressed transition duration-fast shrink-0"
     >
       Let's Talk
     </a>
   </div>
 </section>
+
+<script define:vars={{ uid, headlines }}>
+  const section = document.getElementById(uid);
+  const h4   = section?.querySelector('[data-cta-headline]');
+  const link = section?.querySelector('[data-cta-link]');
+
+  if (h4 && link) {
+    const pick = headlines[Math.floor(Math.random() * headlines.length)];
+    h4.textContent  = pick.text;
+    // Expose the headline ID on both the section and the link for analytics hooks.
+    section.dataset.ctaId = pick.id;
+    link.dataset.ctaId    = pick.id;
+  }
+</script>

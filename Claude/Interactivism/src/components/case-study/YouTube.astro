@@ -1,0 +1,47 @@
+---
+/**
+ * YouTube — responsive 16:9 video embed for case study and blog pages.
+ *
+ * Accepts a full YouTube URL or a bare video ID:
+ *   https://www.youtube.com/watch?v=dQw4w9WgXcQ
+ *   https://youtu.be/dQw4w9WgXcQ
+ *   dQw4w9WgXcQ
+ */
+
+interface Props {
+  url: string;
+  caption?: string;
+}
+
+const { url, caption } = Astro.props;
+
+// Extract video ID from URL or treat the whole value as an ID
+function extractId(input: string): string {
+  try {
+    const u = new URL(input);
+    if (u.hostname === 'youtu.be') return u.pathname.slice(1);
+    return u.searchParams.get('v') ?? input;
+  } catch {
+    return input.trim();
+  }
+}
+
+const videoId = extractId(url);
+const embedUrl = `https://www.youtube-nocookie.com/embed/${videoId}`;
+---
+
+<figure class="not-prose my-12 lg:my-16">
+  <div class="relative w-full aspect-video bg-surface-alt overflow-hidden">
+    <iframe
+      src={embedUrl}
+      title={caption ?? 'YouTube video'}
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+      allowfullscreen
+      loading="lazy"
+      class="absolute inset-0 w-full h-full border-0"
+    ></iframe>
+  </div>
+  {caption && (
+    <figcaption class="mt-3 text-sm text-muted italic">{caption}</figcaption>
+  )}
+</figure>

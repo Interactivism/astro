@@ -32,6 +32,29 @@ const SERVICE_IDS = [
   'user-research',
   'development',
   'product-strategy',
+  'brand-development',
+] as const;
+
+const DELIVERABLE_IDS = [
+  'experience-strategy',
+  'heuristic-evaluation',
+  'usability-assessment',
+  'personas',
+  'information-architecture',
+  'brand-strategy',
+  'brand-identity',
+  'positioning-framework',
+  'messaging-framework',
+  'print-collateral',
+  'illustration',
+  'animation',
+  'content-strategy',
+  'ui-ux-design',
+  'design-system',
+  'data-visualization',
+  'web-development',
+  'mobile-app-development',
+  'futurecasting',
 ] as const;
 
 // ============================================================
@@ -39,7 +62,13 @@ const SERVICE_IDS = [
 // ============================================================
 
 const caseStudies = defineCollection({
-  loader: glob({ pattern: '**/*.mdx', base: './src/content/caseStudies' }),
+  loader: glob({
+    // Flat structure: one {slug}.mdx per case study at the collection root.
+    // Images live in co-named subdirectories: {slug}/hero.jpg, {slug}/images/*.
+    pattern: '*.mdx',
+    base: './src/content/caseStudies',
+    generateId: ({ entry }) => entry.replace(/\.mdx$/, ''),
+  }),
   schema: ({ image }) =>
     z.object({
       title: z.string().max(80),
@@ -52,11 +81,13 @@ const caseStudies = defineCollection({
       ogImage: image().optional(),
       services: z.array(z.enum(SERVICE_IDS)).min(1),
       industry: z.enum(INDUSTRY_IDS),
-      year: z.number().int().positive(),
-      role: z.string(),
+      year: z.coerce.number().int().positive(),
+      // Optional end year. Omit for single-year projects.
+      // Use a number (e.g. 2023) for completed ranges, or the string 'present' for ongoing work.
+      yearEnd: z.union([z.coerce.number().int().positive(), z.literal('present')]).optional(),
+      deliverables: z.array(z.enum(DELIVERABLE_IDS)).min(1),
       duration: z.string().optional(),
-      // If present: 1–4 entries. Omit entirely when there are no metrics;
-      // don't pass an empty array (enforced by .min(1)).
+      // 0–4 metric entries. Empty array and omitted are both treated as "no metrics".
       metrics: z
         .array(
           z.object({
@@ -64,10 +95,15 @@ const caseStudies = defineCollection({
             label: z.string(),
           })
         )
-        .min(1)
         .max(4)
         .optional(),
       relatedCaseStudies: z.array(z.string()).max(2).optional(),
+      gallery: z.array(
+        z.object({
+          image: image(),
+          caption: z.string().optional(),
+        })
+      ).optional(),
     }),
 });
 
@@ -124,11 +160,10 @@ const authors = defineCollection({
   loader: glob({ pattern: '**/*.json', base: './src/content/authors' }),
   schema: ({ image }) =>
     z.object({
-      // Must match the filename. Validated by convention; enforce in CI if needed.
-      id: z.string(),
       name: z.string(),
       role: z.string(),
-      bio: z.string().min(200).max(400),
+      order: z.number().int().positive().optional(),
+      bio: z.string().min(10),
       avatar: image(),
       social: z
         .object({
@@ -156,6 +191,8 @@ const services = defineCollection({
       order: z.number().int().positive(),
       summary: z.string(),
       heroImage: image().optional(),
+      heroImageWide: image().optional(),
+      photoCredit: z.string().optional(),
     }),
 });
 

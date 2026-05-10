@@ -1,0 +1,82 @@
+---
+/**
+ * Case study excerpt card — used on the Work index page.
+ *
+ * Layout:
+ *   - Hero image (16:9) with client name tag flush bottom-left
+ *   - Title (h2, font-display)
+ *   - Summary
+ *   - Services tag row
+ *
+ * The entire card is a link. Image scales on hover.
+ */
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  entry: CollectionEntry<'caseStudies'>;
+}
+
+const { entry } = Astro.props;
+const { title, client, summary, heroImage, services, year, yearEnd } = entry.data;
+const href = `/work/${entry.id}/`;
+
+const yearDisplay = yearEnd === undefined
+  ? String(year)
+  : yearEnd === 'present'
+    ? `${year}–Present`
+    : `${year}–${yearEnd}`;
+
+// Map service IDs to display labels
+const SERVICE_LABELS: Record<string, string> = {
+  'product-design':       'Product Design',
+  'human-ai-experience':  'Human + AI Experience',
+  'user-research':        'User Research',
+  'development':          'Development',
+  'product-strategy':     'Product Strategy',
+  'brand-development':    'Brand Development',
+};
+---
+
+<article>
+  <a href={href} class="group block">
+    <!-- Hero image with client tag -->
+    <div class="relative aspect-[16/9] overflow-hidden mb-6">
+      <Image
+        src={heroImage}
+        alt=""
+        width={800}
+        height={450}
+        class="w-full h-full object-cover transition duration-DEFAULT group-hover:scale-[1.03]"
+      />
+      <!-- Client tag -->
+      <div class="absolute bottom-8 left-0 lg:bottom-11">
+        <span class="inline-flex items-center bg-ink-900 text-inverse font-mono text-xs uppercase tracking-widest px-3 py-1.5">
+          {client}
+        </span>
+      </div>
+    </div>
+
+    <!-- Text content -->
+    <div>
+      <h2 class="font-display text-3xl leading-display text-headline mb-3 group-hover:text-muted transition duration-fast">
+        {title}
+      </h2>
+      <p class="text-base text-body mb-4 max-w-readable">
+        {summary}
+      </p>
+
+      <!-- Services + year -->
+      <div class="grid grid-cols-[1fr_auto] gap-x-6 items-start">
+        <div class="flex flex-wrap gap-2 content-start">
+          {services.map((id) => (
+            <span class="font-mono text-xs text-muted uppercase tracking-widest border border-subtle px-2 py-1">
+              {SERVICE_LABELS[id] ?? id}
+            </span>
+          ))}
+        </div>
+        <span class="font-mono text-xs text-muted pt-1">{yearDisplay}</span>
+      </div>
+    </div>
+  </a>
+</article>

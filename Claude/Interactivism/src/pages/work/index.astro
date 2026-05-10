@@ -1,0 +1,61 @@
+---
+import path from 'node:path';
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Marquee from '../../components/layout/Marquee.astro';
+import CaseStudyCard from '../../components/work/CaseStudyCard.astro';
+import CtaBand from '../../components/home/CtaBand.astro';
+import PhotoCredit from '../../components/layout/PhotoCredit.astro';
+import { getLogoVariant } from '../../lib/imageBrightness';
+import marqueeImage from '../../assets/images/marquee/work-mobile.jpg';
+import marqueeImageWide from '../../assets/images/marquee/work-wide.jpg';
+
+// "present" sorts above any numeric year; fall back to start year when yearEnd is absent.
+const sortYear = (cs: { data: { year: number; yearEnd?: number | 'present' } }) =>
+  cs.data.yearEnd === 'present' ? Infinity : (cs.data.yearEnd ?? cs.data.year);
+
+// Published case studies, most-recently-active first
+const allCaseStudies = await getCollection('caseStudies');
+const now = new Date();
+const caseStudies = allCaseStudies
+  .filter((cs) => cs.data.status === 'published' && cs.data.publishedDate <= now)
+  .sort((a, b) => sortYear(b) - sortYear(a));
+
+// Build-time logo variant from the marquee image
+const marqueeImagePath = path.join(process.cwd(), 'src/assets/images/marquee/work-wide.jpg');
+const logoVariant = await getLogoVariant(marqueeImagePath);
+---
+
+<BaseLayout
+  title="Work"
+  description="Case studies from Interactivism — digital product design and development for teams that care about craft."
+  hasMarquee
+  logoVariant={logoVariant}
+>
+  <Marquee
+    heroImage={marqueeImage}
+    heroImageWide={marqueeImageWide}
+    alt=""
+  />
+
+  <div class="px-6 py-16 lg:py-24 max-w-content mx-auto">
+    <div class="mb-12 lg:mb-16">
+      <p class="font-mono text-xs text-muted mb-4 uppercase tracking-widest">Selected work</p>
+      <h1 class="font-display leading-display text-headline">
+        Work that moves<br />the needle.
+      </h1>
+    </div>
+
+    {caseStudies.length > 0 ? (
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-20">
+        {caseStudies.map((cs) => (
+          <CaseStudyCard entry={cs} />
+        ))}
+      </div>
+    ) : (
+      <p class="text-body text-muted">Case studies coming soon.</p>
+    )}
+  </div>
+
+  <CtaBand />
+</BaseLayout>

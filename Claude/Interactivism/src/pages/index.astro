@@ -1,7 +1,9 @@
 ---
+import path from 'node:path';
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Slider from '../components/home/Slider.astro';
+import { getLogoVariant } from '../lib/imageBrightness';
 import homepageData from '../data/homepage.json';
 
 // Resolve featured case studies — skip missing or non-published slugs.
@@ -15,6 +17,11 @@ const publishedBySlug = new Map(
 const featuredCaseStudies = homepageData.featuredCaseStudies
   .map((slug) => publishedBySlug.get(slug))
   .filter((cs): cs is NonNullable<typeof cs> => cs !== undefined);
+
+// Build-time logo variant: sample the hero slide's background image.
+// The slider JS will re-sample on every slide change at runtime.
+const heroImagePath = path.join(process.cwd(), 'public', homepageData.hero.image);
+const heroLogoVariant = await getLogoVariant(heroImagePath);
 ---
 
 <BaseLayout
@@ -22,6 +29,7 @@ const featuredCaseStudies = homepageData.featuredCaseStudies
   description="Interactivism is a digital product design and development studio in Pasadena, CA. We help teams build products that are engaging, efficient, and easy to use."
   fullBleed
   bodyClass="overflow-hidden"
+  logoVariant={heroLogoVariant}
 >
   <Slider hero={homepageData.hero} caseStudies={featuredCaseStudies} />
 </BaseLayout>

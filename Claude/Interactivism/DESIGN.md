@@ -77,7 +77,7 @@ Design tokens defined here are mirrored in `tailwind.config.mjs`. Semantic names
 | `ink-300` | `#CECECE` | Disabled / placeholder text |
 | `paper-0` | `#FEFEFE` | Page background |
 | `paper-100` | `#F1EFEF` | Alternative background |
-| `brand-yellow` | `#F3ED07` | Brand accent |
+| `brand-yellow` | `#F2DB07` | Brand accent |
 | `color-success` | `#27AE74` | Success messages |
 | `color-info` | `#3498EF` | Info messages |
 | `color-warning` | `#F4D053` | Warning messages |
@@ -108,7 +108,7 @@ Applies to buttons and text links. The pattern: lighten/darken via HSL relative 
 | State | Definition |
 |---|---|
 | `state.default` | Base color as defined per component. |
-| `state.hover` | Background darkens by ~12% lightness. For text links: underline appears in `accent.surface`, base color unchanged. Cursor: pointer. |
+| `state.hover` | Primary button background shifts hue +4° toward green-yellow (HSL 54° → 58°, same lightness), reading as a subtle brightening. For text links: underline appears in `accent.surface`, base color unchanged. Cursor: pointer. |
 | `state.pressed` | Background darkens by ~20% lightness (deeper than hover). Applied via `:active`. No transform, no scale. |
 | `state.on` | For current nav item / selected toggle. 2px `accent.surface` underline (nav) or solid `accent.surface` background (toggle). |
 | `state.disabled` | 50% opacity, `cursor: not-allowed`. Hover and pressed states do not fire. |
@@ -127,7 +127,7 @@ All text/background pairings must meet **WCAG AA** at minimum (4.5:1 for body te
 
 ```
 --font-display:  'DM Serif Display'   /* Headlines */
---font-body:     'Source Sans 3'   /* Body, UI */
+--font-body:     'DM Sans'            /* Body, UI */
 --font-mono:     'IBM Plex Mono', ui-monospace, monospace  /* Code, metadata */
 ```
 
@@ -139,16 +139,17 @@ A modular scale with a 1.25 (major third) ratio works well for editorial sites. 
 
 | Token | Size (rem) | Px @ 16px base | Use |
 |---|---|---|---|
-| `text-xs` | 0.75 | 12 | Metadata, eyebrow labels |
-| `text-sm` | 0.875 | 14 | Captions, fine print |
-| `text-base` | 1 | 16 | Body default |
-| `text-lg` | 1.125 | 18 | Large body, intro paragraphs |
-| `text-xl` | 1.25 | 20 | Subheadings (h4) |
-| `text-2xl` | 1.5 | 24 | h3 |
-| `text-3xl` | 1.875 | 30 | h2 |
-| `text-4xl` | 2.5 | 40 | h1 (default) |
-| `text-5xl` | 3.5 | 56 | Page-level headlines |
-| `text-6xl` | 4.5 | 72 | Hero headlines |
+| `text-xs` | 0.875 | 14 | Metadata, eyebrow labels, footer content |
+| `text-sm` | 1 | 16 | Captions, fine print |
+| `text-base` | 1.125 | 18 | Body default |
+| `text-lg` | 1.25 | 20 | Large body, intro paragraphs |
+| `text-xl` | 1.5 | 24 | Subheadings (h4), nav items, buttons |
+| `text-2xl` | 1.875 | 30 | h3 |
+| `text-3xl` | 2.5 | 40 | h2 |
+| `text-4xl` | 3.5 | 56 | h1 (default) |
+| `text-5xl` | 4.5 | 72 | Page-level headlines |
+| `text-6xl` | 6 | 96 | Hero headlines |
+| `text-7xl` | 7 | 112 | Full-bleed slider headline (desktop) |
 
 ### Weights
 
@@ -279,11 +280,15 @@ Sidenav width: 360px. Main content shifts right by this width (no overlay). Side
 
 The 200×200 logo silhouette in the sidenav acts as a knockout — content positioned behind the sidenav (hero slide images on the homepage, marquee images on case study and blog post detail pages) shows through the wordmark glyphs. The sidenav background `surface.alt` covers everything outside the silhouette.
 
+**Logo variant detection** — to ensure contrast, the logo SVG switches between `logo-light` (white wordmark) and `logo-dark` (ink wordmark) based on the average luminance of the 200×200px image region behind it (80px inset from top-left). Threshold: **197 / 255 (77%)**. At or above → `logo-dark`; below → `logo-light`. Build-time detection via `src/lib/imageBrightness.ts` (`getLogoVariant`); runtime re-sampling in `Slider.astro` on every slide change. Both use the same threshold and `>=` comparison.
+
 **Frozen-slice scroll behavior** (case study and blog post detail pages, desktop): when the user scrolls past the marquee image, the slice of the marquee that fell within the logo silhouette at page load remains visible inside the wordmark — the marquee image disappears as a scrolling element, but its essence persists in the logo. This creates page-level identity continuity: the logo carries the marquee's character throughout the scroll. Implementation note: this is a real engineering effort (likely involving a separately-positioned image element clipped to the wordmark glyph shapes), and may be deferred to a follow-up session if it's blocking initial scaffolding. The static load-state composition is the v1 minimum.
 
 **Mobile / tablet (`<lg`): floating header**
 
-The mobile header has no background. Logo left (`logo-tile`, sized to ~48×48 or similar — the black tile sits cleanly on the light page and matches the brand presence of the desktop sidenav), nav icon (hamburger) right. The nav icon is sticky on scroll, with a 60×60px background in `paper-0` @ 25% opacity. Tap the hamburger → full-screen overlay nav menu. The hamburger morphs to an X that, when tapped, exits the overlay. The nav overlay uses `surface.milk` as background for contrast while maintaining spatial awareness. Nav items stack with min 44px tap targets.
+The mobile header has no background. Logo left (`logo-tile`, sized to ~48×48 or similar — the black tile sits cleanly on the light page and matches the brand presence of the desktop sidenav), nav icon (hamburger) right. The nav icon is sticky on scroll, with a **54×54px** background in `paper-0` @ 25% opacity. Tap the hamburger → full-screen overlay nav menu. The hamburger morphs to an X that, when tapped, exits the overlay. The nav overlay uses `surface.milk` as background for contrast while maintaining spatial awareness. Nav items stack with min 44px tap targets.
+
+Hamburger icon: 32×32px SVG, stroke width 2px.
 
 **Nav items, in this order:**
 
@@ -296,7 +301,9 @@ The mobile header has no background. Logo left (`logo-tile`, sized to ~48×48 or
 
 This order matches the live site and is intentional — capability, then proof, then conversion. Don't reorder without a reason.
 
-**Current page indicator:** `state.on` — a 2px `accent.surface` underline on the active item.
+Nav item labels are rendered **ALL CAPS** (`text-transform: uppercase`).
+
+**Current page indicator:** `state.on` — nav item text color changes to `#9B9B9B` (light grey) to indicate the active page.
 
 **Component:** `src/components/layout/Header.astro`
 
@@ -326,7 +333,9 @@ Two variants, one size.
 - **Primary** — `accent.surface` background, `text.headline` label. Used for primary CTAs ("Let's Talk", "Get in touch").
 - **Secondary** — `accent.subtle` background, `text.headline` label. Used for paired CTAs ("View Project").
 
-Sizing: 16px text, 12px/24px padding. Single size across the site. Hero CTAs use the same button at the same size — hierarchy comes from surrounding type and space, not from a larger button variant.
+Button labels are rendered **ALL CAPS** (`text-transform: uppercase`).
+
+Sizing: `text-xl` (24px), `h-14` height (56px), `px-8` horizontal padding. Single size across the site. Hero CTAs use the same button at the same size — hierarchy comes from surrounding type and space, not from a larger button variant.
 
 States follow the global interactive-state definitions: `default`, `hover`, `pressed`, `disabled`. Focus ring uses `accent.text` at 2px offset.
 
@@ -344,7 +353,7 @@ Nav links are styled within the Header component, not via `<TextLink>`.
 
 Single icon library: **Lucide** (`lucide-astro` or `lucide-react` for interactive contexts).
 
-- Stroke width: 1.5px (consistent across the site)
+- Stroke width: 2px (consistent across the site)
 - Default size: 20px in body / nav contexts; 16px inline with text; 24px in standalone UI affordances
 - Color: inherits from `currentColor` so icons take on the parent's text color
 - Social icons in the footer use brand-specific SVGs (not Lucide), since Lucide's social glyphs are abstracted
@@ -406,6 +415,33 @@ Contact form. Fields: Name, Email, Company (optional), Message. Submit via Netli
 - Submit button is the primary button variant.
 - Submit success: inline confirmation replaces the form (no page redirect). Failure: error message above the submit button, form remains editable.
 
+### Marquee
+
+A full-bleed, viewport-height image strip used as a hero section on **all pages except the homepage**. This includes case study and blog post detail pages, and the static pages: Services, Clients, Team, and Contact (Contact uses `MapMarquee` — see below).
+
+On content pages (case studies, blog posts), the marquee displays the `heroImageWide` (4:1 image) with the client name or post category as a tag superimposed flush left. On static pages, the marquee uses a fixed image — see "Image treatment" below for the naming convention.
+
+On desktop, the marquee runs full viewport width — the leftmost ~360px is partially obscured by the sidenav, with only the logo knockout region (200×200px centered in the sidenav) showing through. This creates the frozen-slice effect: a 200×200 portion of the marquee image appears inside the logo silhouette and remains visible as the user scrolls past the marquee itself.
+
+Implementation detail for the frozen-slice (desktop only): a separately positioned, `position: fixed` element clipped to 200×200px sits behind the sidenav at exactly the logo silhouette location (80px from left, 80px from top). It displays an independently initialized copy of the marquee image — not a CSS trick — so that it remains visually synchronized with the sidenav regardless of scroll position.
+
+**Component:** `src/components/layout/Marquee.astro`
+
+### MapMarquee
+
+A variant of the Marquee component used on the Contact page. Instead of a photography hero, it renders a full-bleed Google Maps instance showing the studio location (40 E. Colorado Blvd, Pasadena, CA) at zoom level 15, with a centered marker pin.
+
+Map configuration:
+- Zoom: 15 (shows `administrative.neighborhood` label "Old Pasadena")
+- Zoom controls: disabled (`zoomControl: false`)
+- Pan/gesture: disabled (`gestureHandling: 'none'`)
+- Neighborhood label style: `administrative.neighborhood` visibility on, fill `#b8935a`, stroke `#f7f1df` weight 3
+- Google attribution bar: hidden by extending the map container 25px beyond the clip boundary
+
+The frozen-slice effect uses the same two-layer wrapper pattern as Marquee: an outer `position: fixed` shell (never passed to the Maps API) wraps an inner div that the Maps API initializes. This prevents the Maps API's internal `position: relative` override from breaking the fixed positioning.
+
+**Component:** `src/components/contact/MapMarquee.astro`
+
 ### CTA band
 
 Repeated section pattern: "Are you ready to take your product to the next level?" with a primary button "Let's Talk" that links to `/contact/`. Lives at the bottom of all pages except `/contact/`.
@@ -415,9 +451,25 @@ Repeated section pattern: "Are you ready to take your product to the next level?
 - **Aspect ratios:**
   - Case study and blog post `heroImage`: 16:9 (Work/Blog index card, homepage slide, mobile detail page hero). Source min 1920px wide.
   - Case study and blog post `heroImageWide`: 4:1 (desktop detail page marquee). Source min 2400px wide.
+  - Static page marquee images: 4:1 (desktop marquee). Source min 2400px wide. Same composition constraints as `heroImageWide` — focal subject in the right ~85% of the frame.
   - Team headshots: 1:1.
 - **Two-image pattern for detail pages.** Detail pages need two distinct images at meaningfully different aspect ratios — 16:9 for mobile, 4:1 for desktop marquee. The aspect ratios are too different to share a source. See CONTENT.md "Image strategy" for the schema and editorial reasoning.
-- **Marquee composition constraint.** `heroImageWide` (4:1) renders full viewport width on desktop with the leftmost ~360px partially obscured by the sidenav (visible only inside the logo silhouette). Authors compose with this in mind: the focal subject sits in the right ~85% of the frame, and the leftmost region is visually quiet enough that the logo knockout reads as a focal moment rather than a distraction.
+- **Static page marquee images.** The static pages (Services, Clients, Team) each have a fixed marquee image. These are **not** CMS fields — they are static assets imported directly by each Astro page. No frontmatter or Keystatic schema is needed; the file path is the contract. Images live in:
+
+  ```
+  src/assets/images/marquee/
+    work.jpg
+    services.jpg
+    clients.jpg
+    blog.jpg
+    team.jpg
+  ```
+
+  Contact uses `MapMarquee` (Google Maps) instead of a photo, so it has no entry here. If Contact ever needs a photo fallback, add `contact.jpg` and a conditional in `MapMarquee.astro`.
+
+  To swap a static marquee image: replace the file at the same path and redeploy. No schema changes needed.
+
+- **Marquee composition constraint.** `heroImageWide` and static marquee images (4:1) render full viewport width on desktop with the leftmost ~360px partially obscured by the sidenav (visible only inside the logo silhouette). Authors compose with this in mind: the focal subject sits in the right ~85% of the frame, and the leftmost region is visually quiet enough that the logo knockout reads as a focal moment rather than a distraction.
 - **Color treatment:** full color, no duotones or filters. Photography is part of the work showcase.
 - **Loading:** every `<Image>` uses Astro's `astro:assets` for automatic optimization. Set `loading="eager"` only on hero images above the fold; everything else is `loading="lazy"` (default).
 - **Placeholders:** while loading, image containers reserve space via aspect-ratio CSS to prevent layout shift. No skeleton shimmers — just a `surface.alt` background until the image loads.
@@ -444,7 +496,7 @@ The favicon kit lives at the public root and gets wired into the base layout's `
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <link rel="manifest" href="/site.webmanifest">
-<meta name="theme-color" content="#F3ED07">
+<meta name="theme-color" content="#F2DB07">
 ```
 
 Asset locations:
@@ -461,14 +513,14 @@ public/
   og-default.png                       # 1200×630, fallback OG
 ```
 
-The manifest declares `name: "Interactivism"`, `theme_color: #F3ED07` (brand-yellow), `background_color: #FEFEFE` (paper-0). Manifest icons are declared with both `purpose: "maskable"` and `purpose: "any"` for cross-platform behavior.
+The manifest declares `name: "Interactivism"`, `theme_color: #F2DB07` (brand-yellow), `background_color: #FEFEFE` (paper-0). Manifest icons are declared with both `purpose: "maskable"` and `purpose: "any"` for cross-platform behavior.
 
 ### Empty, loading, and error states
 
 - **Blog with zero posts:** "We're working on something. Check back soon." + link to Contact.
 - **Form submit success:** inline confirmation replaces the form: "Thanks — we'll be in touch within a few business days."
 - **Form submit failure:** error message above submit button, form fields preserved.
-- **404 page:** custom page with Interactivism wordmark, "We couldn't find that page," and links back to Home, Work, and Contact.
+- **404 page:** custom page with oversized "shrug" ASCII art, "We couldn't find that page. It's us, not you." and links back to Home, Work, and Contact.
 - **Slow image load:** `surface.alt` placeholder holds aspect ratio until image arrives; no spinner.
 
 ---
@@ -487,7 +539,6 @@ See CONTENT.md "Homepage (data file)" for the schema and editorial workflow.
 
 **Slider behavior (accessibility-critical for the Lighthouse 90+ target):**
 
-- **No auto-advance.** Auto-advancing carousels harm accessibility and reduce engagement. User-controlled only.
 - **Keyboard support:** left/right arrow keys advance slides when the slider region has focus.
 - **Touch:** swipe left/right on mobile and tablet.
 - **Focus management:** when a slide changes, focus moves to the new slide's heading. Hidden slides are `aria-hidden="true"` and not focusable.
@@ -498,11 +549,11 @@ See CONTENT.md "Homepage (data file)" for the schema and editorial workflow.
 
 ### Work index
 
-Reverse-chronological list of case studies. And lastly, a CTA band.
+Marquee at top using `src/assets/images/marquee/work.jpg`. Reverse-chronological list of case studies below. And lastly, a CTA band.
 
 ### Services page
 
-Index of service offerings. Vertical stack: each service has a title (h2), 1–2 paragraphs of overview, and a "Learn more" link that jumps to the corresponding service detail page. Closes with a CTA band.
+Marquee at top using `src/assets/images/marquee/services.jpg` (frozen-slice logo knockout applies on desktop). Index of service offerings below. Vertical stack: each service has a title (h2), 1–2 paragraphs of overview, and a "Learn more" link that jumps to the corresponding service detail page. Closes with a CTA band.
 
 ### Service detail page
 
@@ -521,19 +572,19 @@ Note on URL strategy: the live site has a three-level hierarchy (`/services/` �
 
 ### Clients page
 
-Exhaustive list of clients with some linked to case studies in the /work/ section.
+Marquee at top using `src/assets/images/marquee/clients.jpg` (frozen-slice logo knockout applies on desktop). Exhaustive list of clients with some linked to case studies in the /work/ section.
 
 ### Team page
 
-Studio narrative (a few paragraphs), list of brief team bios with links to expanded bios, CTA band.
+Marquee at top using `src/assets/images/marquee/team.jpg` (frozen-slice logo knockout applies on desktop). Studio narrative (a few paragraphs), list of brief team bios with links to expanded bios, CTA band.
 
 ### Blog index
 
-Reverse-chronological list of posts. Pagination after 10–12 posts.
+Marquee at top using `src/assets/images/marquee/blog.jpg`. Reverse-chronological list of posts below. Pagination after 10–12 posts.
 
 ### Contact page
 
-Headline, brief intro, contact form, alternative contact methods (email, social), office location if relevant.
+Full-bleed MapMarquee hero (Google Maps at zoom 15, showing the studio location with neighborhood label) — this *is* the Contact page's marquee, just map-based rather than photo-based. Followed by a headline, brief intro, contact form, and alternative contact methods (email, social).
 
 ---
 
@@ -631,14 +682,18 @@ src/
     typography.css      # Prose styling for blog/case study bodies
   components/
     ui/                 # Buttons, links, form fields, icons
-    layout/             # Header, Footer, Container
+    layout/             # Header, Footer, Marquee, Container
+    home/               # Slider and other homepage-specific components
+    contact/            # MapMarquee and other contact-page components
     case-study/         # MDX components for case study bodies
   assets/
     brand/              # Logo files
-    images/             # Optimized images, processed by astro:assets
+    images/
+      marquee/          # Static page marquee images (work, services, clients, blog, team)
+      # All other images: processed by astro:assets
 ```
 
-Add subfolders (e.g. `components/home/`, `components/blog/`) only when a specific page accumulates enough custom components to justify the split. Don't create folders for files that don't exist yet.
+Add subfolders (e.g. `components/blog/`) only when a specific page accumulates enough custom components to justify the split. Don't create folders for files that don't exist yet.
 
 ### Token export
 

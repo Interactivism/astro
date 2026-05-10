@@ -1,0 +1,38 @@
+---
+/**
+ * PhotoCredit — tertiary attribution strip for marquee images.
+ *
+ * Renders nothing when `credit` is empty or omitted.
+ * Place immediately before <CtaBand /> on any page that has a marquee image.
+ *
+ * Usage:
+ *   <PhotoCredit credit='Marquee photo by <a href="...">Name</a> on <a href="...">Unsplash</a>' />
+ */
+interface Props {
+  /** Raw HTML credit string. Omit or pass empty string to hide entirely. */
+  credit?: string;
+}
+
+const { credit } = Astro.props;
+---
+
+{credit && (
+  <div class="photo-credit px-6 max-w-content mx-auto pb-8">
+    <p class="font-mono text-xs text-muted" set:html={credit} />
+  </div>
+)}
+
+<style>
+  /* Tone down the global anchor defaults inside the credit line */
+  .photo-credit :global(a) {
+    color: #4A4A4A; /* ink-500 / text-muted */
+    font-weight: 400;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    text-decoration-color: rgba(13, 13, 13, 0.20);
+    transition: color 150ms ease-out;
+  }
+  .photo-credit :global(a:hover) {
+    color: #333333; /* ink-700 / text-body */
+  }
+</style>

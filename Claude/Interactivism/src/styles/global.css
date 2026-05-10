@@ -4,7 +4,7 @@
    ============================================================ */
 @import '@fontsource/dm-serif-display/400.css';
 @import '@fontsource/dm-serif-display/400-italic.css';
-@import '@fontsource-variable/source-sans-3';
+@import '@fontsource-variable/dm-sans';
 @import '@fontsource/ibm-plex-mono/400.css';
 @import '@fontsource/ibm-plex-mono/700.css';
 
@@ -28,7 +28,8 @@
   }
 
   body {
-    @apply bg-surface font-body text-body font-light leading-body;
+    @apply bg-surface font-body text-base text-body font-light leading-body;
+    overflow-x: clip; /* prevent horizontal scroll from viewport-width marquee; clip (not hidden) preserves fixed positioning */
   }
 
   /* Headings */
@@ -47,7 +48,10 @@
     @apply font-body font-medium text-headline;
   }
 
-  h1 { @apply text-6xl; }
+  h1 {
+    font-size: clamp(2.75rem, 9vw, 6rem); /* 44px → 96px, fluid across viewport */
+    overflow-wrap: break-word;            /* insurance against unbreakable long words */
+  }
   h2 { @apply text-3xl; }
   h3 { @apply text-2xl; }
   h4 { @apply text-xl; }

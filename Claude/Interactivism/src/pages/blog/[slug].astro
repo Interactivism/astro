@@ -1,0 +1,215 @@
+---
+import path from 'node:path';
+import { getCollection, getEntry, render } from 'astro:content';
+import { Image } from 'astro:assets';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Marquee from '../../components/layout/Marquee.astro';
+import CtaBand from '../../components/home/CtaBand.astro';
+import { getLogoVariant } from '../../lib/imageBrightness';
+import Slideshow from '../../components/case-study/Slideshow.astro';
+import YouTube from '../../components/case-study/YouTube.astro';
+
+export async function getStaticPaths() {
+  const allPosts = await getCollection('blog');
+  const now = new Date();
+  const sorted = allPosts
+    .filter((p) => p.data.status === 'published' && p.data.publishedDate <= now)
+    .sort((a, b) => b.data.publishedDate.getTime() - a.data.publishedDate.getTime());
+
+  return sorted.map((post, i) => ({
+    params: { slug: post.id },
+    props: {
+      entry: post,
+      prevEntry: sorted[i + 1] ?? null,  // older = previous
+      nextEntry: sorted[i - 1] ?? null,  // newer = next
+    },
+  }));
+}
+
+const { entry, prevEntry, nextEntry } = Astro.props;
+const { title, summary, author: authorId, publishedDate, tags, heroImage, heroImageWide, ogImage } = entry.data;
+
+const { Content } = await render(entry);
+const authorEntry = await getEntry('authors', authorId);
+
+const formattedDate = publishedDate.toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+
+// Read time — strip markdown syntax, count words, assume 200 wpm
+const wordCount = (entry.body ?? '')
+  .replace(/```[\s\S]*?```/g, '')   // fenced code blocks
+  .replace(/`[^`]+`/g, '')          // inline code
+  .replace(/!\[.*?\]\(.*?\)/g, '')  // images
+  .replace(/\[.*?\]\(.*?\)/g, '')   // links (keep label text stripped)
+  .replace(/[#*_~>|]/g, '')         // markdown punctuation
+  .trim()
+  .split(/\s+/)
+  .filter(Boolean).length;
+const readMinutes = Math.max(1, Math.round(wordCount / 200));
+const readTime = `${readMinutes} minute read`;
+
+// Logo variant — compute from hero-wide if present, else default dark
+let logoVariant: 'light' | 'dark' = 'dark';
+if (heroImageWide) {
+  const heroWideFs = path.join(process.cwd(), 'src/assets/images/marquee/blog.jpg');
+  logoVariant = await getLogoVariant(heroWideFs);
+}
+---
+
+<BaseLayout
+  title={title}
+  description={summary}
+  ogType="article"
+  ogImage={ogImage ? ogImage.src : undefined}
+  hasMarquee={!!heroImage}
+  logoVariant={logoVariant}
+>
+
+  <!-- ── Hero marquee — only when heroImage is set ─────────────── -->
+  {heroImage && heroImageWide && (
+    <div class="relative">
+      <Marquee heroImage={heroImage} heroImageWide={heroImageWide} alt="" />
+    </div>
+  )}
+
+  <div class="px-6 max-w-content mx-auto">
+
+    <!-- ── Title — full width ──────────────────────────────────── -->
+    <h1 class="font-display leading-display text-headline pt-16 lg:pt-24 pb-12 lg:pb-16">
+      {title}
+    </h1>
+
+    <!-- ── Content grid: main column + sticky sidebar ─────────── -->
+    <div class="flex flex-col lg:grid lg:grid-cols-[1fr_280px] lg:gap-20 lg:items-start">
+
+      <!-- Sidebar: author + date + tags -->
+      <aside class="order-first lg:order-last lg:sticky lg:top-8 lg:self-start
+                    border-b border-subtle pb-8 mb-12
+                    lg:border-0 lg:pb-0 lg:mb-0">
+        <div class="flex flex-col gap-5 text-sm">
+
+          <!-- Author -->
+          {authorEntry && (
+            <div class="flex items-center gap-3">
+              {authorEntry.data.avatar && (
+                authorId === 'interactivism' ? (
+                  <Image
+                    src={authorEntry.data.avatar}
+                    alt={authorEntry.data.name}
+                    width={40}
+                    height={40}
+                    class="rounded-full object-cover shrink-0"
+                  />
+                ) : (
+                  <a href={`/team/${authorId}/`}>
+                    <Image
+                      src={authorEntry.data.avatar}
+                      alt={authorEntry.data.name}
+                      width={40}
+                      height={40}
+                      class="rounded-full object-cover shrink-0 hover:opacity-80 transition duration-fast"
+                    />
+                  </a>
+                )
+              )}
+              <div>
+                {authorId === 'interactivism' ? (
+                  <div class="font-medium text-headline text-sm">{authorEntry.data.name}</div>
+                ) : (
+                  <a href={`/team/${authorId}/`} class="font-medium text-headline text-sm hover:text-muted transition duration-fast">
+                    {authorEntry.data.name}
+                  </a>
+                )}
+                <div class="font-mono text-xs text-muted uppercase tracking-widest">{authorEntry.data.role}</div>
+              </div>
+            </div>
+          )}
+
+          <!-- Date -->
+          <div>
+            <dt class="font-mono text-xs text-muted uppercase tracking-widest mb-1">Published</dt>
+            <dd class="text-body">{formattedDate}</dd>
+          </div>
+
+          <!-- Read time -->
+          <div>
+            <dt class="font-mono text-xs text-muted uppercase tracking-widest mb-1">Read time</dt>
+            <dd class="text-body">{readTime}</dd>
+          </div>
+
+          <!-- Tags -->
+          {tags && tags.length > 0 && (
+            <div>
+              <dt class="font-mono text-xs text-muted uppercase tracking-widest mb-2">Topics</dt>
+              <dd class="flex flex-col gap-1.5">
+                {tags.map((tag) => (
+                  <span class="font-mono text-xs text-muted uppercase tracking-widest border border-subtle px-2 py-1 self-start">
+                    {tag}
+                  </span>
+                ))}
+              </dd>
+            </div>
+          )}
+        </div>
+      </aside>
+
+      <!-- Main column: summary → body prose → author bio -->
+      <div class="order-last lg:order-first">
+
+        <!-- Summary -->
+        <div class="pb-12 lg:pb-16 border-b border-subtle">
+          <p class="text-xl text-body leading-body">{summary}</p>
+        </div>
+
+        <!-- Body prose -->
+        <div class="py-12 lg:py-16 prose prose-lg">
+          <Content components={{ Slideshow, YouTube }} />
+        </div>
+
+
+      </div>
+    </div>
+
+    <!-- ── Prev / Next navigation ──────────────────────────────── -->
+    {(prevEntry || nextEntry) && (
+      <div class="border-t border-subtle py-12 lg:py-16 flex items-start justify-between gap-8">
+        {prevEntry ? (
+          <div class="flex flex-col gap-4 max-w-[45%]">
+            <div class="flex flex-col gap-1.5">
+              <span class="font-mono text-xs text-muted uppercase tracking-widest">Previous</span>
+              <span class="text-base font-medium text-headline leading-snug">{prevEntry.data.title}</span>
+            </div>
+            <a
+              href={`/blog/${prevEntry.id}/`}
+              class="inline-flex items-center justify-center self-start h-12 px-6 bg-ink-900 text-inverse font-body font-medium text-base rounded-sm hover:opacity-80 transition duration-fast whitespace-nowrap"
+            >
+              ← Previous post
+            </a>
+          </div>
+        ) : <div />}
+
+        {nextEntry ? (
+          <div class="flex flex-col gap-4 items-end text-right max-w-[45%] ml-auto">
+            <div class="flex flex-col gap-1.5">
+              <span class="font-mono text-xs text-muted uppercase tracking-widest">Next</span>
+              <span class="text-base font-medium text-headline leading-snug">{nextEntry.data.title}</span>
+            </div>
+            <a
+              href={`/blog/${nextEntry.id}/`}
+              class="inline-flex items-center justify-center self-end h-12 px-6 bg-ink-900 text-inverse font-body font-medium text-base rounded-sm hover:opacity-80 transition duration-fast whitespace-nowrap"
+            >
+              Next post →
+            </a>
+          </div>
+        ) : <div />}
+      </div>
+    )}
+
+  </div>
+
+  <CtaBand />
+
+</BaseLayout>

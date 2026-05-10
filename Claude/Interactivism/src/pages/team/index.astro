@@ -1,0 +1,147 @@
+---
+import path from 'node:path';
+import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Marquee from '../../components/layout/Marquee.astro';
+import CtaBand from '../../components/home/CtaBand.astro';
+import PhotoCredit from '../../components/layout/PhotoCredit.astro';
+import { getLogoVariant } from '../../lib/imageBrightness';
+import marqueeImage from '../../assets/images/marquee/team-mobile.jpg';
+import marqueeImageWide from '../../assets/images/marquee/team-wide.jpg';
+
+// Current team members only (order is set); excludes studio byline and alumni
+const allAuthors = await getCollection('authors');
+const team = allAuthors
+  .filter((a) => a.id !== 'interactivism' && a.data.order !== undefined)
+  .sort((a, b) => (a.data.order ?? 999) - (b.data.order ?? 999));
+
+const marqueeImagePath = path.join(process.cwd(), 'src/assets/images/marquee/team-wide.jpg');
+const logoVariant = await getLogoVariant(marqueeImagePath);
+---
+
+<BaseLayout
+  title="Team"
+  description="Interactivism is a small studio led by Erik Wingren and Petra Wennberg, with a team of designers, researchers, and engineers in Pasadena, CA."
+  hasMarquee
+  logoVariant={logoVariant}
+>
+  <Marquee heroImage={marqueeImage} heroImageWide={marqueeImageWide} alt="" />
+
+  <div class="px-6 max-w-content mx-auto">
+
+    <!-- ── Intro ───────────────────────────────────────────────── -->
+    <div class="pt-16 lg:pt-24 pb-16 lg:pb-24 border-b border-subtle">
+      <p class="font-mono text-xs text-muted mb-4 uppercase tracking-widest">The studio</p>
+      <h1 class="font-display leading-display text-headline mb-10 max-w-[20ch]">
+        Small team,<br />serious work.
+      </h1>
+      <div class="max-w-prose space-y-5 text-lg text-body leading-body">
+        <p>
+          Interactivism is a digital product design and development studio based in Old Town Pasadena, CA. We've been at it since 2008 — long enough to have seen a lot of product trends come and go, and short enough to still care about the difference between a good design decision and a convenient one.
+        </p>
+        <p>
+          We work in small, focused teams. The people you meet in the first conversation are the people who do the work. We don't staff projects with junior talent and supervisor reviews — every engagement gets experienced hands on the actual output.
+        </p>
+        <p>
+          Our work has helped create more than $3B in client exits, from seed-stage startups to Fortune 500 product teams. The clients we remember best aren't the biggest ones — they're the ones who cared about the work as much as we did.
+        </p>
+      </div>
+    </div>
+
+    <!-- ── Team members ────────────────────────────────────────── -->
+    <div class="py-16 lg:py-24">
+      {team.length > 0 ? (
+        <div class="divide-y divide-subtle">
+          {team.map((member) => (
+            <div class="py-12 lg:py-16 grid grid-cols-1 lg:grid-cols-[200px_1fr] gap-8 lg:gap-16 items-start">
+              <!-- Avatar -->
+              <a href={`/team/${member.id}/`} class="block group shrink-0 w-32 lg:w-full overflow-hidden rounded-sm">
+                <Image
+                  src={member.data.avatar}
+                  alt={member.data.name}
+                  width={400}
+                  height={400}
+                  class="w-32 h-32 lg:w-full lg:h-auto lg:aspect-square object-cover transition duration-DEFAULT group-hover:scale-[1.03]"
+                />
+              </a>
+
+              <!-- Bio -->
+              <div>
+                <div class="mb-4">
+                  <a href={`/team/${member.id}/`} class="hover:text-muted transition duration-fast">
+                    <h2 class="font-display text-3xl leading-display text-headline">
+                      {member.data.name}
+                    </h2>
+                  </a>
+                  <p class="font-mono text-xs text-muted uppercase tracking-widest mt-1">
+                    {member.data.role}
+                  </p>
+                </div>
+                <p class="text-base text-body leading-body max-w-prose mb-6">
+                  {member.data.bio.length > 320
+                    ? member.data.bio.slice(0, 320).trimEnd() + '…'
+                    : member.data.bio}
+                </p>
+                <div class="flex items-center gap-5 flex-wrap">
+                  {member.data.social?.linkedin && (
+                    <a
+                      href={member.data.social.linkedin}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="font-mono text-xs text-muted uppercase tracking-widest hover:text-headline transition duration-fast"
+                    >
+                      LinkedIn
+                    </a>
+                  )}
+                  {member.data.social?.medium && (
+                    <a
+                      href={member.data.social.medium}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="font-mono text-xs text-muted uppercase tracking-widest hover:text-headline transition duration-fast"
+                    >
+                      Medium
+                    </a>
+                  )}
+                  {member.data.social?.instagram && (
+                    <a
+                      href={member.data.social.instagram}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="font-mono text-xs text-muted uppercase tracking-widest hover:text-headline transition duration-fast"
+                    >
+                      Instagram
+                    </a>
+                  )}
+                  {member.data.social?.website && (
+                    <a
+                      href={member.data.social.website}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="font-mono text-xs text-muted uppercase tracking-widest hover:text-headline transition duration-fast"
+                    >
+                      Website
+                    </a>
+                  )}
+                  <a
+                    href={`/team/${member.id}/`}
+                    class="font-mono text-xs text-muted uppercase tracking-widest hover:text-headline transition duration-fast group"
+                  >
+                    Full bio <span class="group-hover:translate-x-1 inline-block transition-transform duration-fast">→</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <p class="text-body text-muted">Team profiles coming soon.</p>
+      )}
+    </div>
+
+  </div>
+
+  <PhotoCredit credit='Marquee photo by <a href="https://unsplash.com/@derstudi?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Timon Studler</a> on <a href="https://unsplash.com/photos/people-walking-on-grey-concrete-floor-during-daytime-ABGaVhJxwDQ?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>' />
+  <CtaBand />
+</BaseLayout>

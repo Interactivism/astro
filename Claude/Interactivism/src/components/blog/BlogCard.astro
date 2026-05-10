@@ -1,0 +1,72 @@
+---
+/**
+ * Blog post excerpt card — used on the Blog index page.
+ *
+ * Layout (single column, full-width row):
+ *   - Author avatar + name · date  (mono eyebrow)
+ *   - Title (h2, font-display, links on hover)
+ *   - Summary
+ *   - Tag badges
+ *
+ * The entire card is a link.
+ */
+import { Image } from 'astro:assets';
+import { getEntry } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  entry: CollectionEntry<'blog'>;
+}
+
+const { entry } = Astro.props;
+const { title, summary, author: authorId, publishedDate, tags } = entry.data;
+const href = `/blog/${entry.id}/`;
+
+const authorEntry = await getEntry('authors', authorId);
+const formattedDate = publishedDate.toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+---
+
+<article class="border-b border-subtle last:border-b-0">
+  <a href={href} class="group block py-10">
+    <!-- Author + date eyebrow -->
+    <div class="flex items-center gap-2.5 mb-4">
+      {authorEntry?.data.avatar && (
+        <Image
+          src={authorEntry.data.avatar}
+          alt={authorEntry.data.name}
+          width={24}
+          height={24}
+          class="rounded-full object-cover shrink-0"
+        />
+      )}
+      <span class="font-mono text-xs text-muted uppercase tracking-widest">
+        {authorEntry?.data.name}
+        {authorEntry && ' · '}
+        {formattedDate}
+      </span>
+    </div>
+
+    <!-- Title -->
+    <h2 class="font-display text-3xl lg:text-4xl leading-display text-headline mb-4 group-hover:text-muted transition duration-fast">
+      {title}
+    </h2>
+
+    <!-- Summary -->
+    <p class="text-base text-body mb-5 max-w-readable">{summary}</p>
+
+    <!-- Tags -->
+    {tags && tags.length > 0 && (
+      <div class="flex flex-wrap gap-2">
+        {tags.map((tag) => (
+          <span class="font-mono text-xs text-muted uppercase tracking-widest border border-subtle px-2 py-1">
+            {tag}
+          </span>
+        ))}
+      </div>
+    )}
+  </a>
+</article>

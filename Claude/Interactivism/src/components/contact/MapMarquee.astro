@@ -1,0 +1,72 @@
+---
+/**
+ * MapMarquee — static map image hero for the contact page.
+ *
+ * Replaced the interactive Google Maps embed with two static images:
+ *   Mobile  (<lg): heroImage (16:9 crop, portrait-ish)
+ *   Desktop (lg+): heroImageWide (4:1 wide panoramic crop)
+ *
+ * Both wrap in a link to Google Maps. Clicking opens Maps in a new tab.
+ * The frozen-slice (logo knockout) mirrors the standard <Marquee> behaviour.
+ */
+import { Image, getImage } from 'astro:assets';
+import heroImage from '../../assets/images/marquee/contact-mobile.jpg';
+import heroImageWide from '../../assets/images/marquee/contact-wide.jpg';
+
+const MAPS_URL = 'https://maps.app.goo.gl/pE7ajKU69PGiPyp17';
+
+// Resolve a stable URL for the frozen-slice <img> (raw CSS sizing).
+const frozenSrc = (await getImage({ src: heroImageWide })).src;
+---
+
+<!--
+  Marquee wrapper — identical structure to <Marquee />.
+  Mobile:  aspect-[16/9], full width, normal flow.
+  Desktop: aspect-[4/1],  viewport width via w-screen + -ml-[360px].
+-->
+<a
+  href={MAPS_URL}
+  target="_blank"
+  rel="noopener noreferrer"
+  aria-label="Open Interactivism studio in Google Maps"
+  class="block w-full overflow-hidden lg:w-screen lg:-ml-[360px] aspect-[16/9] lg:aspect-[4/1] relative"
+>
+  <!-- Mobile image (16:9) -->
+  <Image
+    src={heroImage}
+    alt="Map showing Interactivism studio in Old Town Pasadena"
+    width={900}
+    height={506}
+    class="lg:hidden absolute inset-0 w-full h-full object-cover"
+    loading="eager"
+    fetchpriority="high"
+  />
+  <!-- Desktop image (4:1) -->
+  <Image
+    src={heroImageWide}
+    alt="Map showing Interactivism studio in Old Town Pasadena"
+    width={2400}
+    height={600}
+    class="hidden lg:block absolute inset-0 w-full h-full object-cover"
+    loading="eager"
+    fetchpriority="high"
+  />
+</a>
+
+<!--
+  Frozen-slice — desktop only, z-30.
+  Fixed viewport-locked window at the logo silhouette position
+  (left:80px top:80px, 200×200px). Mirrors the standard <Marquee> frozen-slice.
+  pointer-events-none so it never blocks the sidenav or page content.
+-->
+<div
+  class="hidden lg:block fixed overflow-hidden pointer-events-none z-30"
+  style="left: 80px; top: 80px; width: 200px; height: 200px;"
+  aria-hidden="true"
+>
+  <img
+    src={frozenSrc}
+    alt=""
+    style="position: absolute; width: 100vw; max-width: none; height: 25vw; left: -80px; top: -80px; object-fit: cover;"
+  />
+</div>

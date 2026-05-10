@@ -1,0 +1,98 @@
+---
+import path from 'node:path';
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Marquee from '../../components/layout/Marquee.astro';
+import CtaBand from '../../components/home/CtaBand.astro';
+import PhotoCredit from '../../components/layout/PhotoCredit.astro';
+import CaseStudyCard from '../../components/work/CaseStudyCard.astro';
+import { getLogoVariant } from '../../lib/imageBrightness';
+
+export async function getStaticPaths() {
+  const services = await getCollection('services');
+  return services.map((service) => ({
+    params: { slug: service.id },
+    props: { entry: service },
+  }));
+}
+
+const { entry } = Astro.props;
+const { title, summary, id, heroImage, heroImageWide, photoCredit } = entry.data;
+const { Content } = await render(entry);
+
+// Logo variant — derive from heroImageWide on disk if it exists
+let logoVariant: 'light' | 'dark' = 'dark';
+if (heroImageWide) {
+  const heroWideFs = path.join(process.cwd(), 'src/content/services', entry.id, 'hero.jpg');
+  logoVariant = await getLogoVariant(heroWideFs);
+}
+
+// Related case studies — published entries that include this service
+const allCaseStudies = await getCollection('caseStudies');
+const now = new Date();
+const related = allCaseStudies
+  .filter(
+    (cs) =>
+      cs.data.status === 'published' &&
+      cs.data.publishedDate <= now &&
+      cs.data.services.includes(id as any),
+  )
+  .sort((a, b) => {
+    const endA = a.data.yearEnd === 'present' ? Infinity : (a.data.yearEnd ?? a.data.year);
+    const endB = b.data.yearEnd === 'present' ? Infinity : (b.data.yearEnd ?? b.data.year);
+    return endB - endA;
+  })
+  .slice(0, 6);
+---
+
+<BaseLayout
+  title={title}
+  description={summary}
+  hasMarquee={!!heroImage}
+  logoVariant={logoVariant}
+>
+  {heroImage && heroImageWide && (
+    <Marquee heroImage={heroImage} heroImageWide={heroImageWide} alt="" />
+  )}
+
+  <div class="px-6 max-w-content mx-auto">
+
+    <!-- ── Header ──────────────────────────────────────────────── -->
+    <div class="pt-16 lg:pt-24 pb-12 lg:pb-16 border-b border-subtle">
+      <p class="font-mono text-xs text-muted mb-4 uppercase tracking-widest">
+        <a href="/services/" class="hover:text-headline transition duration-fast">Services</a>
+        {' '}/ {title}
+      </p>
+      <h1 class="font-display leading-display text-headline mb-6 max-w-[20ch]">
+        {title}
+      </h1>
+      <p class="text-xl text-body leading-body max-w-prose">
+        {summary}
+      </p>
+    </div>
+
+    <!-- ── Prose content ───────────────────────────────────────── -->
+    <div class="py-16 lg:py-24 prose prose-lg max-w-readable">
+      <Content />
+    </div>
+
+    <!-- ── Related work ────────────────────────────────────────── -->
+    {related.length > 0 && (
+      <div class="border-t border-subtle py-16 lg:py-24">
+        <p class="font-mono text-xs text-muted mb-4 uppercase tracking-widest">Related work</p>
+        <h2 class="font-display text-4xl leading-display text-headline mb-12 lg:mb-16">
+          {title} in practice.
+        </h2>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-20">
+          {related.map((cs) => (
+            <CaseStudyCard entry={cs} />
+          ))}
+        </div>
+      </div>
+    )}
+
+  </div>
+
+  <PhotoCredit credit={photoCredit} />
+  <CtaBand />
+</BaseLayout>
