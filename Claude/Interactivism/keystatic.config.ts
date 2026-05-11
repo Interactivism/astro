@@ -68,6 +68,8 @@ export default config({
       owner: 'Interactivism',
       name: 'astro',
     },
+    // The git repo root is the home directory; the project lives two levels in.
+    pathPrefix: 'Claude/Interactivism',
   },
 
   collections: {

@@ -11,7 +11,8 @@
  *   Caption text, flush left       [←] [→]
  *
  * Design decisions:
- *   - Fixed 4:3 aspect-ratio container — height never shifts between slides
+ *   - Dynamic aspect ratio: derived from the tallest landscape ImageMetadata slide;
+ *     falls back to 4:3 for string/video-only slideshows. Height never shifts between slides.
  *   - object-fit: contain + surface-alt bg — portrait images letterbox, no crop
  *   - Opacity crossfade (not display:none) — no reflow on transition
  *   - pointer-events-none on inactive slides — no ghost click-through
@@ -53,6 +54,16 @@ interface Props {
 const { slides, label = 'Image gallery' } = Astro.props;
 const total = slides.length;
 const uid = `ss-${Math.random().toString(36).slice(2, 9)}`;
+
+// Compute container aspect ratio from the tallest landscape ImageMetadata slide.
+// "Tallest" = smallest width/height ratio = most height per unit of width.
+// Falls back to 4/3 when no ImageMetadata slides are present (string/video-only).
+const metaSlides = slides
+  .map(s => s.image)
+  .filter((img): img is ImageMetadata => typeof img === 'object' && 'width' in img && img.width > img.height);
+const containerRatio = metaSlides.length > 0
+  ? Math.min(...metaSlides.map(img => img.width / img.height))
+  : 4 / 3;
 ---
 
 <div
@@ -64,7 +75,7 @@ const uid = `ss-${Math.random().toString(36).slice(2, 9)}`;
 >
 
   <!-- ── Fixed-ratio image area ──────────────────────────────────── -->
-  <div class="relative aspect-[4/3] bg-surface-alt overflow-hidden">
+  <div class="relative bg-surface-alt overflow-hidden" style={`aspect-ratio: ${containerRatio}`}>
 
     {slides.map((slide, i) => (
       <div
