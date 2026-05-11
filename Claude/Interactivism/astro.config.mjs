@@ -53,7 +53,7 @@ export default defineConfig({
   // Skip the Netlify adapter in dev — its middleware intercepts /api/ routes
   // before Astro can serve them, breaking Keystatic's local API.
   adapter: isDev ? undefined : netlify(),
-  output: 'hybrid',
+  output: 'static',
 
   integrations: [
     mdx(),
