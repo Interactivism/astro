@@ -62,7 +62,13 @@ const deliverableOptions = [
 // ============================================================
 
 export default config({
-  storage: { kind: 'local' },
+  storage: {
+    kind: 'github',
+    repo: {
+      owner: 'Interactivism',
+      name: 'astro',
+    },
+  },
 
   collections: {
 
