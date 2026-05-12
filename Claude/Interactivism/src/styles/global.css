@@ -25,6 +25,7 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
+    -webkit-tap-highlight-color: transparent; /* suppress iOS Safari gray tap flash */
   }
 
   body {
@@ -75,8 +76,13 @@
     @apply max-w-full;
   }
 
-  /* Focus ring — accent.text (ink-900), 2px offset.
-     Applies to keyboard navigation only (focus-visible). */
+  /* Strip the browser's default focus outline for mouse/touch interactions.
+     The :focus-visible rule below restores a clear indicator for keyboard users. */
+  :focus {
+    outline: none;
+  }
+
+  /* Focus ring — ink-900, 2px offset, keyboard navigation only. */
   :focus-visible {
     @apply outline-none ring-2 ring-ink-900 ring-offset-2;
   }
