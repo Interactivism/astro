@@ -50,7 +50,7 @@ function keystatic() {
 
 export default defineConfig({
   site: 'https://interactivism.com',
-  trailingSlash: 'ignore',
+  trailingSlash: 'always',
   // Skip the Netlify adapter in dev — its middleware intercepts /api/ routes
   // before Astro can serve them, breaking Keystatic's local API.
   adapter: isDev ? undefined : netlify(),

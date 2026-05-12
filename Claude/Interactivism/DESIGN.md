@@ -431,16 +431,9 @@ Implementation detail for the frozen-slice (desktop only): a separately position
 
 ### MapMarquee
 
-A variant of the Marquee component used on the Contact page. Instead of a photography hero, it renders a full-bleed Google Maps instance showing the studio location (40 E. Colorado Blvd, Pasadena, CA) at zoom level 15, with a centered marker pin.
+A variant of the Marquee component used on the Contact page. Rather than a Google Maps embed, it uses a **static image** (same pipeline as all other marquee images) wrapped in an `<a>` link to Google Maps for the studio location. This is simpler, faster, and avoids the Maps API dependency entirely.
 
-Map configuration:
-- Zoom: 15 (shows `administrative.neighborhood` label "Old Pasadena")
-- Zoom controls: disabled (`zoomControl: false`)
-- Pan/gesture: disabled (`gestureHandling: 'none'`)
-- Neighborhood label style: `administrative.neighborhood` visibility on, fill `#b8935a`, stroke `#f7f1df` weight 3
-- Google attribution bar: hidden by extending the map container 25px beyond the clip boundary
-
-The frozen-slice effect uses the same two-layer wrapper pattern as Marquee: an outer `position: fixed` shell (never passed to the Maps API) wraps an inner div that the Maps API initializes. This prevents the Maps API's internal `position: relative` override from breaking the fixed positioning.
+The static image lives at `src/assets/images/marquee/contact-wide.jpg` (4:1) and follows the same frozen-slice behavior as all other marquee images on desktop. The link opens Google Maps at the studio address.
 
 **Component:** `src/components/contact/MapMarquee.astro`
 
@@ -568,7 +561,6 @@ Layout:
 - Hero (title + one-paragraph positioning statement)
 - Body content with h2 sections for each sub-topic of the service (e.g. for UX Design: "Information Architecture," "User Research," "Interaction Design")
 - Each h2 has an auto-generated `id` (via `rehype-slug`) so it can be deep-linked
-- Inline sub-nav at the top of the body links to those h2 sections (anchor links within the same page, not separate URLs)
 - Related case studies module (2–3 cards) showing work in this service area
 - CTA band
 
@@ -630,7 +622,7 @@ Four categories of redirect to handle:
    | `/services/research/` | `/services/user-research/` |
    | `/services/training/` | `/services/` |
 
-   `/services/human-ai-experience/` and `/services/development/` carry forward unchanged.
+   `/services/human-ai-experience/`, `/services/development/`, and `/services/brand-development/` carry forward unchanged.
 
 2. **Service sub-category pages → consolidated service page anchors.** Every URL like `/services/ux-design/information-architecture/` redirects to the renamed parent's anchor: `/services/product-design/#information-architecture`. The destination service page must render `id` attributes on the corresponding h2 sections (handled automatically via `rehype-slug` on Astro's MDX pipeline).
 

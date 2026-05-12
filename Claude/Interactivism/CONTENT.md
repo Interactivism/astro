@@ -57,8 +57,12 @@ services:                            # array of service IDs (see Services collec
   - "product-design"
   - "product-strategy"
   - "development"
+deliverables:                        # array of deliverable IDs (controlled vocabulary)
+  - "ui-ux-design"
+  - "design-system"
 industry: "ai-content"               # single industry ID (see industries list)
 year: 2025
+yearEnd: 2026                        # optional; omit for single-year projects; use "present" for ongoing
 role: "Product strategy, design system, front-end development"
 duration: "6 months"                 # optional, free-text
 metrics:                             # optional array, omit if no metrics
@@ -66,6 +70,9 @@ metrics:                             # optional array, omit if no metrics
     label: "in client exits across portfolio"
   - value: "40%"
     label: "reduction in onboarding time"
+gallery:                             # optional; images shown in a slideshow above the prose body
+  - "./gallery-01.jpg"
+  - "./gallery-02.jpg"
 relatedCaseStudies:                  # optional, max 2; manual curation overrides auto-related
   - "dollar-shave-club"
   - "nasa-mission-planning"
@@ -86,10 +93,13 @@ relatedCaseStudies:                  # optional, max 2; manual curation override
 | `ogImage` | image | no | If omitted, the case study uses the site default OG image. Recommended: 1200×630px. |
 | `services` | string[] | yes | Array of service IDs. Must match IDs in the Services collection. Min 1 item. |
 | `industry` | string | yes | Single industry ID from the controlled list (see below). |
-| `year` | number | yes | The year the project shipped (or started, for ongoing work). |
-| `role` | string | yes | Free-text description of Interactivism's role on the project. |
+| `year` | number | yes | The year the project started. |
+| `yearEnd` | number \| `"present"` | no | The year the project ended. Omit for single-year projects. Use `"present"` for ongoing engagements. Displayed as "2020–2023" or "2020–Present". |
+| `deliverables` | string[] | yes | What was produced. Controlled vocabulary — see deliverables list below. Min 1 item. |
+| `role` | string | no | Free-text description of Interactivism's role on the project. |
 | `duration` | string | no | Free-text. Omit if not relevant. |
 | `metrics` | array | no | 0–4 metrics. Omit entirely if there are none — don't pass an empty array. |
+| `gallery` | image[] | no | Optional slideshow shown above the prose body. Co-located images via relative paths. Omit if no gallery. |
 | `relatedCaseStudies` | string[] | no | Manual curation. If omitted, related case studies are auto-derived (same industry first, then shared services). Max 2. |
 
 ### Industry list (controlled vocabulary)
@@ -109,6 +119,34 @@ Industry is a single value from this list. Add new industries here before using 
 | `nonprofit-civic` | Nonprofit & Civic |
 
 The list is alphabetical for ease of scanning in editor UIs (Keystatic renders it as a select). Display order on a future Work-by-industry filter UI is a separate concern and can be controlled at render time.
+
+### Deliverables list (controlled vocabulary)
+
+`deliverables` is an array of one or more values from this list. Add new deliverables here before using them in a case study.
+
+| ID | Display name |
+|---|---|
+| `animation` | Animation |
+| `augmented-reality-experience` | Augmented Reality Experience |
+| `brand-identity` | Brand Identity |
+| `brand-strategy` | Brand Strategy |
+| `content-strategy` | Content Strategy |
+| `data-visualization` | Data Visualization |
+| `design-system` | Design System |
+| `experience-strategy` | Experience Strategy |
+| `futurecasting` | Futurecasting |
+| `heuristic-evaluation` | Heuristic Evaluation |
+| `illustration` | Illustration |
+| `information-architecture` | Information Architecture |
+| `messaging-framework` | Messaging Framework |
+| `mobile` | Mobile |
+| `native-mobile-app` | Native Mobile App |
+| `personas` | Personas |
+| `positioning-framework` | Positioning Framework |
+| `print-collateral` | Print Collateral |
+| `ui-ux-design` | UI/UX Design |
+| `usability-assessment` | Usability Assessment |
+| `web-development` | Web Development |
 
 ### MDX body content
 
@@ -305,13 +343,14 @@ src/content/services/
   user-research.mdx
   development.mdx
   product-strategy.mdx
+  brand-development.mdx
 ```
 
 One file per service. The filename is the service ID, referenced from case study frontmatter.
 
 ### The canonical service list
 
-The new site has five services. This is the controlled list that case study `services` arrays must match:
+The site has six services. This is the controlled list that case study `services` arrays must match:
 
 | Display name | ID | URL |
 |---|---|---|
@@ -320,8 +359,9 @@ The new site has five services. This is the controlled list that case study `ser
 | User Research | `user-research` | `/services/user-research/` |
 | Development | `development` | `/services/development/` |
 | Product Strategy | `product-strategy` | `/services/product-strategy/` |
+| Brand Development | `brand-development` | `/services/brand-development/` |
 
-This list consolidates the live site's six services into five: "UX + Design" merges into "Product Design," "Strategy + Growth" becomes "Product Strategy," "User Research" replaces "Research" (display name and URL aligned), and "Training" drops entirely. Redirects for the renamed and dropped URLs are documented in DESIGN.md.
+This list consolidates the live site's prior service structure: "UX + Design" merges into "Product Design," "Strategy + Growth" becomes "Product Strategy," "User Research" replaces "Research" (display name and URL aligned), and "Training" drops entirely. Redirects for the renamed and dropped URLs are documented in DESIGN.md.
 
 ### Frontmatter schema
 
@@ -332,12 +372,14 @@ id: "product-design"
 order: 1                             # display order on /services/ index
 summary: "Research-driven product design, from information architecture and interaction design to the visual systems that hold them together."
 heroImage: "./hero.jpg"              # optional
+heroImageWide: "./hero.jpg"          # optional; 4:1 desktop marquee (can reuse heroImage)
+photoCredit: 'Photo by <a href="...">Name</a> on <a href="...">Unsplash</a>'  # optional
 ---
 ```
 
 ### MDX body
 
-The body is the long-form content for the service detail page (800–1500 words). Structured with h2 sections for sub-topics — these become the in-page anchor nav (see DESIGN.md, "Service detail page").
+The body is the long-form content for the service detail page (800–1500 words). Structured with h2 sections for each sub-topic of the service.
 
 Available components: same as case studies (this is the same kind of long-form content).
 
