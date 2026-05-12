@@ -62,15 +62,17 @@ const deliverableOptions = [
 // ============================================================
 
 export default config({
-  storage: {
-    kind: 'github',
-    repo: {
-      owner: 'Interactivism',
-      name: 'astro',
-    },
-    // The git repo root is the home directory; the project lives two levels in.
-    pathPrefix: 'Claude/Interactivism',
-  },
+  storage: process.env.NODE_ENV === 'development'
+    ? { kind: 'local' }
+    : {
+        kind: 'github',
+        repo: {
+          owner: 'Interactivism',
+          name: 'astro',
+        },
+        // The git repo root is the home directory; the project lives two levels in.
+        pathPrefix: 'Claude/Interactivism',
+      },
 
   collections: {
 
