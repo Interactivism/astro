@@ -412,7 +412,7 @@ Keeping these separate means rotating the featured work doesn't disturb the hero
     "headline": "We design and develop digital products that are engaging, efficient, and easy to use.",
     "image": "/homepage/hero.jpg",
     "cta": {
-      "label": "Let's Talk",
+      "label": "Let's talk",
       "href": "/contact/"
     }
   },

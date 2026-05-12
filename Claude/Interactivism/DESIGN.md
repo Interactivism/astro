@@ -216,7 +216,7 @@ Sections on the homepage and marketing pages use generous vertical padding to gi
 | `container-prose` | 720px | Long-form text (blog post body, case study narrative) |
 | `container-default` | 1200px | Standard page width for everything else |
 
-Horizontal page padding: `px-6` mobile, `px-8` tablet, `px-12` desktop. Containers are centered with `mx-auto`. Add wider containers only if a specific layout demands it.
+Horizontal page padding: `px-6` mobile, `px-6 lg:px-12` desktop (two-step, no intermediate tablet stop). Containers are centered with `mx-auto`. Add wider containers only if a specific layout demands it.
 
 ---
 
@@ -330,10 +330,10 @@ Elements, in order:
 
 Two variants, one size.
 
-- **Primary** — `accent.surface` background, `text.headline` label. Used for primary CTAs ("Let's Talk", "Get in touch").
-- **Secondary** — `accent.subtle` background, `text.headline` label. Used for paired CTAs ("View Project").
+- **Primary** — `accent.surface` background, `text.headline` label. Used for primary CTAs ("Let's talk", "Get in touch").
+- **Secondary** — `accent.subtle` background, `text.headline` label. Used for paired CTAs ("View project").
 
-Button labels are rendered **ALL CAPS** (`text-transform: uppercase`).
+Button labels are **sentence case** — not ALL CAPS. No `uppercase` or `tracking-widest` on button text.
 
 Sizing: `text-xl` (24px), `h-14` height (56px), `px-8` horizontal padding. Single size across the site. Hero CTAs use the same button at the same size — hierarchy comes from surrounding type and space, not from a larger button variant.
 
@@ -399,7 +399,7 @@ Exhaustive list of clients with some linked to case studies in the /work/ sectio
 
 ### Team (team member index)
 
-List of team members. Photo, name, role, bio blurb with jump link to team member detail, optional social links.
+List of team members. Photo, name, role, bio blurb with jump link to team member detail, optional social links rendered as **inline SVG icons** (LinkedIn, Medium, Instagram, globe for website) — not text labels. Icons use `currentColor` at 16×16px with an `aria-label` on the link for accessibility.
 
 ### Team member detail
 
@@ -425,6 +425,8 @@ On desktop, the marquee runs full viewport width — the leftmost ~360px is part
 
 Implementation detail for the frozen-slice (desktop only): a separately positioned, `position: fixed` element clipped to 200×200px sits behind the sidenav at exactly the logo silhouette location (80px from left, 80px from top). It displays an independently initialized copy of the marquee image — not a CSS trick — so that it remains visually synchronized with the sidenav regardless of scroll position.
 
+**Sizing constraint:** the marquee wrapper has `lg:min-h-[300px]` to ensure the image always covers the logo window (which extends to 280px from the top). The frozen-slice image mirrors this with `height: max(25vw, 300px)` — matching the `aspect-[4/1]` fluid height at wider viewports and the fixed floor at narrower ones. If the min-height changes, update both values together.
+
 **Component:** `src/components/layout/Marquee.astro`
 
 ### MapMarquee
@@ -444,7 +446,7 @@ The frozen-slice effect uses the same two-layer wrapper pattern as Marquee: an o
 
 ### CTA band
 
-Repeated section pattern: "Are you ready to take your product to the next level?" with a primary button "Let's Talk" that links to `/contact/`. Lives at the bottom of all pages except `/contact/`.
+Repeated section pattern: "Are you ready to take your product to the next level?" with a primary button "Let's talk" that links to `/contact/`. Lives at the bottom of all pages except `/contact/`.
 
 ### Image treatment
 
@@ -532,7 +534,7 @@ The manifest declares `name: "Interactivism"`, `theme_color: #F2DB07` (brand-yel
 Slide composition:
 
 1. **Hero slide** — studio positioning. Driven by the `hero` block in `src/data/homepage.json` (headline + image + CTA). Persistent across case study rotations; edited only when positioning changes.
-2. **Work slides** — one per featured case study. Driven by the `featuredCaseStudies` array in `src/data/homepage.json` (3–8 slugs). Each slide shows the case study's hero image, client name, and project title, with primary CTA "Let's Talk" plus secondary CTA "View Project" linking to the case study. Edited when business priorities shift or new work ships.
+2. **Work slides** — one per featured case study. Driven by the `featuredCaseStudies` array in `src/data/homepage.json` (3–8 slugs). Each slide shows the case study's hero image, client name, and project title, with primary CTA "Let's talk" plus secondary CTA "View project" linking to the case study. Edited when business priorities shift or new work ships.
 3. **Pagination control** — current slide / total slides, with previous and next flippers. Layout: `[← | current / total | →]`.
 
 See CONTENT.md "Homepage (data file)" for the schema and editorial workflow.
@@ -550,6 +552,8 @@ See CONTENT.md "Homepage (data file)" for the schema and editorial workflow.
 ### Work index
 
 Marquee at top using `src/assets/images/marquee/work.jpg`. Reverse-chronological list of case studies below. And lastly, a CTA band.
+
+Grid: single column at `lg` (1024px), two columns at `xl` (1280px+). Case study detail and blog post detail pages likewise use a single-column layout at `lg`, deferring the metadata sidebar to `xl`.
 
 ### Services page
 
@@ -668,6 +672,8 @@ Non-negotiable for v1, supporting the Lighthouse 90+ target in PROJECT.md:
 - Color is never the only indicator of meaning (links underlined or otherwise distinguished beyond color)
 - Form fields have associated `<label>` elements
 - `prefers-reduced-motion` honored
+
+**Focus ring implementation:** `global.css` strips the browser default (`:focus { outline: none }`) and restores a clear keyboard ring via `:focus-visible { ring-2 ring-ink-900 ring-offset-2 }`. iOS Safari incorrectly fires `:focus-visible` on programmatic `.focus()` calls triggered by touch interactions (e.g. hamburger refocus after menu close, slider heading focus on slide change). This is suppressed by `html.is-touching :focus-visible { outline: none; box-shadow: none }`, toggled by a touch-tracking script in `BaseLayout.astro` that adds `is-touching` to `<html>` on `touchstart` and removes it 500ms after `touchend` (immediately on `keydown`).
 
 ---
 
