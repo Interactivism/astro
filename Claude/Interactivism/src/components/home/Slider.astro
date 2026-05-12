@@ -47,7 +47,7 @@ const desktopPad = 'lg:pl-[440px] lg:pr-20';
 //   height on short desktops (e.g. 1440×900), width on narrow phones (390px).
 //   clamp() floors at 2.5rem (40px) and caps at 7rem (112px).
 const headlineClass = 'font-display leading-display text-inverse max-w-[18ch] focus:outline-none';
-const headlineStyle = 'font-size: clamp(2.5rem, min(9vh, 11vw), 7rem)';
+const headlineStyle = 'font-size: clamp(2.5rem, min(8vh, 6vw), 7rem)';
 const tagClass      = 'inline-flex items-center bg-ink-900 text-inverse font-mono text-base uppercase tracking-widest px-4 py-1.5 mb-5';
 ---
 
@@ -125,7 +125,7 @@ const tagClass      = 'inline-flex items-center bg-ink-900 text-inverse font-mon
           <div class={`absolute bottom-0 left-0 right-0 pb-20 lg:pb-16 px-6 ${desktopPad}`}>
             <div class={tagClass}>{cs.data.client}</div>
             <h2 class={headlineClass} style={headlineStyle} tabindex="-1">{cs.data.title}</h2>
-            <div class="mt-8 lg:mt-12 flex items-center gap-4 flex-wrap">
+            <div class="mt-8 lg:mt-12 flex items-center gap-4 flex-wrap-reverse lg:pr-64">
               <a
                 href="/contact/"
                 tabindex="-1"
