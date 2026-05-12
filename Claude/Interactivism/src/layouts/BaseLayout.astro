@@ -139,4 +139,34 @@ const pageTitle = `${title} — Interactivism`;
       </footer>
     )}
   </body>
+
+  <script>
+    /**
+     * Touch-state tracking — suppresses :focus-visible rings that iOS Safari
+     * incorrectly fires when .focus() is called programmatically as a result
+     * of a touch interaction (e.g. hamburger refocus after menu close, slider
+     * heading focus after slide change).
+     *
+     * html.is-touching → CSS kills the ring for the duration of the touch.
+     * Removed 500 ms after touchend to cover any deferred focus() calls.
+     * Immediately removed on keydown so keyboard navigation always gets rings.
+     */
+    let touchTimer: ReturnType<typeof setTimeout> | undefined;
+
+    document.addEventListener('touchstart', () => {
+      clearTimeout(touchTimer);
+      document.documentElement.classList.add('is-touching');
+    }, { passive: true });
+
+    document.addEventListener('touchend', () => {
+      touchTimer = setTimeout(() => {
+        document.documentElement.classList.remove('is-touching');
+      }, 500);
+    }, { passive: true });
+
+    document.addEventListener('keydown', () => {
+      clearTimeout(touchTimer);
+      document.documentElement.classList.remove('is-touching');
+    }, { passive: true });
+  </script>
 </html>
