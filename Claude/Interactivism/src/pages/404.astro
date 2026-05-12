@@ -1,0 +1,39 @@
+---
+import path from 'node:path';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Marquee from '../components/layout/Marquee.astro';
+import CtaBand from '../components/home/CtaBand.astro';
+import { getLogoVariant } from '../lib/imageBrightness';
+import marqueeImage from '../assets/images/marquee/404.jpg';
+
+const marqueeImagePath = path.join(process.cwd(), 'src/assets/images/marquee/404.jpg');
+const logoVariant = await getLogoVariant(marqueeImagePath);
+---
+
+<BaseLayout
+  title="Page not found"
+  description="That page does not exist."
+  hasMarquee
+  logoVariant={logoVariant}
+>
+  <Marquee heroImage={marqueeImage} heroImageWide={marqueeImage} alt="Scattered Scrabble tiles" />
+
+  <div class="px-6 lg:px-12 max-w-content mx-auto">
+    <div class="pt-16 lg:pt-24 pb-16 lg:pb-24">
+      <h1 class="font-display leading-display text-headline mb-6">
+        Nope. <span class="font-body font-light text-2xl text-muted align-middle">(6 points)</span>
+      </h1>
+      <p class="text-xl text-body font-light leading-body max-w-prose">
+        That page does not exist. However, feel free to read about our{' '}
+        <a href="/services/" class="font-medium text-headline underline decoration-accent decoration-2 underline-offset-2 hover:text-muted transition duration-fast">services</a>,
+        check out our{' '}
+        <a href="/work/" class="font-medium text-headline underline decoration-accent decoration-2 underline-offset-2 hover:text-muted transition duration-fast">work</a>,
+        or{' '}
+        <a href="/contact/" class="font-medium text-headline underline decoration-accent decoration-2 underline-offset-2 hover:text-muted transition duration-fast">get in touch</a>{' '}
+        to discuss how we can work together.
+      </p>
+    </div>
+  </div>
+
+  <CtaBand />
+</BaseLayout>
