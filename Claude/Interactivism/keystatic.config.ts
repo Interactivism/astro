@@ -8,7 +8,7 @@
  * Admin UI: http://localhost:4321/keystatic  (dev only in local mode)
  */
 import { config, collection, fields } from '@keystatic/core';
-import { block } from '@keystatic/core/content-components';
+import { block, wrapper } from '@keystatic/core/content-components';
 
 // ============================================================
 // Controlled vocabularies — must mirror content.config.ts
@@ -245,6 +245,62 @@ export default config({
                 caption: fields.text({ label: 'Caption' }),
               },
             }),
+            ImageWithCaption: block({
+              label: 'Image with Caption',
+              schema: {
+                src: fields.image({
+                  label: 'Image',
+                  directory: 'src/content/caseStudies',
+                  publicPath: './',
+                  validation: { isRequired: true },
+                }),
+                alt: fields.text({ label: 'Alt text', validation: { isRequired: true } }),
+                caption: fields.text({ label: 'Caption' }),
+              },
+            }),
+            ImageGrid: wrapper({
+              label: 'Image Grid',
+              schema: {
+                columns: fields.select({
+                  label: 'Columns',
+                  options: [
+                    { label: '2 columns', value: '2' },
+                    { label: '3 columns', value: '3' },
+                  ],
+                  defaultValue: '2',
+                }),
+              },
+            }),
+            BeforeAfter: block({
+              label: 'Before / After',
+              schema: {
+                before: fields.image({
+                  label: 'Before image',
+                  directory: 'src/content/caseStudies',
+                  publicPath: './',
+                  validation: { isRequired: true },
+                }),
+                after: fields.image({
+                  label: 'After image',
+                  directory: 'src/content/caseStudies',
+                  publicPath: './',
+                  validation: { isRequired: true },
+                }),
+                alt: fields.text({ label: 'Alt text' }),
+                beforeLabel: fields.text({ label: 'Before label', description: 'Defaults to "Before"' }),
+                afterLabel: fields.text({ label: 'After label', description: 'Defaults to "After"' }),
+              },
+            }),
+            PullQuote: wrapper({
+              label: 'Pull Quote',
+              schema: {
+                author: fields.text({ label: 'Attribution', description: 'e.g. "Jane Doe, CEO of Acme". Optional.' }),
+              },
+            }),
+            Aside: wrapper({
+              label: 'Aside',
+              schema: {},
+            }),
           },
         }),
       },
@@ -344,6 +400,62 @@ export default config({
                 }),
                 caption: fields.text({ label: 'Caption' }),
               },
+            }),
+            ImageWithCaption: block({
+              label: 'Image with Caption',
+              schema: {
+                src: fields.image({
+                  label: 'Image',
+                  directory: 'src/content/blog',
+                  publicPath: './',
+                  validation: { isRequired: true },
+                }),
+                alt: fields.text({ label: 'Alt text', validation: { isRequired: true } }),
+                caption: fields.text({ label: 'Caption' }),
+              },
+            }),
+            ImageGrid: wrapper({
+              label: 'Image Grid',
+              schema: {
+                columns: fields.select({
+                  label: 'Columns',
+                  options: [
+                    { label: '2 columns', value: '2' },
+                    { label: '3 columns', value: '3' },
+                  ],
+                  defaultValue: '2',
+                }),
+              },
+            }),
+            BeforeAfter: block({
+              label: 'Before / After',
+              schema: {
+                before: fields.image({
+                  label: 'Before image',
+                  directory: 'src/content/blog',
+                  publicPath: './',
+                  validation: { isRequired: true },
+                }),
+                after: fields.image({
+                  label: 'After image',
+                  directory: 'src/content/blog',
+                  publicPath: './',
+                  validation: { isRequired: true },
+                }),
+                alt: fields.text({ label: 'Alt text' }),
+                beforeLabel: fields.text({ label: 'Before label', description: 'Defaults to "Before"' }),
+                afterLabel: fields.text({ label: 'After label', description: 'Defaults to "After"' }),
+              },
+            }),
+            PullQuote: wrapper({
+              label: 'Pull Quote',
+              schema: {
+                author: fields.text({ label: 'Attribution', description: 'e.g. "Jane Doe, CEO of Acme". Optional.' }),
+              },
+            }),
+            Aside: wrapper({
+              label: 'Aside',
+              schema: {},
             }),
           },
         }),
