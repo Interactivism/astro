@@ -29,7 +29,7 @@
   }
 
   body {
-    @apply bg-surface font-body text-base text-body font-light leading-body;
+    @apply bg-surface font-body text-lg text-body font-light leading-body;
     overflow-x: clip; /* prevent horizontal scroll from viewport-width marquee; clip (not hidden) preserves fixed positioning */
   }
 

@@ -143,8 +143,8 @@ A modular scale with a 1.25 (major third) ratio works well for editorial sites. 
 | `text-sm` | 1 | 16 | Captions, fine print |
 | `text-base` | 1.125 | 18 | Body default |
 | `text-lg` | 1.25 | 20 | Large body, intro paragraphs |
-| `text-xl` | 1.5 | 24 | Subheadings (h4), nav items, buttons |
-| `text-2xl` | 1.875 | 30 | h3 |
+| `text-xl` | 1.5 | 24 | Subheadings (h4), buttons |
+| `text-2xl` | 1.875 | 30 | h3, nav items |
 | `text-3xl` | 2.5 | 40 | h2 |
 | `text-4xl` | 3.5 | 56 | h1 (default) |
 | `text-5xl` | 4.5 | 72 | Page-level headlines |
@@ -286,7 +286,7 @@ The 200×200 logo silhouette in the sidenav acts as a knockout — content posit
 
 **Mobile / tablet (`<lg`): floating header**
 
-The mobile header has no background. Logo left (`logo-tile`, sized to ~48×48 or similar — the black tile sits cleanly on the light page and matches the brand presence of the desktop sidenav), nav icon (hamburger) right. The nav icon is sticky on scroll, with a **54×54px** background in `paper-0` @ 25% opacity. Tap the hamburger → full-screen overlay nav menu. The hamburger morphs to an X that, when tapped, exits the overlay. The nav overlay uses `surface.milk` as background for contrast while maintaining spatial awareness. Nav items stack with min 44px tap targets.
+The mobile header has no background. Logo left (`logo-tile`, sized to ~48×48 or similar — the black tile sits cleanly on the light page and matches the brand presence of the desktop sidenav), nav icon (hamburger) right. The nav icon is sticky on scroll, with a **54×54px** background in `paper-0` @ 25% opacity. Tap the hamburger → full-screen overlay nav menu. The hamburger morphs to an X that, when tapped, exits the overlay. The nav overlay uses `surface.milk` as background. It contains **only the nav items** — no logo, no footer — centered vertically and horizontally in the full-screen overlay. Nav items stack with min 44px tap targets.
 
 Hamburger icon: 32×32px SVG, stroke width 2px.
 
@@ -301,7 +301,7 @@ Hamburger icon: 32×32px SVG, stroke width 2px.
 
 This order matches the live site and is intentional — capability, then proof, then conversion. Don't reorder without a reason.
 
-Nav item labels are rendered **ALL CAPS** (`text-transform: uppercase`).
+Nav item labels are rendered in **sentence case** — no `uppercase` or `tracking-widest`. Size: `text-2xl` (30px), weight: `font-light` (300). Nav items are indented `108px` from the left edge of the sidenav, visually aligning with the logo silhouette.
 
 **Current page indicator:** `state.on` — nav item text color changes to `#9B9B9B` (light grey) to indicate the active page.
 
@@ -403,7 +403,7 @@ List of team members. Photo, name, role, bio blurb with jump link to team member
 
 ### Team member detail
 
-Same layout as list items on the team member index, but with a full bio, and a link to go back (to /team/) 
+Same layout as list items on the team member index, but with a full bio and social links rendered as **inline SVG icons** (same treatment as the team index — LinkedIn, Medium, Instagram, globe for website; 16×16px, `currentColor`, `aria-label` on the link). A link to go back (to /team/) is also shown.
 
 ### Forms
 

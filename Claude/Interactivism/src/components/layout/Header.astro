@@ -61,7 +61,7 @@ function isActive(href: string): boolean {
   </div>
 
   <!-- Nav: surface-alt bg, left edge aligns with logo left edge (pl-20 = 80px) -->
-  <nav class="flex-1 bg-surface-alt pl-20 pr-10" aria-label="Primary navigation">
+  <nav class="flex-1 bg-surface-alt pl-[108px] pr-10" aria-label="Primary navigation">
     <ul class="flex flex-col" role="list">
       {
         navItems.map(({ label, href }) => {
@@ -72,7 +72,7 @@ function isActive(href: string): boolean {
                 href={href}
                 aria-current={active ? 'page' : undefined}
                 class:list={[
-                  'flex items-center py-3 font-body font-medium text-xl uppercase',
+                  'flex items-center py-3 font-body font-light text-2xl',
                   'transition duration-fast',
                   active ? 'text-[#9B9B9B]' : 'text-headline hover:text-muted',
                 ]}
@@ -152,11 +152,6 @@ function isActive(href: string): boolean {
   aria-label="Navigation menu"
   class="hidden lg:hidden fixed inset-0 z-[60] flex-col bg-surface-milk"
 >
-  <!-- Logo: same absolute position as the page logo in BaseLayout -->
-  <a href="/" aria-label="Interactivism — home" class="absolute top-6 left-6 z-10 block w-20 h-20">
-    <img src="/brand/logo-tile.svg" alt="" width="80" height="80" class="w-full h-full" />
-  </a>
-
   <!-- Nav: centered vertically + horizontally -->
   <nav class="flex-1 flex items-center justify-center" aria-label="Primary navigation">
     <ul class="flex flex-col items-center w-full" role="list">
@@ -170,7 +165,7 @@ function isActive(href: string): boolean {
                 aria-current={active ? 'page' : undefined}
                 class:list={[
                   'flex items-center justify-center min-h-[44px] py-3',
-                  'font-body font-medium text-xl uppercase transition duration-fast',
+                  'font-body font-light text-2xl transition duration-fast',
                   active ? 'text-[#9B9B9B]' : 'text-headline hover:text-muted',
                 ]}
               >
@@ -182,11 +177,6 @@ function isActive(href: string): boolean {
       }
     </ul>
   </nav>
-
-  <!-- Footer at bottom of overlay -->
-  <div class="px-6 pb-8">
-    <Footer />
-  </div>
 </div>
 
 <script>
