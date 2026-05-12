@@ -5,6 +5,7 @@ import tailwind from '@astrojs/tailwind';
 import sitemap from '@astrojs/sitemap';
 import netlify from '@astrojs/netlify';
 import rehypeSlug from 'rehype-slug';
+import remarkSmartypants from 'remark-smartypants';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
@@ -66,6 +67,7 @@ export default defineConfig({
   ],
 
   markdown: {
+    remarkPlugins: [remarkSmartypants],
     rehypePlugins: [rehypeSlug],
   },
 
