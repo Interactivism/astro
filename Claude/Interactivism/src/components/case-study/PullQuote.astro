@@ -1,0 +1,28 @@
+---
+/**
+ * Large editorial pull quote with optional attribution.
+ * A 2px brand-yellow top rule signals the pull-quote treatment.
+ *
+ * Usage in MDX:
+ *   <PullQuote author="Jane Doe, CEO of Acme">
+ *     The redesign cut our onboarding time in half. We didn't expect that.
+ *   </PullQuote>
+ */
+
+interface Props {
+  author?: string;
+}
+
+const { author } = Astro.props;
+---
+
+<figure class="not-prose my-12 lg:my-16 border-t-2 border-accent pt-6">
+  <blockquote class="font-display text-3xl lg:text-4xl leading-display text-headline">
+    <slot />
+  </blockquote>
+  {author && (
+    <figcaption class="mt-4 font-mono text-xs text-muted uppercase tracking-widest">
+      — {author}
+    </figcaption>
+  )}
+</figure>

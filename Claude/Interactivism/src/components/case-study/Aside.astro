@@ -1,0 +1,19 @@
+---
+/**
+ * Short sidebar callout — used for notes, caveats, or supplementary context
+ * that shouldn't interrupt the main prose flow but belongs near it.
+ * Brand-yellow left border signals the aside treatment.
+ *
+ * Usage in MDX:
+ *   <Aside>
+ *     Note: this pattern only applies to authenticated users. Guest flows
+ *     follow a different path described in the appendix.
+ *   </Aside>
+ */
+---
+
+<aside class="not-prose my-8 border-l-[3px] border-accent pl-5 lg:pl-6">
+  <div class="text-base text-body leading-body [&>p]:mb-3 [&>p:last-child]:mb-0">
+    <slot />
+  </div>
+</aside>

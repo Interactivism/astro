@@ -1,0 +1,26 @@
+---
+/**
+ * 2-up or 3-up image grid.
+ * Pass images directly as children — <Image>, <img>, or <ImageWithCaption> components.
+ * Note: <ImageWithCaption> removes its own vertical margins inside a grid context.
+ *
+ * Usage in MDX:
+ *   import img1 from './flow-01.png';
+ *   import img2 from './flow-02.png';
+ *   <ImageGrid columns={2}>
+ *     <ImageWithCaption src={img1} alt="Step one" caption="Initial state" />
+ *     <ImageWithCaption src={img2} alt="Step two" caption="After redesign" />
+ *   </ImageGrid>
+ */
+
+interface Props {
+  columns?: 2 | 3;
+}
+
+const { columns = 2 } = Astro.props;
+const gridCols = columns === 3 ? 'sm:grid-cols-3' : 'sm:grid-cols-2';
+---
+
+<div class={`not-prose my-10 lg:my-12 grid grid-cols-1 ${gridCols} gap-4 [&_figure]:my-0`}>
+  <slot />
+</div>

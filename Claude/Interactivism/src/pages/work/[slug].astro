@@ -7,6 +7,11 @@ import Stat from '../../components/case-study/Stat.astro';
 import StatRow from '../../components/case-study/StatRow.astro';
 import Slideshow from '../../components/case-study/Slideshow.astro';
 import YouTube from '../../components/case-study/YouTube.astro';
+import ImageWithCaption from '../../components/case-study/ImageWithCaption.astro';
+import ImageGrid from '../../components/case-study/ImageGrid.astro';
+import PullQuote from '../../components/case-study/PullQuote.astro';
+import BeforeAfter from '../../components/case-study/BeforeAfter.astro';
+import Aside from '../../components/case-study/Aside.astro';
 import { getLogoVariant } from '../../lib/imageBrightness';
 import path from 'node:path';
 import { existsSync } from 'node:fs';
@@ -202,7 +207,7 @@ const INDUSTRY_LABELS: Record<string, string> = {
 
         <!-- Body prose -->
         <div class="py-12 lg:py-16 prose prose-lg lg:prose-xl">
-          <Content components={{ Stat, StatRow, Slideshow, YouTube }} />
+          <Content components={{ Stat, StatRow, Slideshow, YouTube, ImageWithCaption, ImageGrid, PullQuote, BeforeAfter, Aside }} />
         </div>
 
       </div>

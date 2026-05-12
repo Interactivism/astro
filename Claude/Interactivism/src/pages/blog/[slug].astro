@@ -8,6 +8,9 @@ import CtaBand from '../../components/home/CtaBand.astro';
 import { getLogoVariant } from '../../lib/imageBrightness';
 import Slideshow from '../../components/case-study/Slideshow.astro';
 import YouTube from '../../components/case-study/YouTube.astro';
+import ImageWithCaption from '../../components/case-study/ImageWithCaption.astro';
+import PullQuote from '../../components/case-study/PullQuote.astro';
+import Aside from '../../components/case-study/Aside.astro';
 
 export async function getStaticPaths() {
   const allPosts = await getCollection('blog');
@@ -166,7 +169,7 @@ if (heroImageWide) {
 
         <!-- Body prose -->
         <div class="py-12 lg:py-16 prose prose-lg lg:prose-xl">
-          <Content components={{ Slideshow, YouTube }} />
+          <Content components={{ Slideshow, YouTube, ImageWithCaption, PullQuote, Aside }} />
         </div>
 
 
