@@ -42,7 +42,7 @@ const frozenSrc = (await getImage({ src: heroImageWide })).src;
   Desktop: aspect-[4/1],  viewport width via w-screen + -ml-[360px].
            overflow-hidden clips the negative-margin shift.
 -->
-<div class="w-full overflow-hidden lg:w-screen lg:-ml-[360px] aspect-[16/9] lg:aspect-[4/1] relative">
+<div class="w-full overflow-hidden lg:w-screen lg:-ml-[360px] aspect-[16/9] lg:aspect-[4/1] lg:min-h-[300px] relative">
   <!-- Mobile image (16:9) -->
   <Image
     src={heroImage}

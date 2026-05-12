@@ -106,7 +106,7 @@ const INDUSTRY_LABELS: Record<string, string> = {
   <div class="relative">
     <Marquee heroImage={heroImage} heroImageWide={heroImageWide} alt="" />
     <div class="absolute bottom-0 left-0 right-0 pb-6 lg:pb-[44px]">
-      <div class="px-6 max-w-content mx-auto">
+      <div class="px-6 lg:px-12 max-w-content mx-auto">
         <span class="inline-flex items-center bg-ink-900 text-inverse font-mono text-base uppercase tracking-widest px-4 py-1.5">
           {client}
         </span>
@@ -114,7 +114,7 @@ const INDUSTRY_LABELS: Record<string, string> = {
     </div>
   </div>
 
-  <div class="px-6 max-w-content mx-auto">
+  <div class="px-6 lg:px-12 max-w-content mx-auto">
 
     <!-- ── Title — full width ────────────────────────────────────── -->
     <h1 class="font-display leading-display text-headline pt-16 lg:pt-24 pb-12 lg:pb-16">
@@ -124,15 +124,15 @@ const INDUSTRY_LABELS: Record<string, string> = {
     <!-- ── Content grid: main column + sticky sidebar ────────────── -->
     <!--
       DOM order: aside first so it appears above main content on mobile.
-      On desktop the grid reverses them visually via order utilities.
+      On desktop (xl+) the grid reverses them visually via order utilities.
     -->
-    <div class="flex flex-col lg:grid lg:grid-cols-[1fr_280px] lg:gap-20 lg:items-start">
+    <div class="flex flex-col xl:grid xl:grid-cols-[1fr_280px] xl:gap-20 xl:items-start">
 
-      <!-- Sidebar: meta — top on mobile, sticky right column on desktop -->
-      <aside class="order-first lg:order-last lg:sticky lg:top-8 lg:self-start
+      <!-- Sidebar: meta — top on mobile/lg, sticky right column on xl+ -->
+      <aside class="order-first xl:order-last xl:sticky xl:top-8 xl:self-start
                     border-b border-subtle pb-8 mb-12
-                    lg:border-0 lg:pb-0 lg:mb-0 lg:pt-0">
-        <dl class="grid grid-cols-2 gap-x-6 gap-y-5 lg:grid-cols-1 text-sm">
+                    xl:border-0 xl:pb-0 xl:mb-0 xl:pt-0">
+        <dl class="grid grid-cols-2 gap-x-6 gap-y-5 xl:grid-cols-1 text-sm">
           <div>
             <dt class="font-mono text-xs text-muted uppercase tracking-widest mb-1">Client</dt>
             <dd class="text-headline font-medium">{client}</dd>
@@ -171,7 +171,7 @@ const INDUSTRY_LABELS: Record<string, string> = {
       </aside>
 
       <!-- Main column: overview → metrics → body prose -->
-      <div class="order-last lg:order-first">
+      <div class="order-last xl:order-first">
 
         <!-- Project overview -->
         <div class="pb-12 lg:pb-16 border-b border-subtle">
