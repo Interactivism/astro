@@ -194,6 +194,8 @@ if (heroImageWide) {
       </div>
     </div>
 
+    {heroImage && heroImageWide && <PhotoCredit credit={credit} />}
+
     <!-- ── Prev / Next navigation ──────────────────────────────── -->
     {(prevEntry || nextEntry) && (
       <div class="border-t border-subtle py-12 lg:py-16 flex items-start justify-between gap-8">
@@ -221,7 +223,6 @@ if (heroImageWide) {
 
   </div>
 
-  {heroImage && heroImageWide && <PhotoCredit credit={credit} />}
   <CtaBand />
 
 </BaseLayout>
