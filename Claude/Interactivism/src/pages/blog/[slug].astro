@@ -17,7 +17,10 @@ export async function getStaticPaths() {
   const allPosts = await getCollection('blog');
   const now = new Date();
   const sorted = allPosts
-    .filter((p) => p.data.status === 'published' && p.data.publishedDate <= now)
+    .filter((p) => {
+      if (import.meta.env.DEV) return true; // include drafts locally
+      return p.data.status === 'published' && p.data.publishedDate <= now;
+    })
     .sort((a, b) => b.data.publishedDate.getTime() - a.data.publishedDate.getTime());
 
   return sorted.map((post, i) => ({

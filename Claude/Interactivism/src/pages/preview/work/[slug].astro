@@ -1,49 +1,48 @@
 ---
+/**
+ * Preview route for case studies — renders any entry regardless of status or
+ * publishedDate. Protected by the preview middleware (password cookie).
+ *
+ * Mirrors src/pages/work/[slug].astro but:
+ *   - SSR (no getStaticPaths)
+ *   - Includes draft and future-dated entries
+ *   - Shows PreviewBanner
+ *   - Omits prev/next navigation (not meaningful across mixed draft/published)
+ *   - Skips build-time logo-variant sampling (filesystem not available at SSR runtime)
+ */
+export const prerender = false;
+
 import { getCollection, render } from 'astro:content';
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import Marquee from '../../components/layout/Marquee.astro';
-import CtaBand from '../../components/home/CtaBand.astro';
-import Stat from '../../components/case-study/Stat.astro';
-import StatRow from '../../components/case-study/StatRow.astro';
-import Slideshow from '../../components/case-study/Slideshow.astro';
-import YouTube from '../../components/case-study/YouTube.astro';
-import ImageWithCaption from '../../components/case-study/ImageWithCaption.astro';
-import ImageGrid from '../../components/case-study/ImageGrid.astro';
-import PullQuote from '../../components/case-study/PullQuote.astro';
-import BeforeAfter from '../../components/case-study/BeforeAfter.astro';
-import Aside from '../../components/case-study/Aside.astro';
-import { getLogoVariant } from '../../lib/imageBrightness';
-import PhotoCredit from '../../components/layout/PhotoCredit.astro';
-import path from 'node:path';
-import { existsSync } from 'node:fs';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Marquee from '../../../components/layout/Marquee.astro';
+import PreviewBanner from '../../../components/layout/PreviewBanner.astro';
+import PhotoCredit from '../../../components/layout/PhotoCredit.astro';
+import CtaBand from '../../../components/home/CtaBand.astro';
+import Stat from '../../../components/case-study/Stat.astro';
+import StatRow from '../../../components/case-study/StatRow.astro';
+import Slideshow from '../../../components/case-study/Slideshow.astro';
+import YouTube from '../../../components/case-study/YouTube.astro';
+import ImageWithCaption from '../../../components/case-study/ImageWithCaption.astro';
+import ImageGrid from '../../../components/case-study/ImageGrid.astro';
+import PullQuote from '../../../components/case-study/PullQuote.astro';
+import BeforeAfter from '../../../components/case-study/BeforeAfter.astro';
+import Aside from '../../../components/case-study/Aside.astro';
 
-export async function getStaticPaths() {
-  const sortYear = (cs: { data: { year: number; yearEnd?: number | 'present' } }) =>
-    cs.data.yearEnd === 'present' ? Infinity : (cs.data.yearEnd ?? cs.data.year);
+const { slug } = Astro.params;
 
-  const allCaseStudies = await getCollection('caseStudies');
-  const now = new Date();
-  const sorted = allCaseStudies
-    .filter((cs) => {
-      if (import.meta.env.DEV) return true; // include drafts locally
-      return cs.data.status === 'published' && cs.data.publishedDate <= now;
-    })
-    .sort((a, b) => sortYear(b) - sortYear(a));
+// Get ALL case studies — no status or date filter.
+const allCaseStudies = await getCollection('caseStudies');
+const entry = allCaseStudies.find((cs) => cs.id === slug);
 
-  return sorted.map((cs, i) => ({
-    params: { slug: cs.id },
-    props: {
-      entry: cs,
-      prevEntry: sorted[i + 1] ?? null,  // older = previous
-      nextEntry: sorted[i - 1] ?? null,  // newer = next
-    },
-  }));
+if (!entry) {
+  return Astro.redirect('/404/');
 }
 
-const { entry, prevEntry, nextEntry } = Astro.props;
-const { title, client, summary, heroImage, heroImageWide, photoCredit, industry, services, year, yearEnd, deliverables, duration, metrics, gallery } = entry.data;
+const {
+  title, client, summary, heroImage, heroImageWide, photoCredit,
+  industry, services, year, yearEnd, deliverables, duration, metrics, gallery,
+} = entry.data;
 
-// "2020", "2020–2023", or "2020–Present"
 const yearDisplay = yearEnd === undefined
   ? String(year)
   : yearEnd === 'present'
@@ -52,18 +51,11 @@ const yearDisplay = yearEnd === undefined
 
 const { Content } = await render(entry);
 
-// Build-time logo variant from the wide hero image. Defaults to 'light' when no image is set.
-let logoVariant: 'light' | 'dark' = 'light';
-if (heroImageWide) {
-  const heroWideBase = path.join(process.cwd(), 'src/content/caseStudies', entry.id, 'heroImageWide');
-  const heroWideFs = existsSync(heroWideBase + '.jpg') ? heroWideBase + '.jpg' : heroWideBase + '.png';
-  if (existsSync(heroWideFs)) {
-    logoVariant = await getLogoVariant(heroWideFs);
-  }
-}
+// Logo variant: filesystem not available in SSR production; default to 'light'.
+// (The placeholder marquee image has a dark background so 'light' logo is correct.)
+const logoVariant: 'light' | 'dark' = 'light';
 
-// Photo credit HTML — links photographer name and platform when URLs are provided.
-// Renders nothing when photographer is blank.
+// Photo credit HTML
 function buildCredit(pc: typeof photoCredit): string | undefined {
   if (!pc?.photographer) return undefined;
   const name = pc.photographerUrl
@@ -108,6 +100,7 @@ const DELIVERABLE_LABELS: Record<string, string> = {
   'experience-strategy':          'Experience Strategy',
   'positioning-framework':        'Positioning Framework',
   'messaging-framework':          'Messaging Framework',
+  'mobile-app-development':       'Mobile App Development',
 };
 
 const INDUSTRY_LABELS: Record<string, string> = {
@@ -124,12 +117,14 @@ const INDUSTRY_LABELS: Record<string, string> = {
 ---
 
 <BaseLayout
-  title={`${client} — ${title}`}
+  title={`[Preview] ${client} — ${title}`}
   description={summary}
   ogType="article"
   hasMarquee
   logoVariant={logoVariant}
 >
+
+  <PreviewBanner />
 
   <!-- ── Marquee with client tag ───────────────────────────────── -->
   <div class="relative">
@@ -146,19 +141,15 @@ const INDUSTRY_LABELS: Record<string, string> = {
 
   <div class="px-6 lg:px-12 max-w-content mx-auto">
 
-    <!-- ── Title — full width ────────────────────────────────────── -->
+    <!-- ── Title ─────────────────────────────────────────────────── -->
     <h1 class="font-display leading-display text-headline pt-16 lg:pt-24 pb-12 lg:pb-16">
       {title}
     </h1>
 
-    <!-- ── Content grid: main column + sticky sidebar ────────────── -->
-    <!--
-      DOM order: aside first so it appears above main content on mobile.
-      On desktop (xl+) the grid reverses them visually via order utilities.
-    -->
+    <!-- ── Content grid ──────────────────────────────────────────── -->
     <div class="flex flex-col xl:grid xl:grid-cols-[1fr_280px] xl:gap-20 xl:items-start">
 
-      <!-- Sidebar: meta — top on mobile/lg, sticky right column on xl+ -->
+      <!-- Sidebar -->
       <aside class="order-first xl:order-last xl:sticky xl:top-8 xl:self-start
                     border-b border-subtle pb-8 mb-12
                     xl:border-0 xl:pb-0 xl:mb-0 xl:pt-0">
@@ -200,15 +191,13 @@ const INDUSTRY_LABELS: Record<string, string> = {
         </dl>
       </aside>
 
-      <!-- Main column: overview → metrics → body prose -->
+      <!-- Main column -->
       <div class="order-last xl:order-first">
 
-        <!-- Project overview -->
         <div class="pb-12 lg:pb-16 border-b border-subtle">
           <p class="text-xl text-body leading-body">{summary}</p>
         </div>
 
-        <!-- Metrics strip -->
         {metrics && metrics.length > 0 && (
           <div class="py-12 lg:py-16 border-b border-subtle grid grid-cols-2 gap-x-4 gap-y-8 lg:gap-8">
             {metrics.map((m) => (
@@ -220,52 +209,18 @@ const INDUSTRY_LABELS: Record<string, string> = {
           </div>
         )}
 
-        <!-- Gallery slideshow — shown when gallery images are present in frontmatter -->
         {gallery && gallery.length > 0 && (
           <div class="py-12 lg:py-16 border-b border-subtle">
-            <Slideshow
-              slides={gallery}
-              label={`${client} project gallery`}
-            />
+            <Slideshow slides={gallery} label={`${client} project gallery`} />
           </div>
         )}
 
-        <!-- Body prose -->
         <div class="py-12 lg:py-16 prose prose-lg lg:prose-xl">
           <Content components={{ Stat, StatRow, Slideshow, YouTube, ImageWithCaption, ImageGrid, PullQuote, BeforeAfter, Aside }} />
         </div>
 
       </div>
     </div>
-
-    <!-- ── Prev / Next navigation ────────────────────────────────── -->
-    {(prevEntry || nextEntry) && (
-    <div class="border-t border-subtle py-12 lg:py-16 flex items-start justify-between gap-8">
-      {prevEntry ? (
-        <a
-          href={`/work/${prevEntry.id}/`}
-          class="flex flex-col gap-1.5 max-w-[45%] hover:opacity-70 transition duration-fast"
-        >
-          <span class="font-mono text-xs text-muted uppercase tracking-widest">← Previous</span>
-          <span class="font-body font-medium text-base text-headline leading-snug">
-            {prevEntry.data.client} — {prevEntry.data.title}
-          </span>
-        </a>
-      ) : <div />}
-
-      {nextEntry ? (
-        <a
-          href={`/work/${nextEntry.id}/`}
-          class="flex flex-col gap-1.5 items-end text-right max-w-[45%] ml-auto hover:opacity-70 transition duration-fast"
-        >
-          <span class="font-mono text-xs text-muted uppercase tracking-widest">Next →</span>
-          <span class="font-body font-medium text-base text-headline leading-snug">
-            {nextEntry.data.client} — {nextEntry.data.title}
-          </span>
-        </a>
-      ) : <div />}
-    </div>
-    )}
 
   </div>
 

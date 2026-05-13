@@ -88,7 +88,7 @@ export default config({
       path: 'src/content/caseStudies/*',
       format: { contentField: 'content' },
       entryLayout: 'content',
-      previewUrl: '/work/{slug}/',
+      previewUrl: '/preview/work/{slug}/',
       schema: {
         title: fields.slug({
           name: {
@@ -339,6 +339,7 @@ export default config({
       path: 'src/content/blog/*',
       format: { contentField: 'content' },
       entryLayout: 'content',
+      previewUrl: '/preview/blog/{slug}/',
       schema: {
         title: fields.slug({
           name: {

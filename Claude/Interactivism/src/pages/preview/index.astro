@@ -1,0 +1,64 @@
+---
+/**
+ * Preview password form.
+ * Shown when an unauthenticated user tries to access a /preview/* route.
+ * Preserves the original destination via `?redirect=` so the user lands
+ * directly on the draft page after a successful login.
+ */
+export const prerender = false;
+
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Button from '../../components/ui/Button.astro';
+
+const error    = Astro.url.searchParams.get('error') === '1';
+const redirect = Astro.url.searchParams.get('redirect') ?? '/preview/';
+
+// If already authenticated, send straight to the destination.
+// (The middleware handles this for protected routes; this covers the
+// edge case where someone manually visits /preview/ while logged in.)
+---
+
+<BaseLayout
+  title="Preview access"
+  description=""
+  logoVariant="dark"
+>
+  <div class="px-6 lg:px-12 py-24 max-w-content mx-auto">
+
+    <p class="font-mono text-xs text-muted mb-4 uppercase tracking-widest">Preview access</p>
+    <h1 class="font-display leading-display text-headline mb-10 text-4xl">
+      Enter the preview<br />password to continue.
+    </h1>
+
+    <form
+      method="POST"
+      action="/api/preview-auth/"
+      class="max-w-sm space-y-6"
+    >
+      <input type="hidden" name="redirect" value={redirect} />
+
+      <div class="flex flex-col gap-2">
+        <label for="password" class="font-mono text-xs text-muted uppercase tracking-widest">
+          Password
+        </label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          required
+          autofocus
+          class="w-full bg-surface-alt border border-subtle rounded-sm px-4 py-3 font-body text-base text-body placeholder:text-ink-300"
+        />
+      </div>
+
+      {error && (
+        <p class="font-mono text-xs text-error" role="alert">
+          Incorrect password — please try again.
+        </p>
+      )}
+
+      <Button type="submit">Access preview</Button>
+    </form>
+
+  </div>
+</BaseLayout>

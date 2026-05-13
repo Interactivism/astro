@@ -1,0 +1,19 @@
+---
+/**
+ * PreviewBanner — shown at the top of every /preview/* page.
+ * Signals clearly that the page is a draft not ready for public distribution.
+ * Includes a sign-out link that clears the preview session cookie.
+ */
+---
+
+<div class="bg-accent px-6 py-2.5 flex items-center justify-between gap-4 flex-wrap">
+  <p class="font-mono text-xs uppercase tracking-widest text-headline font-medium">
+    Draft preview — not for public distribution
+  </p>
+  <a
+    href="/api/preview-auth/?action=logout"
+    class="font-mono text-xs text-headline/60 hover:text-headline underline underline-offset-2 transition duration-fast"
+  >
+    Sign out
+  </a>
+</div>

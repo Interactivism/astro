@@ -1,0 +1,194 @@
+---
+/**
+ * Preview route for blog posts — renders any entry regardless of status or
+ * publishedDate. Protected by the preview middleware (password cookie).
+ *
+ * Mirrors src/pages/blog/[slug].astro but:
+ *   - SSR (no getStaticPaths)
+ *   - Includes draft and future-dated entries
+ *   - Shows PreviewBanner
+ *   - Omits prev/next navigation
+ */
+export const prerender = false;
+
+import path from 'node:path';
+import { getCollection, getEntry, render } from 'astro:content';
+import { Image } from 'astro:assets';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Marquee from '../../../components/layout/Marquee.astro';
+import PreviewBanner from '../../../components/layout/PreviewBanner.astro';
+import PhotoCredit from '../../../components/layout/PhotoCredit.astro';
+import CtaBand from '../../../components/home/CtaBand.astro';
+import Slideshow from '../../../components/case-study/Slideshow.astro';
+import YouTube from '../../../components/case-study/YouTube.astro';
+import ImageWithCaption from '../../../components/case-study/ImageWithCaption.astro';
+import ImageGrid from '../../../components/case-study/ImageGrid.astro';
+import BeforeAfter from '../../../components/case-study/BeforeAfter.astro';
+import PullQuote from '../../../components/case-study/PullQuote.astro';
+import Aside from '../../../components/case-study/Aside.astro';
+
+const { slug } = Astro.params;
+
+// Get ALL blog posts — no status or date filter.
+const allPosts = await getCollection('blog');
+const entry = allPosts.find((p) => p.id === slug);
+
+if (!entry) {
+  return Astro.redirect('/404/');
+}
+
+const {
+  title, summary, author: authorId, publishedDate, tags,
+  heroImage, heroImageWide, photoCredit, ogImage,
+} = entry.data;
+
+const { Content } = await render(entry);
+const authorEntry = await getEntry('authors', authorId);
+
+const formattedDate = publishedDate.toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+
+// Read time
+const wordCount = (entry.body ?? '')
+  .replace(/```[\s\S]*?```/g, '')
+  .replace(/`[^`]+`/g, '')
+  .replace(/!\[.*?\]\(.*?\)/g, '')
+  .replace(/\[.*?\]\(.*?\)/g, '')
+  .replace(/[#*_~>|]/g, '')
+  .trim()
+  .split(/\s+/)
+  .filter(Boolean).length;
+const readMinutes = Math.max(1, Math.round(wordCount / 200));
+const readTime = `${readMinutes} minute read`;
+
+// Photo credit HTML
+function buildCredit(pc: typeof photoCredit): string | undefined {
+  if (!pc?.photographer) return undefined;
+  const name = pc.photographerUrl
+    ? `<a href="${pc.photographerUrl}">${pc.photographer}</a>`
+    : pc.photographer;
+  if (!pc.platform) return `Marquee photo by ${name}`;
+  const platform = pc.platformUrl
+    ? `<a href="${pc.platformUrl}">${pc.platform}</a>`
+    : pc.platform;
+  return `Marquee photo by ${name} on ${platform}`;
+}
+const credit = buildCredit(photoCredit);
+---
+
+<BaseLayout
+  title={`[Preview] ${title}`}
+  description={summary}
+  ogType="article"
+  ogImage={ogImage ? ogImage.src : undefined}
+  hasMarquee={!!heroImage}
+  logoVariant="dark"
+>
+
+  <PreviewBanner />
+
+  {heroImage && heroImageWide && (
+    <div class="relative">
+      <Marquee heroImage={heroImage} heroImageWide={heroImageWide} alt="" />
+    </div>
+  )}
+  {heroImage && heroImageWide && <PhotoCredit credit={credit} />}
+
+  <div class="px-6 lg:px-12 max-w-content mx-auto">
+
+    <h1 class="font-display leading-display text-headline pt-16 lg:pt-24 pb-12 lg:pb-16">
+      {title}
+    </h1>
+
+    <div class="flex flex-col xl:grid xl:grid-cols-[1fr_280px] xl:gap-20 xl:items-start">
+
+      <!-- Sidebar -->
+      <aside class="order-first xl:order-last xl:sticky xl:top-8 xl:self-start
+                    border-b border-subtle pb-8 mb-12
+                    xl:border-0 xl:pb-0 xl:mb-0">
+        <div class="grid grid-cols-2 gap-x-6 gap-y-5 xl:grid-cols-1 text-sm">
+
+          {authorEntry && (
+            <div class="col-span-2 xl:col-span-1 flex items-center gap-3">
+              {authorEntry.data.avatar && (
+                authorId === 'interactivism' ? (
+                  <Image
+                    src={authorEntry.data.avatar}
+                    alt={authorEntry.data.name}
+                    width={40}
+                    height={40}
+                    class="rounded-full object-cover shrink-0"
+                  />
+                ) : (
+                  <a href={`/team/${authorId}/`}>
+                    <Image
+                      src={authorEntry.data.avatar}
+                      alt={authorEntry.data.name}
+                      width={40}
+                      height={40}
+                      class="rounded-full object-cover shrink-0 hover:opacity-80 transition duration-fast"
+                    />
+                  </a>
+                )
+              )}
+              <div>
+                {authorId === 'interactivism' ? (
+                  <div class="font-medium text-headline text-sm">{authorEntry.data.name}</div>
+                ) : (
+                  <a href={`/team/${authorId}/`} class="font-medium text-headline text-sm hover:text-muted transition duration-fast">
+                    {authorEntry.data.name}
+                  </a>
+                )}
+                <div class="font-mono text-xs text-muted uppercase tracking-widest">{authorEntry.data.role}</div>
+              </div>
+            </div>
+          )}
+
+          <div class="flex flex-col gap-5">
+            <div>
+              <dt class="font-mono text-xs text-muted uppercase tracking-widest mb-1">Published</dt>
+              <dd class="text-body">{formattedDate}</dd>
+            </div>
+            <div>
+              <dt class="font-mono text-xs text-muted uppercase tracking-widest mb-1">Read time</dt>
+              <dd class="text-body">{readTime}</dd>
+            </div>
+          </div>
+
+          {tags && tags.length > 0 && (
+            <div>
+              <dt class="font-mono text-xs text-muted uppercase tracking-widest mb-2">Topics</dt>
+              <dd class="flex flex-col gap-1.5">
+                {tags.map((tag) => (
+                  <span class="font-mono text-xs text-muted uppercase tracking-widest border border-subtle px-2 py-1 self-start">
+                    {tag}
+                  </span>
+                ))}
+              </dd>
+            </div>
+          )}
+        </div>
+      </aside>
+
+      <!-- Main column -->
+      <div class="order-last xl:order-first">
+
+        <div class="pb-12 lg:pb-16 border-b border-subtle">
+          <p class="text-xl text-body leading-body">{summary}</p>
+        </div>
+
+        <div class="py-12 lg:py-16 prose prose-lg lg:prose-xl">
+          <Content components={{ Slideshow, YouTube, ImageWithCaption, ImageGrid, BeforeAfter, PullQuote, Aside }} />
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <CtaBand />
+
+</BaseLayout>
