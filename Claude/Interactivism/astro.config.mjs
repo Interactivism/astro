@@ -50,7 +50,9 @@ function keystatic() {
 
 export default defineConfig({
   site: 'https://interactivism.com',
-  trailingSlash: 'always',
+  // 'always' in production for canonical URL consistency.
+  // 'ignore' in dev so Keystatic API routes work (they call endpoints without trailing slashes).
+  trailingSlash: isDev ? 'ignore' : 'always',
   // Skip the Netlify adapter in dev — its middleware intercepts /api/ routes
   // before Astro can serve them, breaking Keystatic's local API.
   adapter: isDev ? undefined : netlify(),

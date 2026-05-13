@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import MapMarquee from '../../components/contact/MapMarquee.astro';
+import Button from '../../components/ui/Button.astro';
 
 ---
 
@@ -88,13 +89,9 @@ import MapMarquee from '../../components/contact/MapMarquee.astro';
 
         <!-- Submit + inline error -->
         <div class="flex items-center gap-6 flex-wrap">
-          <button
-            id="contact-submit"
-            type="submit"
-            class="inline-flex items-center justify-center py-3 px-6 bg-accent hover:bg-accent-hover active:bg-accent-pressed text-headline font-body font-medium text-xl rounded-sm transition duration-fast disabled:opacity-40 disabled:cursor-not-allowed"
-          >
+          <Button id="contact-submit" type="submit" class="disabled:opacity-40 disabled:cursor-not-allowed">
             Send message
-          </button>
+          </Button>
           <p id="form-error" class="hidden text-error font-mono text-xs" role="alert"></p>
         </div>
       </form>

@@ -1,20 +1,17 @@
 ---
 import path from 'node:path';
-import { getCollection } from 'astro:content';
+import { getPublishedEntries } from '../../lib/content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Marquee from '../../components/layout/Marquee.astro';
 import BlogCard from '../../components/blog/BlogCard.astro';
 import CtaBand from '../../components/home/CtaBand.astro';
+import Button from '../../components/ui/Button.astro';
 import PhotoCredit from '../../components/layout/PhotoCredit.astro';
 import { getLogoVariant } from '../../lib/imageBrightness';
 import marqueeImage from '../../assets/images/marquee/blog-mobile.jpg';
 import marqueeImageWide from '../../assets/images/marquee/blog-wide.jpg';
 
-const allPosts = await getCollection('blog');
-const now = new Date();
-const posts = allPosts
-  .filter((p) => p.data.status === 'published' && p.data.publishedDate <= now)
-  .sort((a, b) => b.data.publishedDate.getTime() - a.data.publishedDate.getTime());
+const posts = await getPublishedEntries('blog');
 
 const marqueeImagePath = path.join(process.cwd(), 'src/assets/images/marquee/blog-wide.jpg');
 const logoVariant = await getLogoVariant(marqueeImagePath);
@@ -39,11 +36,22 @@ const logoVariant = await getLogoVariant(marqueeImagePath);
     </div>
 
     {posts.length > 0 ? (
-      <div>
-        {posts.map((post) => <BlogCard entry={post} />)}
-      </div>
+      <>
+        <div id="posts-list">
+          {posts.map((post, i) => (
+            <div data-post-index={i}>
+              <BlogCard entry={post} />
+            </div>
+          ))}
+        </div>
+
+        <!-- Load more — hidden until JS determines there are posts beyond PAGE_SIZE -->
+        <div id="load-more-wrap" hidden class="border-t border-subtle py-12 lg:py-16 flex justify-center">
+          <Button id="load-more-btn" variant="dark">Load more posts</Button>
+        </div>
+      </>
     ) : (
-      <p class="py-12 text-body text-muted">Posts coming soon.</p>
+      <p class="py-12 text-body text-muted">Posts coming soon. In the meantime, <a href="/contact/">let's talk</a>.</p>
     )}
 
   </div>
@@ -51,3 +59,35 @@ const logoVariant = await getLogoVariant(marqueeImagePath);
   <PhotoCredit credit='Marquee photo by <a href="https://unsplash.com/@redzeppelin?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Red Zeppelin</a> on <a href="https://unsplash.com/photos/assorted-title-book-lot-placed-on-white-wooden-shelf-4nulm-JUYFo?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>' />
   <CtaBand />
 </BaseLayout>
+
+<script>
+  // PAGE_SIZE controls how many posts are visible before "Load more" appears.
+  // In production this is 10. Pass ?pageSize=N in the URL to preview at a smaller threshold.
+  const PAGE_SIZE_DEFAULT = 10;
+  const params   = new URLSearchParams(window.location.search);
+  const pageSize = parseInt(params.get('pageSize') ?? '', 10) || PAGE_SIZE_DEFAULT;
+
+  const items = Array.from(document.querySelectorAll<HTMLElement>('[data-post-index]'));
+  const wrap  = document.getElementById('load-more-wrap') as HTMLElement | null;
+  const btn   = document.getElementById('load-more-btn') as HTMLButtonElement | null;
+
+  // No pagination needed — all posts fit on one page.
+  if (items.length <= pageSize || !wrap || !btn) return; // Script is a module; top-level return is fine.
+
+  let shown = pageSize;
+
+  function update() {
+    items.forEach((item, i) => { item.hidden = i >= shown; });
+    wrap!.hidden = shown >= items.length;
+  }
+
+  // Initial state: hide posts beyond PAGE_SIZE and reveal the button.
+  update();
+
+  btn.addEventListener('click', () => {
+    shown = Math.min(shown + pageSize, items.length);
+    update();
+    // Move focus to the first newly revealed post for keyboard/screen-reader users.
+    (items[shown - pageSize] as HTMLElement | undefined)?.focus();
+  });
+</script>

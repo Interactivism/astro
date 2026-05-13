@@ -1,6 +1,6 @@
 ---
 import path from 'node:path';
-import { getCollection } from 'astro:content';
+import { getPublishedEntries } from '../../lib/content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Marquee from '../../components/layout/Marquee.astro';
 import CaseStudyCard from '../../components/work/CaseStudyCard.astro';
@@ -14,11 +14,8 @@ import marqueeImageWide from '../../assets/images/marquee/work-wide.jpg';
 const sortYear = (cs: { data: { year: number; yearEnd?: number | 'present' } }) =>
   cs.data.yearEnd === 'present' ? Infinity : (cs.data.yearEnd ?? cs.data.year);
 
-// Published case studies, most-recently-active first
-const allCaseStudies = await getCollection('caseStudies');
-const now = new Date();
-const caseStudies = allCaseStudies
-  .filter((cs) => cs.data.status === 'published' && cs.data.publishedDate <= now)
+// Published case studies, most-recently-active first (custom sort by project year, not publish date)
+const caseStudies = (await getPublishedEntries('caseStudies'))
   .sort((a, b) => sortYear(b) - sortYear(a));
 
 // Build-time logo variant from the marquee image

@@ -21,8 +21,8 @@ The site has four content collections, each living under `src/content/`:
 
 Plus two supporting data files (not content collections — flat data files imported as needed):
 
-- `src/data/clients.json` — list of all clients for the Clients page and homepage logo wall
-- `src/data/homepage.json` — homepage composition (hero content + featured case studies + featured blog posts)
+- `src/data/clients.json` — list of all clients for the Clients page
+- `src/data/homepage.json` — homepage composition (hero content + featured case studies)
 
 ---
 
@@ -247,9 +247,11 @@ Blog post bodies can be `.md` (no components, pure markdown) or `.mdx` (with com
 | `<PullQuote>` | Same as case study — large blockquote |
 | `<Aside>` | Sidebar / callout |
 | `<ImageWithCaption>` | Image with optional caption |
+| `<ImageGrid>` | 2-up or 3-up image grid |
+| `<BeforeAfter>` | Paired images for before/after comparisons |
 | `<Code>` | Multi-line code with syntax highlighting (markdown fences also work) |
 
-Case-study-specific components (`<Stat>`, `<StatRow>`, `<BeforeAfter>`) are *not* available in blog posts. They belong to a different content type and shouldn't drift across.
+Case-study-specific components (`<Stat>`, `<StatRow>`) are *not* available in blog posts. They belong to a different content type and shouldn't drift across.
 
 ### Reading time
 
@@ -397,27 +399,9 @@ Not a content collection — a flat JSON data file at `src/data/clients.json`.
 
 ```json
 [
-  {
-    "name": "NASA",
-    "logo": "/logos/nasa.svg",
-    "url": "https://www.nasa.gov",
-    "caseStudy": "nasa-mission-planning",
-    "featured": true
-  },
-  {
-    "name": "Dollar Shave Club",
-    "logo": "/logos/dollar-shave-club.svg",
-    "url": "https://www.dollarshaveclub.com",
-    "caseStudy": "dollar-shave-club",
-    "featured": true
-  },
-  {
-    "name": "Acme Corp",
-    "logo": "/logos/acme.svg",
-    "url": null,
-    "caseStudy": null,
-    "featured": false
-  }
+  { "name": "NASA", "href": "/work/nasa-mission-planning/" },
+  { "name": "Dollar Shave Club", "href": "/work/dollar-shave-club/" },
+  { "name": "Acme Corp" }
 ]
 ```
 
@@ -426,12 +410,9 @@ Not a content collection — a flat JSON data file at `src/data/clients.json`.
 | Field | Type | Required | Notes |
 |---|---|---|---|
 | `name` | string | yes | Display name. |
-| `logo` | path | yes | Path to SVG in `public/logos/`. SVGs render inline; can inherit `currentColor` for hover states. |
-| `url` | url | no | Client's website. `null` if private/internal client. |
-| `caseStudy` | string | no | Slug of an existing case study. `null` if no public case study. Drives the "View work" link on the Clients page. |
-| `featured` | boolean | yes | Featured clients appear on the homepage logo wall (top 8–12). All clients appear on the Clients page. |
+| `href` | path | no | Link to a case study. Omit if no public case study. |
 
-The Clients page renders the list with case-study links where available; the homepage logo wall renders only `featured: true` entries.
+The Clients page renders all entries alphabetically, linking to the case study where `href` is set.
 
 ---
 
@@ -442,7 +423,7 @@ Not a content collection — a single flat data file at `src/data/homepage.json`
 The homepage has two distinct editorial surfaces:
 
 1. **The hero** — fixed studio positioning. Persists across case study rotations. Edit only when the studio's positioning evolves.
-2. **The featured case studies and blog posts** — editorial curation. Rotate as new work ships or as business priorities shift.
+2. **The featured case studies** — editorial curation. Rotate as new work ships or as business priorities shift.
 
 Keeping these separate means rotating the featured work doesn't disturb the hero, and updating the hero doesn't require touching every case study.
 
@@ -463,9 +444,6 @@ Keeping these separate means rotating the featured work doesn't disturb the hero
     "dollar-shave-club",
     "tvscientific",
     "nasa-mission-planning"
-  ],
-  "featuredBlogPosts": [
-    "why-we-stopped-using-design-systems"
   ]
 }
 ```
@@ -479,7 +457,6 @@ Keeping these separate means rotating the featured work doesn't disturb the hero
 | `hero.cta.label` | string | yes | Primary CTA button text. |
 | `hero.cta.href` | path | yes | CTA destination. Typically `/contact/`. |
 | `featuredCaseStudies` | string[] | yes | Slugs of case studies for the homepage slider (slides 2–N). 3–8 items. |
-| `featuredBlogPosts` | string[] | yes | Slugs of blog posts for the homepage blog teaser. 0–3 items. Empty array is valid (no blog teaser). |
 
 ### Validation rules
 
@@ -498,7 +475,7 @@ The order in each array is the display order on the homepage. Reorder by reorder
 
 ### Keystatic UI
 
-Renders as a Singleton with three field groups (hero, featured case studies, featured blog posts). The featured arrays use Keystatic's relationship-array field with reordering support — editors drag items to reorder, and the dropdown for adding new items only shows published content.
+Renders as a Singleton with two field groups (hero, featured case studies). The featured array uses Keystatic's relationship-array field with reordering support — editors drag items to reorder, and the dropdown for adding new items only shows published content.
 
 ### How the homepage slider uses this
 
@@ -520,7 +497,7 @@ This is one mechanism, not two — but the editorial inputs for slide 1 (the her
 // src/lib/content.ts
 import { getCollection } from 'astro:content';
 
-export async function getPublishedPosts(collection: 'blog' | 'caseStudies') {
+export async function getPublishedEntries(collection: 'blog' | 'caseStudies') {
   const all = await getCollection(collection);
   const now = new Date();
   return all
@@ -530,7 +507,7 @@ export async function getPublishedPosts(collection: 'blog' | 'caseStudies') {
 }
 ```
 
-This helper is the single chokepoint — every page that lists content goes through it. Don't bypass it.
+This helper is the single chokepoint — every page that lists content goes through it. Don't bypass it. The function is used on the blog index, work index, homepage, and RSS feed.
 
 ---
 
@@ -565,10 +542,8 @@ These are enforced at build time via Zod schemas in `src/content/config.ts`. Bui
 
 **Homepage data file:**
 - `featuredCaseStudies` slugs must each reference a published case study.
-- `featuredBlogPosts` slugs must each reference a published blog post.
 - `featuredCaseStudies` length: 3–8.
-- `featuredBlogPosts` length: 0–3.
-- No duplicate slugs in either array.
+- No duplicate slugs in the array.
 - `hero.image` must resolve to a real file in `public/`.
 
 When a build fails on validation, the error message points to the file and field. Fix in place rather than disabling validation.
@@ -612,6 +587,6 @@ When migrating WordPress content into these schemas:
 - **Service pages migrate from a three-level hierarchy to one consolidated page per service.** The live site has `/services/` → category (e.g. `/services/ux-design/`) → sub-category (e.g. `/services/ux-design/information-architecture/`). The new `services` collection collapses category and sub-category content into a single MDX file per service, with sub-category content becoming h2 sections. Sub-category URLs redirect to anchor sections on the consolidated page (see DESIGN.md "URL strategy & redirects").
 - **Authors are migrated from the live Team page.** Each team member with a bio on the current site becomes an entry in the `authors` collection. Bios likely need rewriting to fit the 200–400 character constraint — the live bios may be longer or shorter. Add the studio-byline "Interactivism" entry as a manual addition (it has no source on the live site). Authors must exist before any blog post that references them is migrated.
 - **Clients need to be inventoried.** The `clients.json` file is hand-built from the current site's client list, with `caseStudy` references added for clients that have public case studies.
-- **The homepage composition is hand-built.** `homepage.json` is a from-scratch editorial decision, not migrated content. The hero copy can carry forward from the live site's hero ("We design and develop digital experiences..."), but `featuredCaseStudies` and `featuredBlogPosts` are fresh choices about what to surface at launch. Author this file last, after the case studies and blog posts it references have been migrated and published.
+- **The homepage composition is hand-built.** `homepage.json` is a from-scratch editorial decision, not migrated content. The hero copy can carry forward from the live site's hero ("We design and develop digital experiences..."), but `featuredCaseStudies` is a fresh choice about what to surface at launch. Author this file last, after the case studies it references have been migrated and published.
 
 The full migration plan is in PROJECT.md. This document describes only the content shape; the migration sequence is separate.

@@ -1,18 +1,14 @@
 ---
 import path from 'node:path';
-import { getCollection } from 'astro:content';
+import { getPublishedEntries } from '../lib/content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Slider from '../components/home/Slider.astro';
 import { getLogoVariant } from '../lib/imageBrightness';
 import homepageData from '../data/homepage.json';
 
 // Resolve featured case studies — skip missing or non-published slugs.
-const allCaseStudies = await getCollection('caseStudies');
-const now = new Date();
 const publishedBySlug = new Map(
-  allCaseStudies
-    .filter((cs) => cs.data.status === 'published' && cs.data.publishedDate <= now)
-    .map((cs) => [cs.id, cs])
+  (await getPublishedEntries('caseStudies')).map((cs) => [cs.id, cs])
 );
 const featuredCaseStudies = homepageData.featuredCaseStudies
   .map((slug) => publishedBySlug.get(slug))

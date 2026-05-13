@@ -25,6 +25,7 @@
  */
 import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
+import Button from '../ui/Button.astro';
 
 interface HeroCta { label: string; href: string; }
 interface HeroData { headline: string; image: string; cta: HeroCta; tag?: string; }
@@ -85,12 +86,7 @@ const tagClass      = 'inline-flex items-center bg-ink-900 text-inverse font-mon
       <div class={tagClass}>{heroTag}</div>
       <h1 class={headlineClass} style={headlineStyle} tabindex="-1">{hero.headline}</h1>
       <div class="mt-8 lg:mt-12">
-        <a
-          href={hero.cta.href}
-          class="inline-flex items-center justify-center py-3 px-6 bg-accent text-headline font-body font-medium text-xl rounded-sm hover:bg-accent-hover active:bg-accent-pressed transition duration-fast"
-        >
-          {hero.cta.label}
-        </a>
+        <Button href={hero.cta.href}>{hero.cta.label}</Button>
       </div>
     </div>
   </div>
@@ -126,20 +122,8 @@ const tagClass      = 'inline-flex items-center bg-ink-900 text-inverse font-mon
             <div class={tagClass}>{cs.data.client}</div>
             <h2 class={headlineClass} style={headlineStyle} tabindex="-1">{cs.data.title}</h2>
             <div class="mt-8 lg:mt-12 flex items-center gap-4 flex-wrap-reverse lg:pr-64">
-              <a
-                href="/contact/"
-                tabindex="-1"
-                class="inline-flex items-center justify-center py-3 px-6 bg-accent text-headline font-body font-medium text-xl rounded-sm hover:bg-accent-hover active:bg-accent-pressed transition duration-fast"
-              >
-                Let’s talk
-              </a>
-              <a
-                href={`/work/${cs.id}/`}
-                tabindex="-1"
-                class="inline-flex items-center justify-center py-3 px-6 bg-paper-0/[66%] text-headline font-body font-medium text-xl rounded-sm hover:bg-paper-0/90 transition duration-fast"
-              >
-                View project
-              </a>
+              <Button href="/contact/" tabindex="-1">Let’s talk</Button>
+              <Button href={`/work/${cs.id}/`} variant="ghost" tabindex="-1">View project</Button>
             </div>
           </div>
         </div>
@@ -218,6 +202,12 @@ const tagClass      = 'inline-flex items-center bg-ink-900 text-inverse font-mon
 
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (reduceMotion) slides.forEach(s => { s.style.transitionDuration = '0ms'; });
+
+  // paused = true means auto-advance has been permanently stopped by user interaction.
+  // Hover/focus temporarily cancel the timer without setting this flag;
+  // explicit navigation (pagination, swipe) sets it and never restarts.
+  // Also permanently disabled when prefers-reduced-motion is set.
+  let paused = reduceMotion;
 
   // ── Logo variant (desktop only) ────────────────────────────────
   // Samples the logo region (80×80 inset, 200×200px crop) of the active
@@ -334,7 +324,7 @@ const tagClass      = 'inline-flex items-center bg-ink-900 text-inverse font-mon
     if (nextImg) scheduleLogo(nextImg);
 
     next.querySelector<HTMLElement>('h1, h2')?.focus({ preventScroll: true });
-    resetAdvance();
+    stopAdvance();
   }
 
   // ── Auto-advance ───────────────────────────────────────────────
@@ -366,9 +356,9 @@ const tagClass      = 'inline-flex items-center bg-ink-900 text-inverse font-mon
     timer = setTimeout(tick, 5000);
   }
 
-  function startAdvance()  { if (!timer) timer = setTimeout(tick, 5000); }
+  function startAdvance()  { if (!paused && !timer) timer = setTimeout(tick, 5000); }
   function cancelAdvance() { if (timer) { clearTimeout(timer); timer = null; } }
-  function resetAdvance()  { cancelAdvance(); startAdvance(); }
+  function stopAdvance()   { paused = true; cancelAdvance(); }
 
   startAdvance();
 

@@ -1,14 +1,9 @@
 import rss from '@astrojs/rss';
-import { getCollection } from 'astro:content';
+import { getPublishedEntries } from '../lib/content';
 import type { APIContext } from 'astro';
 
 export async function GET(context: APIContext) {
-  const allPosts = await getCollection('blog');
-  const now = new Date();
-
-  const posts = allPosts
-    .filter((p) => p.data.status === 'published' && p.data.publishedDate <= now)
-    .sort((a, b) => b.data.publishedDate.getTime() - a.data.publishedDate.getTime());
+  const posts = await getPublishedEntries('blog');
 
   return rss({
     title: 'Interactivism',

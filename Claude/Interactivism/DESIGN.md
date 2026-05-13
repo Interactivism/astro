@@ -241,8 +241,7 @@ Horizontal page padding: `px-6` mobile, `px-6 lg:px-12` desktop (two-step, no in
 | Token | Value | Use |
 |---|---|---|
 | `rounded-none` | 0 | Default for editorial elements (case study images, hero) |
-| `rounded-sm` | 4px | Form inputs, small UI |
-| `rounded-md` | 8px | Buttons, cards |
+| `rounded-sm` | 4px | Buttons, form inputs, small UI |
 | `rounded-full` | 9999px | Pills, avatars |
 
 ### Shadows
@@ -328,26 +327,29 @@ Elements, in order:
 
 ### Buttons
 
-Two variants, one size.
+Three variants, one size. Implemented as `src/components/ui/Button.astro` — renders an `<a>` when `href` is provided, a `<button>` otherwise.
 
-- **Primary** — `accent.surface` background, `text.headline` label. Used for primary CTAs ("Let's talk", "Get in touch").
-- **Secondary** — `accent.subtle` background, `text.headline` label. Used for paired CTAs ("View project").
+- **Primary** (`variant="primary"`) — `accent.surface` background, `text.headline` label. Used for primary CTAs ("Let's talk", "Get in touch").
+- **Ghost** (`variant="ghost"`) — `paper-0` @ 66% opacity background, `text.headline` label. Used over dark hero images and marquee overlays (e.g. "View project" on work slides).
+- **Dark** (`variant="dark"`) — `ink-900` background, `text.inverse` label. Used for secondary actions on light surfaces (e.g. "Load more posts" on the blog index).
 
 Button labels are **sentence case** — not ALL CAPS. No `uppercase` or `tracking-widest` on button text.
 
-Sizing: `text-xl` (24px), `h-14` height (56px), `px-8` horizontal padding. Single size across the site. Hero CTAs use the same button at the same size — hierarchy comes from surrounding type and space, not from a larger button variant.
+Sizing: `text-xl` (24px), `py-3 px-6` padding, `rounded-sm` (4px radius). Single size across the site. Hero CTAs use the same button at the same size — hierarchy comes from surrounding type and space, not from a larger button variant.
 
-States follow the global interactive-state definitions: `default`, `hover`, `pressed`, `disabled`. Focus ring uses `accent.text` at 2px offset.
+States follow the global interactive-state definitions: `default`, `hover`, `pressed`, `disabled`. Focus ring uses `accent.text` at 2px offset. Disabled state: `opacity-40`, `cursor-not-allowed`.
+
+**Component:** `src/components/ui/Button.astro`
 
 ### Text links
 
-Single component, `<TextLink>`. Optional `withArrow` prop appends a right-arrow glyph for "Learn more" / jump-link contexts.
+Text links are styled globally via a base `a` rule in `global.css` — there is no separate `<TextLink>` component.
 
-- Default: `accent.text` color, weight 500, no underline.
+- Default: `ink-900` color, weight 500, no underline.
 - Hover: underline appears in `accent.surface` (yellow), text color unchanged.
 - Pressed: underline darkens per `state.pressed`.
 
-Nav links are styled within the Header component, not via `<TextLink>`.
+Nav links are styled within the Header component and override these defaults.
 
 ### Icons
 
@@ -512,8 +514,8 @@ The manifest declares `name: "Interactivism"`, `theme_color: #F2DB07` (brand-yel
 
 ### Empty, loading, and error states
 
-- **Blog with zero posts:** "We're working on something. Check back soon." + link to Contact.
-- **Form submit success:** inline confirmation replaces the form: "Thanks — we'll be in touch within a few business days."
+- **Blog with zero posts:** "Posts coming soon. In the meantime, [let's talk](/contact/)."
+- **Form submit success:** inline confirmation replaces the form: "Thanks — we'll be in touch within one business day."
 - **Form submit failure:** error message above submit button, form fields preserved.
 - **404 page:** custom page with oversized "shrug" ASCII art, "We couldn't find that page. It's us, not you." and links back to Home, Work, and Contact.
 - **Slow image load:** `surface.alt` placeholder holds aspect ratio until image arrives; no spinner.
@@ -534,11 +536,14 @@ See CONTENT.md "Homepage (data file)" for the schema and editorial workflow.
 
 **Slider behavior (accessibility-critical for the Lighthouse 90+ target):**
 
-- **Keyboard support:** left/right arrow keys advance slides when the slider region has focus.
-- **Touch:** swipe left/right on mobile and tablet.
+- **Auto-advance:** slides change every 5 seconds automatically.
+- **Pause on hover / focus:** hovering or focusing inside the slider region temporarily suspends auto-advance; it resumes on mouse leave / blur. This is non-destructive — auto-advance can restart.
+- **Permanent stop on explicit navigation (WCAG 2.2.2):** clicking the pagination controls or swiping permanently stops auto-advance for the remainder of the page session. It does not restart on hover leave or focus blur.
+- **Reduced motion:** if `prefers-reduced-motion` is set, auto-advance is disabled entirely and slide transitions are instant.
+- **Keyboard support:** left/right arrow keys advance slides when the slider region has focus (also triggers the permanent stop).
+- **Touch:** swipe left/right on mobile and tablet (also triggers the permanent stop).
 - **Focus management:** when a slide changes, focus moves to the new slide's heading. Hidden slides are `aria-hidden="true"` and not focusable.
-- **Reduced motion:** if `prefers-reduced-motion` is set, slide transitions are instant (no slide animation).
-- Slider container has `role="region"` and `aria-label="Featured work"`.
+- Slider container has `role="region"`, `aria-label="Featured work"`, and `aria-roledescription="carousel"`.
 
 **Component:** `src/components/home/Slider.astro` (or `.tsx` for the interactive logic).
 
@@ -576,7 +581,7 @@ Marquee at top using `src/assets/images/marquee/team.jpg` (frozen-slice logo kno
 
 ### Blog index
 
-Marquee at top using `src/assets/images/marquee/blog.jpg`. Reverse-chronological list of posts below. Pagination after 10–12 posts.
+Marquee at top using `src/assets/images/marquee/blog.jpg`. Reverse-chronological list of posts below. A **"Load more posts"** button (dark variant) appears after 10 posts and loads the next 10 on click. All posts are server-rendered for SEO and no-JS resilience; JS hides posts beyond the threshold and reveals the button. To preview the button with fewer than 10 posts, append `?pageSize=N` to the URL.
 
 ### Contact page
 
@@ -607,7 +612,7 @@ The new site's URL structure is intentionally flatter than the live site. Most p
 /404                                Custom 404 page
 ```
 
-Trailing slashes are consistent across the site (always present on directory-style URLs). Astro's `trailingSlash` config option locks this in.
+Trailing slashes are consistent across the site (always present on directory-style URLs). Astro's `trailingSlash` config option is set to `'always'` in production and `'ignore'` in development — the `'ignore'` setting is required in dev so that Keystatic's API routes (which call endpoints without trailing slashes) are not 404'd by the dev server.
 
 ### Redirects (built during migration, lives in `netlify.toml`)
 

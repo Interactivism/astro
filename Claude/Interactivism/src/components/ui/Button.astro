@@ -1,0 +1,56 @@
+---
+/**
+ * Primary action button — renders as <a> when href is provided, <button> otherwise.
+ *
+ * Variants:
+ *   primary (default) — solid brand-yellow CTA
+ *   ghost             — translucent white; used over dark hero images
+ *   dark              — ink-900 background, inverse text; secondary action on light surfaces
+ *
+ * Usage:
+ *   <Button href="/contact/">Let's talk</Button>
+ *   <Button href="/work/acme/" variant="ghost">View project</Button>
+ *   <Button type="submit" id="contact-submit">Send message</Button>
+ *   <Button id="load-more-btn" variant="dark">Load more posts</Button>
+ */
+
+interface Props {
+  href?:    string;
+  variant?: 'primary' | 'ghost' | 'dark';
+  type?:    'button' | 'submit' | 'reset';
+  id?:      string;
+  tabindex?: string | number;
+  class?:   string;
+  [key: string]: unknown;
+}
+
+const {
+  href,
+  variant = 'primary',
+  type = 'button',
+  id,
+  tabindex,
+  class: className,
+  ...rest
+} = Astro.props;
+
+const base = 'inline-flex items-center justify-center py-3 px-6 font-body font-medium text-xl rounded-sm transition duration-fast';
+
+const variants = {
+  primary: 'bg-accent text-headline hover:bg-accent-hover active:bg-accent-pressed',
+  ghost:   'bg-paper-0/[66%] text-headline hover:bg-paper-0/90',
+  dark:    'bg-ink-900 text-inverse hover:bg-ink-700 active:bg-ink-900',
+};
+
+const cls = [base, variants[variant], className].filter(Boolean).join(' ');
+---
+
+{href ? (
+  <a href={href} id={id} tabindex={tabindex} class={cls} {...rest}>
+    <slot />
+  </a>
+) : (
+  <button type={type} id={id} tabindex={tabindex} class={cls} {...rest}>
+    <slot />
+  </button>
+)}
