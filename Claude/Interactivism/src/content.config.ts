@@ -73,10 +73,12 @@ const caseStudies = defineCollection({
     z.object({
       title: z.string().max(80),
       client: z.string(),
-      // References an ID in the authors collection. Optional — omit to attribute to Interactivism.
-      author: z.string().optional(),
       publishedDate: z.coerce.date(),
       status: z.enum(['draft', 'published']),
+      // Auto-stamped by the pre-commit git hook. Not set on entries that have
+      // never been committed since the hook was introduced.
+      lastUpdatedBy: z.string().optional(),
+      lastUpdatedAt: z.string().optional(),
       summary: z.string().min(100).max(160),
       heroImage: image().optional(),
       heroImageWide: image().optional(),

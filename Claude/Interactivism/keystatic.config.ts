@@ -89,7 +89,7 @@ export default config({
       format: { contentField: 'content' },
       entryLayout: 'content',
       previewUrl: '/preview/work/{slug}/',
-      columns: ['client', 'author', 'status'],
+      columns: ['client', 'lastUpdatedBy', 'status'],
       schema: {
         title: fields.slug({
           name: {
@@ -100,11 +100,6 @@ export default config({
         client: fields.text({
           label: 'Client',
           validation: { isRequired: true },
-        }),
-        author: fields.relationship({
-          label: 'Author',
-          description: 'Leave blank to attribute to Interactivism.',
-          collection: 'authors',
         }),
         publishedDate: fields.date({
           label: 'Published Date',
@@ -117,6 +112,14 @@ export default config({
             { label: 'Published', value: 'published' },
           ],
           defaultValue: 'draft',
+        }),
+        lastUpdatedBy: fields.text({
+          label: 'Last Updated By',
+          description: 'Auto-stamped by git hook on commit (git config user.name). Do not edit manually.',
+        }),
+        lastUpdatedAt: fields.text({
+          label: 'Last Updated At',
+          description: 'ISO timestamp. Auto-stamped by git hook on commit. Do not edit manually.',
         }),
         summary: fields.text({
           label: 'Summary',
