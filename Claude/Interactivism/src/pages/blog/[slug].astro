@@ -96,8 +96,6 @@ if (heroImageWide) {
       <Marquee heroImage={heroImage} heroImageWide={heroImageWide} alt="" />
     </div>
   )}
-  {heroImage && heroImageWide && <PhotoCredit credit={credit} />}
-
   <div class="px-6 lg:px-12 max-w-content mx-auto">
 
     <!-- ── Title — full width ──────────────────────────────────── -->
@@ -223,6 +221,7 @@ if (heroImageWide) {
 
   </div>
 
+  {heroImage && heroImageWide && <PhotoCredit credit={credit} />}
   <CtaBand />
 
 </BaseLayout>

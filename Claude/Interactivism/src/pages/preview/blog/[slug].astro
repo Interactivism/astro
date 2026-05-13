@@ -95,8 +95,6 @@ const credit = buildCredit(photoCredit);
       <Marquee heroImage={heroImage} heroImageWide={heroImageWide} alt="" />
     </div>
   )}
-  {heroImage && heroImageWide && <PhotoCredit credit={credit} />}
-
   <div class="px-6 lg:px-12 max-w-content mx-auto">
 
     <h1 class="font-display leading-display text-headline pt-16 lg:pt-24 pb-12 lg:pb-16">
@@ -189,6 +187,7 @@ const credit = buildCredit(photoCredit);
 
   </div>
 
+  {heroImage && heroImageWide && <PhotoCredit credit={credit} />}
   <CtaBand />
 
 </BaseLayout>
