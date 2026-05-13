@@ -59,12 +59,20 @@ if (heroImageWide) {
   }
 }
 
-// Photo credit string — "Marquee photo by [name]" or "Marquee photo by [name] on [platform]"
-const credit = photoCredit?.photographer
-  ? photoCredit.platform
-    ? `Marquee photo by ${photoCredit.photographer} on ${photoCredit.platform}`
-    : `Marquee photo by ${photoCredit.photographer}`
-  : undefined;
+// Photo credit HTML — links photographer name and platform when URLs are provided.
+// Renders nothing when photographer is blank.
+function buildCredit(pc: typeof photoCredit): string | undefined {
+  if (!pc?.photographer) return undefined;
+  const name = pc.photographerUrl
+    ? `<a href="${pc.photographerUrl}">${pc.photographer}</a>`
+    : pc.photographer;
+  if (!pc.platform) return `Marquee photo by ${name}`;
+  const platform = pc.platformUrl
+    ? `<a href="${pc.platformUrl}">${pc.platform}</a>`
+    : pc.platform;
+  return `Marquee photo by ${name} on ${platform}`;
+}
+const credit = buildCredit(photoCredit);
 
 const SERVICE_LABELS: Record<string, string> = {
   'product-design':       'Product Design',

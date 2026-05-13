@@ -80,7 +80,9 @@ const caseStudies = defineCollection({
       heroImageWide: image().optional(),
       photoCredit: z.object({
         photographer: z.string().optional(),
+        photographerUrl: z.string().url().optional(),
         platform: z.string().optional(),
+        platformUrl: z.string().url().optional(),
       }).optional(),
       ogImage: image().optional(),
       services: z.array(z.enum(SERVICE_IDS)).min(1),
