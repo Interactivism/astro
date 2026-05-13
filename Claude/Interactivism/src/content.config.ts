@@ -76,8 +76,12 @@ const caseStudies = defineCollection({
       publishedDate: z.coerce.date(),
       status: z.enum(['draft', 'published']),
       summary: z.string().min(100).max(160),
-      heroImage: image(),
-      heroImageWide: image(),
+      heroImage: image().optional(),
+      heroImageWide: image().optional(),
+      photoCredit: z.object({
+        photographer: z.string().optional(),
+        platform: z.string().optional(),
+      }).optional(),
       ogImage: image().optional(),
       services: z.array(z.enum(SERVICE_IDS)).min(1),
       industry: z.enum(INDUSTRY_IDS),
@@ -125,6 +129,10 @@ const blog = defineCollection({
         summary: z.string().min(100).max(200),
         heroImage: image().optional(),
         heroImageWide: image().optional(),
+        photoCredit: z.object({
+          photographer: z.string().optional(),
+          platform: z.string().optional(),
+        }).optional(),
         ogImage: image().optional(),
         tags: z.array(z.string()).optional(),
         // Only set when republishing from another platform (e.g. Medium).

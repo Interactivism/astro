@@ -106,14 +106,23 @@ const tagClass      = 'inline-flex items-center bg-ink-900 text-inverse font-mon
           aria-hidden="true"
           class="absolute inset-0 opacity-0 pointer-events-none transition-opacity duration-500"
         >
-          <Image
-            src={cs.data.heroImage}
-            alt=""
-            class="absolute inset-0 w-full h-full object-cover"
-            width={1920}
-            height={1080}
-            loading="lazy"
-          />
+          {cs.data.heroImage ? (
+            <Image
+              src={cs.data.heroImage}
+              alt=""
+              class="absolute inset-0 w-full h-full object-cover"
+              width={1920}
+              height={1080}
+              loading="lazy"
+            />
+          ) : (
+            <img
+              src="/placeholders/hero-placeholder.svg"
+              alt=""
+              class="absolute inset-0 w-full h-full object-cover"
+              aria-hidden="true"
+            />
+          )}
           <div class="absolute inset-0 bg-gradient-to-b from-ink-900/55 via-transparent to-transparent pointer-events-none" />
           <div class="absolute inset-0 bg-gradient-to-t from-ink-900/70 via-ink-900/10 to-transparent pointer-events-none" />
 

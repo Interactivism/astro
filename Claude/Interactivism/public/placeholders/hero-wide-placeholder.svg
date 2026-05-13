@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2400 600" preserveAspectRatio="xMidYMid slice">
+  <rect width="2400" height="600" fill="#BCC4CC"/>
+  <!-- Sun -->
+  <circle cx="680" cy="210" r="70" fill="#D6DCE2"/>
+  <!-- Back hills -->
+  <path d="M0,420 C480,200 1000,360 1400,270 C1800,180 2100,330 2400,270 L2400,600 L0,600 Z" fill="#D6DCE2"/>
+  <!-- Front hills -->
+  <path d="M0,500 C320,360 740,460 1200,400 C1660,340 2060,440 2400,390 L2400,600 L0,600 Z" fill="#E3E8EC"/>
+</svg>

@@ -71,23 +71,23 @@ const logoVariant = await getLogoVariant(marqueeImagePath);
   const wrap  = document.getElementById('load-more-wrap') as HTMLElement | null;
   const btn   = document.getElementById('load-more-btn') as HTMLButtonElement | null;
 
-  // No pagination needed — all posts fit on one page.
-  if (items.length <= pageSize || !wrap || !btn) return; // Script is a module; top-level return is fine.
+  // Only activate pagination when there are more posts than the page size.
+  if (items.length > pageSize && wrap && btn) {
+    let shown = pageSize;
 
-  let shown = pageSize;
+    function update() {
+      items.forEach((item, i) => { item.hidden = i >= shown; });
+      wrap!.hidden = shown >= items.length;
+    }
 
-  function update() {
-    items.forEach((item, i) => { item.hidden = i >= shown; });
-    wrap!.hidden = shown >= items.length;
-  }
-
-  // Initial state: hide posts beyond PAGE_SIZE and reveal the button.
-  update();
-
-  btn.addEventListener('click', () => {
-    shown = Math.min(shown + pageSize, items.length);
+    // Initial state: hide posts beyond PAGE_SIZE and reveal the button.
     update();
-    // Move focus to the first newly revealed post for keyboard/screen-reader users.
-    (items[shown - pageSize] as HTMLElement | undefined)?.focus();
-  });
+
+    btn.addEventListener('click', () => {
+      shown = Math.min(shown + pageSize, items.length);
+      update();
+      // Move focus to the first newly revealed post for keyboard/screen-reader users.
+      (items[shown - pageSize] as HTMLElement | undefined)?.focus();
+    });
+  }
 </script>

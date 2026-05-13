@@ -124,18 +124,32 @@ export default config({
         // '../{slug}/hero.jpg' resolves correctly from {slug}/index.mdx in Astro.
         heroImage: fields.image({
           label: 'Hero Image (16:9)',
-          description: 'Mobile hero and Work index card. Source min 1920px wide.',
+          description: 'Mobile hero and Work index card. Source min 1920px wide. A placeholder is shown when omitted.',
           directory: 'src/content/caseStudies',
           publicPath: './',
-          validation: { isRequired: true },
         }),
         heroImageWide: fields.image({
           label: 'Hero Image Wide (4:1)',
-          description: 'Desktop marquee. Source min 2400px wide.',
+          description: 'Desktop marquee. Source min 2400px wide. A placeholder is shown when omitted.',
           directory: 'src/content/caseStudies',
           publicPath: './',
-          validation: { isRequired: true },
         }),
+        photoCredit: fields.object(
+          {
+            photographer: fields.text({
+              label: 'Photographer name',
+              description: 'Leave blank to hide the photo credit entirely.',
+            }),
+            platform: fields.text({
+              label: 'Platform',
+              description: 'e.g. "Unsplash". Leave blank to omit.',
+            }),
+          },
+          {
+            label: 'Photo Credit',
+            description: 'Renders as "Marquee photo by [name]" or "Marquee photo by [name] on [platform]".',
+          }
+        ),
         ogImage: fields.image({
           label: 'OG Image (optional)',
           description: '1200×630px. Falls back to the default OG image if omitted.',
@@ -349,15 +363,32 @@ export default config({
         }),
         heroImage: fields.image({
           label: 'Hero Image (16:9)',
+          description: 'Optional. A placeholder is shown when omitted.',
           directory: 'src/content/blog',
           publicPath: '../../content/blog/',
         }),
         heroImageWide: fields.image({
           label: 'Hero Image Wide (4:1)',
-          description: 'Required when Hero Image is set.',
+          description: 'Required when Hero Image is set. A placeholder is shown when omitted.',
           directory: 'src/content/blog',
           publicPath: '../../content/blog/',
         }),
+        photoCredit: fields.object(
+          {
+            photographer: fields.text({
+              label: 'Photographer name',
+              description: 'Leave blank to hide the photo credit entirely.',
+            }),
+            platform: fields.text({
+              label: 'Platform',
+              description: 'e.g. "Unsplash". Leave blank to omit.',
+            }),
+          },
+          {
+            label: 'Photo Credit',
+            description: 'Renders as "Marquee photo by [name]" or "Marquee photo by [name] on [platform]".',
+          }
+        ),
         ogImage: fields.image({
           label: 'OG Image (optional)',
           directory: 'src/content/blog',

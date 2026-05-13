@@ -11,6 +11,7 @@ import YouTube from '../../components/case-study/YouTube.astro';
 import ImageWithCaption from '../../components/case-study/ImageWithCaption.astro';
 import PullQuote from '../../components/case-study/PullQuote.astro';
 import Aside from '../../components/case-study/Aside.astro';
+import PhotoCredit from '../../components/layout/PhotoCredit.astro';
 
 export async function getStaticPaths() {
   const allPosts = await getCollection('blog');
@@ -30,7 +31,14 @@ export async function getStaticPaths() {
 }
 
 const { entry, prevEntry, nextEntry } = Astro.props;
-const { title, summary, author: authorId, publishedDate, tags, heroImage, heroImageWide, ogImage } = entry.data;
+const { title, summary, author: authorId, publishedDate, tags, heroImage, heroImageWide, photoCredit, ogImage } = entry.data;
+
+// Photo credit string — "Marquee photo by [name]" or "Marquee photo by [name] on [platform]"
+const credit = photoCredit?.photographer
+  ? photoCredit.platform
+    ? `Marquee photo by ${photoCredit.photographer} on ${photoCredit.platform}`
+    : `Marquee photo by ${photoCredit.photographer}`
+  : undefined;
 
 const { Content } = await render(entry);
 const authorEntry = await getEntry('authors', authorId);
@@ -77,6 +85,7 @@ if (heroImageWide) {
       <Marquee heroImage={heroImage} heroImageWide={heroImageWide} alt="" />
     </div>
   )}
+  {heroImage && heroImageWide && <PhotoCredit credit={credit} />}
 
   <div class="px-6 lg:px-12 max-w-content mx-auto">
 

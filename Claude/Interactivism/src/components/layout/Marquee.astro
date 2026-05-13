@@ -21,10 +21,10 @@ import { Image, getImage } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
 
 interface Props {
-  /** 16:9 image — shown on mobile */
-  heroImage: ImageMetadata;
-  /** 4:1 image — shown on desktop */
-  heroImageWide: ImageMetadata;
+  /** 16:9 image — shown on mobile. Shows placeholder when omitted. */
+  heroImage?: ImageMetadata;
+  /** 4:1 image — shown on desktop. Shows placeholder when omitted. */
+  heroImageWide?: ImageMetadata;
   /** Decorative alt text (empty by default) */
   alt?: string;
 }
@@ -32,8 +32,10 @@ interface Props {
 const { heroImage, heroImageWide, alt = '' } = Astro.props;
 
 // Resolve a URL for the frozen-slice <img> (which uses raw CSS sizing).
-// getImage processes it through Astro's pipeline and returns a stable src URL.
-const frozenSrc = (await getImage({ src: heroImageWide })).src;
+// Falls back to the wide placeholder SVG when no image is set.
+const frozenSrc = heroImageWide
+  ? (await getImage({ src: heroImageWide })).src
+  : '/placeholders/hero-wide-placeholder.svg';
 ---
 
 <!--
@@ -43,26 +45,44 @@ const frozenSrc = (await getImage({ src: heroImageWide })).src;
            overflow-hidden clips the negative-margin shift.
 -->
 <div class="w-full overflow-hidden lg:w-screen lg:-ml-[360px] aspect-[16/9] lg:aspect-[4/1] lg:min-h-[300px] relative">
-  <!-- Mobile image (16:9) -->
-  <Image
-    src={heroImage}
-    alt={alt}
-    width={900}
-    height={506}
-    class="lg:hidden absolute inset-0 w-full h-full object-cover"
-    loading="eager"
-    fetchpriority="high"
-  />
-  <!-- Desktop image (4:1) -->
-  <Image
-    src={heroImageWide}
-    alt={alt}
-    width={2400}
-    height={600}
-    class="hidden lg:block absolute inset-0 w-full h-full object-cover"
-    loading="eager"
-    fetchpriority="high"
-  />
+  <!-- Mobile image (16:9) — real image or placeholder -->
+  {heroImage ? (
+    <Image
+      src={heroImage}
+      alt={alt}
+      width={900}
+      height={506}
+      class="lg:hidden absolute inset-0 w-full h-full object-cover"
+      loading="eager"
+      fetchpriority="high"
+    />
+  ) : (
+    <img
+      src="/placeholders/hero-placeholder.svg"
+      alt=""
+      class="lg:hidden absolute inset-0 w-full h-full object-cover"
+      aria-hidden="true"
+    />
+  )}
+  <!-- Desktop image (4:1) — real image or placeholder -->
+  {heroImageWide ? (
+    <Image
+      src={heroImageWide}
+      alt={alt}
+      width={2400}
+      height={600}
+      class="hidden lg:block absolute inset-0 w-full h-full object-cover"
+      loading="eager"
+      fetchpriority="high"
+    />
+  ) : (
+    <img
+      src="/placeholders/hero-wide-placeholder.svg"
+      alt=""
+      class="hidden lg:block absolute inset-0 w-full h-full object-cover"
+      aria-hidden="true"
+    />
+  )}
 </div>
 
 <!--

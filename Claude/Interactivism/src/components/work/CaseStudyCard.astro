@@ -42,13 +42,22 @@ const SERVICE_LABELS: Record<string, string> = {
   <a href={href} class="group block">
     <!-- Hero image with client tag -->
     <div class="relative aspect-[16/9] overflow-hidden mb-6">
-      <Image
-        src={heroImage}
-        alt=""
-        width={800}
-        height={450}
-        class="w-full h-full object-cover transition duration-DEFAULT group-hover:scale-[1.03]"
-      />
+      {heroImage ? (
+        <Image
+          src={heroImage}
+          alt=""
+          width={800}
+          height={450}
+          class="w-full h-full object-cover transition duration-DEFAULT group-hover:scale-[1.03]"
+        />
+      ) : (
+        <img
+          src="/placeholders/hero-placeholder.svg"
+          alt=""
+          class="w-full h-full object-cover"
+          aria-hidden="true"
+        />
+      )}
       <!-- Client tag -->
       <div class="absolute bottom-8 left-0 lg:bottom-11">
         <span class="inline-flex items-center bg-ink-900 text-inverse font-mono text-xs uppercase tracking-widest px-3 py-1.5">
