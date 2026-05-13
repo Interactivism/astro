@@ -140,7 +140,7 @@ export default config({
               label: 'Photographer name',
               description: 'Leave blank to hide the photo credit entirely.',
             }),
-            photographerUrl: fields.url({
+            photographerUrl: fields.text({
               label: 'Photographer URL',
               description: 'Link to the photographer\'s profile page.',
             }),
@@ -148,7 +148,7 @@ export default config({
               label: 'Platform',
               description: 'e.g. "Unsplash". Leave blank to omit.',
             }),
-            platformUrl: fields.url({
+            platformUrl: fields.text({
               label: 'Platform URL',
               description: 'Link to the specific photo on the platform.',
             }),
@@ -388,7 +388,7 @@ export default config({
               label: 'Photographer name',
               description: 'Leave blank to hide the photo credit entirely.',
             }),
-            photographerUrl: fields.url({
+            photographerUrl: fields.text({
               label: 'Photographer URL',
               description: 'Link to the photographer\'s profile page.',
             }),
@@ -396,7 +396,7 @@ export default config({
               label: 'Platform',
               description: 'e.g. "Unsplash". Leave blank to omit.',
             }),
-            platformUrl: fields.url({
+            platformUrl: fields.text({
               label: 'Platform URL',
               description: 'Link to the specific photo on the platform.',
             }),
