@@ -89,6 +89,7 @@ export default config({
       format: { contentField: 'content' },
       entryLayout: 'content',
       previewUrl: '/preview/work/{slug}/',
+      columns: ['client', 'author', 'status'],
       schema: {
         title: fields.slug({
           name: {
@@ -99,6 +100,11 @@ export default config({
         client: fields.text({
           label: 'Client',
           validation: { isRequired: true },
+        }),
+        author: fields.relationship({
+          label: 'Author',
+          description: 'Leave blank to attribute to Interactivism.',
+          collection: 'authors',
         }),
         publishedDate: fields.date({
           label: 'Published Date',

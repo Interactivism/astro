@@ -73,6 +73,8 @@ const caseStudies = defineCollection({
     z.object({
       title: z.string().max(80),
       client: z.string(),
+      // References an ID in the authors collection. Optional — omit to attribute to Interactivism.
+      author: z.string().optional(),
       publishedDate: z.coerce.date(),
       status: z.enum(['draft', 'published']),
       summary: z.string().min(100).max(160),
