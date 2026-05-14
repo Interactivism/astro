@@ -41,7 +41,7 @@ function setFrontmatterField(md: string, key: string, value: string): string {
 }
 
 function editorName(): string {
-  const env = (process.env.KEYSTATIC_EDITOR_NAME ?? '').trim();
+  const env = (import.meta.env.KEYSTATIC_EDITOR_NAME ?? '').trim();
   if (env) return env;
   try { return execSync('git config user.name', { encoding: 'utf8' }).trim(); } catch (_) {}
   try { return execSync('git config user.email', { encoding: 'utf8' }).trim(); } catch (_) {}
@@ -53,7 +53,7 @@ async function stampRequest(request: Request): Promise<Request> {
   // TODO (go-live): extend this to GitHub mode. Options: (a) extract the GitHub
   // user from the Keystatic session JWT (signed with KEYSTATIC_SECRET), or (b)
   // a GitHub Actions workflow that stamps frontmatter after Keystatic commits.
-  if (process.env.NODE_ENV !== 'development') return request;
+  if (!import.meta.env.DEV) return request;
 
   // Only intercept POST …/update
   const path = new URL(request.url, 'https://x').pathname;
