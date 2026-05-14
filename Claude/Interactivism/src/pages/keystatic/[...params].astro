@@ -3,3 +3,25 @@ export const prerender = false;
 import KeystaticPage from '@keystatic/astro/internal/keystatic-astro-page.astro';
 ---
 <KeystaticPage />
+
+<!--
+  Dev-only: after a successful Keystatic save, Astro invalidates content-assets.mjs
+  but the new module isn't ready yet, causing a transient "Could not find image" error.
+  Patching fetch to trigger a full reload ~600ms after any /api/keystatic/update
+  response gives Astro enough time to rebuild the module before the page renders.
+-->
+<script>
+  if (import.meta.env.DEV) {
+    window.fetch = new Proxy(window.fetch, {
+      apply(target, thisArg, args) {
+        return Reflect.apply(target, thisArg, args).then(res => {
+          const url = String(args[0]?.url ?? args[0] ?? '');
+          if (res.ok && url.includes('/api/keystatic/update')) {
+            setTimeout(() => location.reload(), 600);
+          }
+          return res;
+        });
+      },
+    });
+  }
+</script>
