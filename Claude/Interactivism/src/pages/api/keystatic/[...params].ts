@@ -50,6 +50,9 @@ function editorName(): string {
 
 async function stampRequest(request: Request): Promise<Request> {
   // Only stamp in local / dev mode — GitHub mode records identity via OAuth commits.
+  // TODO (go-live): extend this to GitHub mode. Options: (a) extract the GitHub
+  // user from the Keystatic session JWT (signed with KEYSTATIC_SECRET), or (b)
+  // a GitHub Actions workflow that stamps frontmatter after Keystatic commits.
   if (process.env.NODE_ENV !== 'development') return request;
 
   // Only intercept POST …/update
