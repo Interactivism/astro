@@ -6,8 +6,7 @@
     "dev": "astro dev --host",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro",
-    "prepare": "node scripts/install-hooks.mjs"
+    "astro": "astro"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.0.0",
