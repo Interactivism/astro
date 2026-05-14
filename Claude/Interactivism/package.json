@@ -6,7 +6,8 @@
     "dev": "astro dev --host",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "lint:typography": "node scripts/lint-typography.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.0.0",
