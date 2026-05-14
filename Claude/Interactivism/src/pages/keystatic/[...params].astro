@@ -11,17 +11,44 @@ import KeystaticPage from '@keystatic/astro/internal/keystatic-astro-page.astro'
   response gives Astro enough time to rebuild the module before the page renders.
 -->
 <script>
-  if (import.meta.env.DEV) {
-    window.fetch = new Proxy(window.fetch, {
-      apply(target, thisArg, args) {
-        return Reflect.apply(target, thisArg, args).then(res => {
-          const url = String(args[0]?.url ?? args[0] ?? '');
-          if (res.ok && url.includes('/api/keystatic/update')) {
-            setTimeout(() => location.reload(), 600);
-          }
-          return res;
-        });
-      },
-    });
+  // Dev-only: Astro's HMR reloads the page after a Keystatic save, but
+  // content-assets.mjs may still be rebuilding at that point, causing a
+  // transient "Could not find image" error. We use sessionStorage to survive
+  // the HMR reload and then trigger one final reload after a settle delay.
+  if (import.meta.env.DEV && import.meta.hot) {
+    const FLAG = 'ks-post-save';
+    const SETTLE_MS = 1800;
+
+    if (sessionStorage.getItem(FLAG)) {
+      // We just came back from an Astro-triggered HMR reload after a save.
+      // Wait for content-assets.mjs to finish rebuilding, then reload once more.
+      sessionStorage.removeItem(FLAG);
+      setTimeout(() => location.reload(), SETTLE_MS);
+    } else {
+      let fallbackTimer: ReturnType<typeof setTimeout> | null = null;
+
+      // Mark that a save just happened so the next page load knows to settle-reload.
+      window.fetch = new Proxy(window.fetch, {
+        apply(target, thisArg, args) {
+          return Reflect.apply(target, thisArg, args).then(res => {
+            const url = String(args[0]?.url ?? args[0] ?? '');
+            if (res.ok && url.includes('/api/keystatic/update')) {
+              sessionStorage.setItem(FLAG, '1');
+              // Fallback: if Astro's HMR doesn't reload on its own, we do it.
+              fallbackTimer = setTimeout(() => location.reload(), 900);
+            }
+            return res;
+          });
+        },
+      });
+
+      // If Vite fires its own full reload, cancel our fallback (it's redundant).
+      import.meta.hot.on('vite:beforeFullReload', () => {
+        if (fallbackTimer !== null) {
+          clearTimeout(fallbackTimer);
+          fallbackTimer = null;
+        }
+      });
+    }
   }
 </script>
