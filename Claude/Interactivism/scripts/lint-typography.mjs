@@ -3,10 +3,14 @@
  *
  * Scans all .astro files in src/ and reports any straight apostrophe (U+0027)
  * found within a word ([a-zA-Z]'[a-zA-Z]), excluding:
+ *   - Astro frontmatter blocks  (--- … ---)
  *   - Single-line code/JSDoc comments  (// … and * …)
  *   - HTML comments  <!-- … -->  (single- or multi-line)
  *   - <script> blocks
  *   - <style> blocks
+ *
+ * Frontmatter JS is excluded because esbuild rejects non-ASCII characters in
+ * certain token positions in dev mode; use the ’ escape there instead.
  *
  * Markdown/MDX files are exempt — remark-smartypants handles them at build time.
  *
@@ -44,6 +48,8 @@ for (const file of walk(srcDir)) {
   const rel   = file.replace(projectRoot + '/', '');
   const lines = readFileSync(file, 'utf8').split('\n');
 
+  let inFrontmatter = lines[0]?.trim() === '---'; // true until closing ---
+  let frontmatterClosed = false;
   let inHtmlComment = false;
   let inScript      = false;
   let inStyle       = false;
@@ -51,6 +57,12 @@ for (const file of walk(srcDir)) {
   for (let i = 0; i < lines.length; i++) {
     const raw     = lines[i];
     const trimmed = raw.trim();
+
+    // ── frontmatter (--- … ---) ──────────────────────────────────────────────
+    if (inFrontmatter && !frontmatterClosed) {
+      if (i > 0 && trimmed === '---') frontmatterClosed = true;
+      continue;
+    }
 
     // ── block state ──────────────────────────────────────────────────────────
     if (inHtmlComment) {
