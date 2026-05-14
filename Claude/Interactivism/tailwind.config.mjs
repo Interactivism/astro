@@ -77,7 +77,7 @@ export default {
 
       fontFamily: {
         display: ['"DM Serif Display"', 'Georgia', 'serif'],
-        body: ['"DM Sans"', 'system-ui', 'sans-serif'],
+        body: ['"DM Sans Variable"', '"DM Sans"', 'system-ui', 'sans-serif'],
         mono: ['"IBM Plex Mono"', 'ui-monospace', 'monospace'],
       },
 
