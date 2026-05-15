@@ -50,7 +50,73 @@ At a high level:
 - **`clients.json`** — flat data file driving the Clients page and homepage logo wall.
 - **`homepage.json`** — flat data file driving the homepage composition (hero + featured case studies + featured blog posts).
 
-`src/content/config.ts` (Astro / Zod) and `keystatic.config.ts` (CMS UI) implement the same schemas in different syntaxes. Both must stay in sync — see CONTENT.md for the mapping.
+`src/content/config.ts` (Astro / Zod) and `keystatic.config.ts` (CMS UI) implement the same schemas in different syntaxes. Both must stay in sync — see SCHEMA.md for the mapping.
+
+## URL strategy & redirects
+
+The new site's URL structure is intentionally flatter than the live site. Most paths carry forward unchanged; service URLs consolidate from three levels to two.
+
+### Final URL structure
+
+```
+/                                   Home
+/services/                          Services index
+/services/[service]/                Service detail (e.g. /services/product-design/)
+/work/                              Case studies index
+/work/[slug]/                       Case study detail
+/clients/                           Clients list
+/blog/                              Blog index
+/blog/[slug]/                       Blog post
+/team/                              Team page
+/contact/                           Contact
+
+/sitemap.xml                        Auto-generated via @astrojs/sitemap
+/rss.xml                            Auto-generated via @astrojs/rss
+/404                                Custom 404 page
+```
+
+Trailing slashes are consistent across the site (always present on directory-style URLs). Astro's `trailingSlash` config option is set to `'always'` in production and `'ignore'` in development — the `'ignore'` setting is required in dev so that Keystatic's API routes (which call endpoints without trailing slashes) are not 404'd by the dev server.
+
+### Redirects (built during migration, lives in `netlify.toml`)
+
+Four categories of redirect to handle:
+
+1. **Service rename redirects.** Several service URLs change in the new site (consolidating from six services to five, with three renames):
+
+   | From | To |
+   |---|---|
+   | `/services/ux-design/` | `/services/product-design/` |
+   | `/services/strategy-growth/` | `/services/product-strategy/` |
+   | `/services/research/` | `/services/user-research/` |
+   | `/services/training/` | `/services/` |
+
+   `/services/human-ai-experience/`, `/services/development/`, and `/services/brand-development/` carry forward unchanged.
+
+2. **Service sub-category pages → consolidated service page anchors.** Every URL like `/services/ux-design/information-architecture/` redirects to the renamed parent's anchor: `/services/product-design/#information-architecture`. The destination service page must render `id` attributes on the corresponding h2 sections (handled automatically via `rehype-slug` on Astro's MDX pipeline).
+
+3. **WordPress permalink patterns → new slugs.** Date-based blog URLs like `/2024/03/15/post-title/` redirect to `/blog/post-title/`. Category and tag archive URLs from WordPress redirect to the blog index.
+
+4. **Any URL that no longer exists** (orphaned WordPress pages, plugin-generated URLs, dropped Training sub-category pages, etc.) redirects to the most relevant section, or to the 404 page if no relevant destination exists.
+
+The complete redirect map is generated during the migration phase by crawling the live site (Screaming Frog or the WordPress REST API) for an exhaustive URL inventory, then writing one redirect rule per old URL. No URL goes unmapped.
+
+Pattern in `netlify.toml`:
+
+```toml
+# Service rename
+[[redirects]]
+  from = "/services/ux-design/"
+  to = "/services/product-design/"
+  status = 301
+
+# Sub-category to consolidated page anchor
+[[redirects]]
+  from = "/services/ux-design/information-architecture/"
+  to = "/services/product-design/#information-architecture"
+  status = 301
+```
+
+Test redirects on the staging deploy before cutover. A bad redirect map causes SEO damage that takes months to recover from.
 
 ## Tech stack
 
@@ -66,26 +132,22 @@ At a high level:
 
 ## Design fidelity
 
-The new site carries forward the look and feel of the current interactivism.com — refined, not redesigned. Design tokens (colors, typography, spacing, component patterns) and the URL strategy live in **DESIGN.md**, which is the source of truth for visual and IA decisions. This document defers to it on anything design-related.
+The new site carries forward the look and feel of the current interactivism.com — refined, not redesigned. Design tokens (colors, typography, spacing, component patterns) live in **DESIGN.md**, which is the source of truth for visual decisions. The URL strategy lives in this document ("URL strategy & redirects" above). This document defers to DESIGN.md on anything visual.
 
 ## Migration scope
 
-Content being migrated from the current WordPress site:
+Content migrated from the WordPress site at launch:
 
-- **Case studies** — those ready to publish carry forward; tagged with industry and services per the CONTENT.md schema.
-- **Selected blog posts** — cleanup pass required; older or low-value posts may be pruned rather than migrated.
-- **Service pages** — content from the live site's three-level service hierarchy (`/services/` → category → sub-category) consolidates into one MDX page per service in the new `services` collection. Sub-category content becomes h2 sections within the consolidated page; old URLs redirect to anchors. See DESIGN.md "URL strategy & redirects" for the redirect pattern.
-- **Author profiles** — team member bios from the live Team page become entries in the `authors` collection. Bios may need rewriting to fit CONTENT.md's length and structure constraints. Includes a studio-byline "Interactivism" entry for posts not attributed to an individual.
+- **Case studies** — published case studies are live; new work is added via Keystatic. Tagged with industry and services per the CONTENT.md schema.
+- **Blog posts** — selected posts migrated with cleanup; older or low-value posts were pruned.
+- **Service pages** — the live site's three-level hierarchy consolidated into one MDX page per service. Sub-category content became h2 sections; old URLs redirect to anchors. See "URL strategy & redirects" below for the redirect pattern.
+- **Author profiles** — team member bios are in the `authors` collection. Includes a studio-byline "Interactivism" entry for posts not attributed to an individual.
 - **Client list / logos** — populates `clients.json` and the homepage logo wall.
 - **Static page content** — home, services index, team, contact.
 
-Out of scope for migration:
+Ongoing updates — new case studies, blog posts, and author profiles — are authored via Keystatic. The WordPress install (Closte) is retired.
 
-- WordPress comments
-- WordPress user accounts
-- Any plugin-driven functionality not explicitly listed above
-
-URL structure preserves existing slugs where possible, with 301 redirects from old paths to new paths configured in `netlify.toml`. The complete redirect map — including the service-hierarchy consolidation — is generated from a URL inventory of the live site before cutover. See DESIGN.md for redirect specifics.
+Not migrated: WordPress comments, user accounts, plugin-driven functionality.
 
 ## Success criteria
 

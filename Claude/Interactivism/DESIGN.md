@@ -8,8 +8,6 @@ When working in this repo (especially via Claude Code): **read this document bef
 
 The current interactivism.com is the canonical reference for visual direction, but the new site should be a refined version — clean up inconsistencies, drop one-off styles, enforce a single set of tokens. Anywhere this document conflicts with the live site, this document wins.
 
-> Items marked `[OBSERVE]` need values pulled from the live site via browser DevTools. See the checklist at the end of this document.
-
 ---
 
 ## Foundations
@@ -95,7 +93,7 @@ The names below are what get used in components. They map to raw palette values 
 | `text.inverse` | `paper-0` | Text on dark or image backgrounds |
 | `surface.default` | `paper-0` | Page background |
 | `surface.alt` | `paper-100` | Desktop sidenav background, form input backgrounds |
-| `surface.milk` | `paper-0` @ 85% opacity | Mobile nav menu background |
+| `surface.milk` | `paper-0` @ 95% opacity | Mobile nav menu background |
 | `border.subtle` | `ink-900` @ 10% opacity | Hairline dividers |
 | `accent.surface` | `brand-yellow` | Primary button background, text link underline on hover |
 | `accent.subtle` | `ink-900` @ 25% opacity | Secondary button background |
@@ -126,10 +124,12 @@ All text/background pairings must meet **WCAG AA** at minimum (4.5:1 for body te
 ### Font families
 
 ```
---font-display:  'DM Serif Display'   /* Headlines */
---font-body:     'DM Sans'            /* Body, UI */
---font-mono:     'IBM Plex Mono', ui-monospace, monospace  /* Code, metadata */
+--font-display:  'DM Serif Display'                          /* Headlines */
+--font-body:     'DM Sans Variable', 'DM Sans'               /* Body, UI */
+--font-mono:     'IBM Plex Mono', ui-monospace, monospace    /* Code, metadata */
 ```
+
+The body font is loaded via `@fontsource-variable/dm-sans`, which registers the family as `'DM Sans Variable'`. The fallback `'DM Sans'` catches systems where DM Sans is installed natively. The Tailwind config mirrors this: `fontFamily.body: ['"DM Sans Variable"', '"DM Sans"', 'system-ui', 'sans-serif']`.
 
 Self-host fonts via `@fontsource/*` packages rather than loading from Google Fonts CDN — better performance, fewer DNS lookups, no third-party requests on every page load. This is the kind of detail Lighthouse 90+ depends on.
 
@@ -262,6 +262,20 @@ Respect `prefers-reduced-motion`: animations that move significant content are r
 ## Components
 
 This inventory is derived from observed IA + standard marketing-site patterns. Each component lives in `src/components/` as an Astro component (or `.tsx` if interactivity is required).
+
+### Quick reference
+
+| Component | File | Appears on |
+|---|---|---|
+| Header | `src/components/layout/Header.astro` | Every page |
+| Footer | `src/components/layout/Footer.astro` | Every page |
+| Marquee | `src/components/layout/Marquee.astro` | All pages except home |
+| MapMarquee | `src/components/contact/MapMarquee.astro` | Contact |
+| Button | `src/components/ui/Button.astro` | CTAs, forms |
+| CTA band | *(inline section, no dedicated component file)* | Bottom of most pages |
+| Slider | `src/components/home/Slider.astro` | Home |
+
+See SCHEMA.md for file structure and implementation conventions.
 
 ### Header
 
@@ -569,7 +583,7 @@ Layout:
 - Related case studies module (2–3 cards) showing work in this service area
 - CTA band
 
-Note on URL strategy: the live site has a three-level hierarchy (`/services/` → `/services/ux-design/` → `/services/ux-design/information-architecture/`). The new site flattens to two levels (`/services/` → `/services/product-design/`). Sub-category URLs from the old site redirect to anchor sections on the renamed consolidated detail page. See "URL strategy & redirects" below.
+Note on URL strategy: the live site has a three-level hierarchy (`/services/` → `/services/ux-design/` → `/services/ux-design/information-architecture/`). The new site flattens to two levels (`/services/` → `/services/product-design/`). Sub-category URLs from the old site redirect to anchor sections on the renamed consolidated detail page. See "URL strategy & redirects" in PROJECT.md.
 
 ### Clients page
 
@@ -589,74 +603,6 @@ Full-bleed MapMarquee hero (Google Maps at zoom 15, showing the studio location 
 
 ---
 
-## URL strategy & redirects
-
-The new site's URL structure is intentionally flatter than the live site. Most paths carry forward unchanged; service URLs consolidate from three levels to two.
-
-### Final URL structure
-
-```
-/                                   Home
-/services/                          Services index
-/services/[service]/                Service detail (e.g. /services/product-design/)
-/work/                              Case studies index
-/work/[slug]/                       Case study detail
-/clients/                           Clients list
-/blog/                              Blog index
-/blog/[slug]/                       Blog post
-/team/                              Team page
-/contact/                           Contact
-
-/sitemap.xml                        Auto-generated via @astrojs/sitemap
-/rss.xml                            Auto-generated via @astrojs/rss
-/404                                Custom 404 page
-```
-
-Trailing slashes are consistent across the site (always present on directory-style URLs). Astro's `trailingSlash` config option is set to `'always'` in production and `'ignore'` in development — the `'ignore'` setting is required in dev so that Keystatic's API routes (which call endpoints without trailing slashes) are not 404'd by the dev server.
-
-### Redirects (built during migration, lives in `netlify.toml`)
-
-Four categories of redirect to handle:
-
-1. **Service rename redirects.** Several service URLs change in the new site (consolidating from six services to five, with three renames):
-
-   | From | To |
-   |---|---|
-   | `/services/ux-design/` | `/services/product-design/` |
-   | `/services/strategy-growth/` | `/services/product-strategy/` |
-   | `/services/research/` | `/services/user-research/` |
-   | `/services/training/` | `/services/` |
-
-   `/services/human-ai-experience/`, `/services/development/`, and `/services/brand-development/` carry forward unchanged.
-
-2. **Service sub-category pages → consolidated service page anchors.** Every URL like `/services/ux-design/information-architecture/` redirects to the renamed parent's anchor: `/services/product-design/#information-architecture`. The destination service page must render `id` attributes on the corresponding h2 sections (handled automatically via `rehype-slug` on Astro's MDX pipeline).
-
-3. **WordPress permalink patterns → new slugs.** Date-based blog URLs like `/2024/03/15/post-title/` redirect to `/blog/post-title/`. Category and tag archive URLs from WordPress redirect to the blog index.
-
-4. **Any URL that no longer exists** (orphaned WordPress pages, plugin-generated URLs, dropped Training sub-category pages, etc.) redirects to the most relevant section, or to the 404 page if no relevant destination exists.
-
-The complete redirect map is generated during the migration phase by crawling the live site (Screaming Frog or the WordPress REST API) for an exhaustive URL inventory, then writing one redirect rule per old URL. No URL goes unmapped.
-
-Pattern in `netlify.toml`:
-
-```toml
-# Service rename
-[[redirects]]
-  from = "/services/ux-design/"
-  to = "/services/product-design/"
-  status = 301
-
-# Sub-category to consolidated page anchor
-[[redirects]]
-  from = "/services/ux-design/information-architecture/"
-  to = "/services/product-design/#information-architecture"
-  status = 301
-```
-
-Test redirects on the staging deploy before cutover. A bad redirect map causes SEO damage that takes months to recover from.
-
----
-
 ## Accessibility baseline
 
 Non-negotiable for v1, supporting the Lighthouse 90+ target in PROJECT.md:
@@ -672,48 +618,3 @@ Non-negotiable for v1, supporting the Lighthouse 90+ target in PROJECT.md:
 
 **Focus ring implementation:** `global.css` strips the browser default (`:focus { outline: none }`) and restores a clear keyboard ring via `:focus-visible { ring-2 ring-ink-900 ring-offset-2 }`. iOS Safari incorrectly fires `:focus-visible` on programmatic `.focus()` calls triggered by touch interactions (e.g. hamburger refocus after menu close, slider heading focus on slide change). This is suppressed by `html.is-touching :focus-visible { outline: none; box-shadow: none }`, toggled by a touch-tracking script in `BaseLayout.astro` that adds `is-touching` to `<html>` on `touchstart` and removes it 500ms after `touchend` (immediately on `keydown`).
 
----
-
-## Implementation notes
-
-### File structure
-
-```
-src/
-  styles/
-    global.css          # Tailwind directives + base styles
-    typography.css      # Prose styling for blog/case study bodies
-  components/
-    ui/                 # Buttons, links, form fields, icons
-    layout/             # Header, Footer, Marquee, Container
-    home/               # Slider and other homepage-specific components
-    contact/            # MapMarquee and other contact-page components
-    case-study/         # MDX components for case study bodies
-  assets/
-    brand/              # Logo files
-    images/
-      marquee/          # Static page marquee images (work, services, clients, blog, team)
-      # All other images: processed by astro:assets
-```
-
-Add subfolders (e.g. `components/blog/`) only when a specific page accumulates enough custom components to justify the split. Don't create folders for files that don't exist yet.
-
-### Token export
-
-Tokens defined here are mirrored in `tailwind.config.mjs` under `theme.extend`. When a token is added or changed in this document, update the Tailwind config in the same commit.
-
-### Tailwind plugins
-
-- `@tailwindcss/typography` — for blog and case study prose (with custom `prose-interactivism` modifier matching our type scale)
-- `@tailwindcss/forms` — sane form defaults
-
-### Don't reach for these
-
-These are intentionally not part of the system:
-
-- Component libraries (shadcn, Radix-as-default, Headless UI) — overkill for a marketing site, adds dependencies that need maintenance
-- Animation libraries (Framer Motion, GSAP) — CSS transitions cover everything we need; revisit only if a specific case study demands it
-- CSS-in-JS — we have Tailwind
-- Additional icon libraries beyond Lucide
-
----

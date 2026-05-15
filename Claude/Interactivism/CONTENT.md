@@ -4,7 +4,7 @@
 
 This is the source of truth for content structure on interactivism.com — the schemas for case studies, blog posts, authors, and supporting collections. PROJECT.md handles intent; DESIGN.md handles how things look; CONTENT.md handles what gets written and how it's structured.
 
-When working in this repo (especially via Claude Code): **this document defines what `src/content/config.ts` (Astro) and `keystatic.config.ts` (CMS) must implement.** Both files derive from the same schema spec — they describe the same content shape from different angles. Schema changes happen here first, then propagate to both configs in the same commit.
+When working in this repo (especially via Claude Code): **this document defines what `src/content/config.ts` (Astro) and `keystatic.config.ts` (CMS) must implement.** Both files derive from the same schema spec — they describe the same content shape from different angles. Schema changes happen here first, then propagate to `src/content/config.ts` and `keystatic.config.ts` in the same commit. The Keystatic↔Astro mapping table lives in SCHEMA.md.
 
 ---
 
@@ -321,7 +321,7 @@ For posts that should be bylined to the studio rather than an individual:
   "name": "Interactivism",
   "role": "Studio",
   "bio": "Interactivism is a digital product design & development studio based in Pasadena, CA.",
-  "avatar": "./interactivism-mark.jpg",
+  "avatar": "./avatar.svg",
   "social": {
     "linkedin": "https://www.linkedin.com/company/interactivism",
     "medium": "https://medium.com/@interactivismco",
@@ -363,7 +363,7 @@ The site has six services. This is the controlled list that case study `services
 | Product Strategy | `product-strategy` | `/services/product-strategy/` |
 | Brand Development | `brand-development` | `/services/brand-development/` |
 
-This list consolidates the live site's prior service structure: "UX + Design" merges into "Product Design," "Strategy + Growth" becomes "Product Strategy," "User Research" replaces "Research" (display name and URL aligned), and "Training" drops entirely. Redirects for the renamed and dropped URLs are documented in DESIGN.md.
+This list consolidates the live site's prior service structure: "UX + Design" merges into "Product Design," "Strategy + Growth" becomes "Product Strategy," "User Research" replaces "Research" (display name and URL aligned), and "Training" drops entirely. Redirects for the renamed and dropped URLs are documented in PROJECT.md.
 
 ### Frontmatter schema
 
@@ -513,80 +513,13 @@ This helper is the single chokepoint — every page that lists content goes thro
 
 ## Validation rules
 
-These are enforced at build time via Zod schemas in `src/content/config.ts`. Build fails if any rule is violated.
+Build-time validation is enforced via Zod schemas in `src/content/config.ts`. The full rule set is documented in SCHEMA.md. Key rules to know:
 
-**All collections:**
-- `title`, `summary`, and required string fields must be non-empty.
-- `publishedDate` must be a valid ISO date.
-- `status` must be `"draft"` or `"published"`.
-
-**Case studies:**
-- `services` array must contain at least 1 valid service ID.
-- `industry` must be a valid ID from the controlled list.
-- `summary` length: 100–160 characters.
-- `metrics`, if present, must contain 1–4 entries (no empty array).
-- `heroImage` and `heroImageWide` must both be present.
-
-**Blog posts:**
-- `author` must reference an existing author ID.
-- `summary` length: 100–200 characters.
-- If `heroImage` is set, `heroImageWide` must also be set (and vice versa). Either both or neither.
-
-**Authors:**
-- `id` must match the filename.
-- `bio` length: 200–400 characters.
-
-**Services:**
-- `id` must match the filename.
-- `order` must be a positive integer.
-
-**Homepage data file:**
-- `featuredCaseStudies` slugs must each reference a published case study.
-- `featuredCaseStudies` length: 3–8.
-- No duplicate slugs in the array.
-- `hero.image` must resolve to a real file in `public/`.
-
-When a build fails on validation, the error message points to the file and field. Fix in place rather than disabling validation.
+- `status: "draft"` excludes content from all production builds.
+- `summary` length: 100–160 chars for case studies, 100–200 for blog posts.
+- `services` array: at least 1 valid service ID per case study.
+- If `heroImage` is set on a blog post, `heroImageWide` must also be set (and vice versa).
+- `featuredCaseStudies` in `homepage.json`: 3–8 slugs, all must be published.
 
 ---
 
-## Keystatic ↔ Astro mapping
-
-Both configs implement the same schemas, but in different syntaxes:
-
-- **`src/content/config.ts`** (Astro) — uses Zod schemas. Validates content at build time. Generates TypeScript types for use in templates.
-- **`keystatic.config.ts`** (Keystatic) — uses Keystatic's field functions. Generates the editor UI.
-
-When a schema changes, **both files update in the same commit**. Drift between the two will cause one of two failure modes:
-- Keystatic shows fields that Astro doesn't validate → silent garbage in frontmatter
-- Astro requires fields that Keystatic doesn't expose → editors can't publish via the UI
-
-A short reference for the mapping:
-
-| Schema concept | Astro (Zod) | Keystatic |
-|---|---|---|
-| Required string | `z.string()` | `fields.text({ validation: { isRequired: true } })` |
-| Optional string | `z.string().optional()` | `fields.text({ validation: { isRequired: false } })` |
-| Date | `z.date()` | `fields.date()` |
-| Enum | `z.enum(['draft', 'published'])` | `fields.select({ options: [...] })` |
-| Image | `image()` (from `astro:assets`) | `fields.image({ directory, publicPath })` |
-| Array of strings | `z.array(z.string())` | `fields.array(fields.text(...))` |
-| Reference to another collection | `reference('authors')` | `fields.relationship({ collection: 'authors' })` |
-| Markdown body | (handled by Astro) | `fields.markdoc({ ... })` or `fields.mdx({ ... })` |
-
-The full configs live in `src/content/config.ts` and `keystatic.config.ts`. This document is the spec they implement.
-
----
-
-## Migration notes
-
-When migrating WordPress content into these schemas:
-
-- **Case studies on the live site need to be mapped to the new schema.** Most fields will need to be filled in (industry, services, year, role, metrics, related case studies). The conversion script handles structure; field values are a manual pass.
-- **Blog posts need cleanup more than mapping.** WordPress's Gutenberg HTML doesn't convert cleanly to MDX. Plan to hand-edit the top 10–20 most valuable posts; older posts may be pruned rather than migrated.
-- **Service pages migrate from a three-level hierarchy to one consolidated page per service.** The live site has `/services/` → category (e.g. `/services/ux-design/`) → sub-category (e.g. `/services/ux-design/information-architecture/`). The new `services` collection collapses category and sub-category content into a single MDX file per service, with sub-category content becoming h2 sections. Sub-category URLs redirect to anchor sections on the consolidated page (see DESIGN.md "URL strategy & redirects").
-- **Authors are migrated from the live Team page.** Each team member with a bio on the current site becomes an entry in the `authors` collection. Bios likely need rewriting to fit the 200–400 character constraint — the live bios may be longer or shorter. Add the studio-byline "Interactivism" entry as a manual addition (it has no source on the live site). Authors must exist before any blog post that references them is migrated.
-- **Clients need to be inventoried.** The `clients.json` file is hand-built from the current site's client list, with `caseStudy` references added for clients that have public case studies.
-- **The homepage composition is hand-built.** `homepage.json` is a from-scratch editorial decision, not migrated content. The hero copy can carry forward from the live site's hero ("We design and develop digital experiences..."), but `featuredCaseStudies` is a fresh choice about what to surface at launch. Author this file last, after the case studies it references have been migrated and published.
-
-The full migration plan is in PROJECT.md. This document describes only the content shape; the migration sequence is separate.
