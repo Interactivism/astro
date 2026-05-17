@@ -127,32 +127,32 @@
 
 [[redirects]]
   from = "/work/tvscientific-bringing-performance-to-connected-tv-advertising/"
-  to = "/work/tvscientific/"
+  to = "/work/tvscientific-bringing-performance-to-ctv-advertising/"
   status = 301
 
 [[redirects]]
   from = "/work/rebranding-democracy/"
-  to = "/work/vote/"
+  to = "/work/vote-rebranding-democracy/"
   status = 301
 
 [[redirects]]
   from = "/work/launching-the-next-layer-1-blockchain/"
-  to = "/work/xx-network/"
+  to = "/work/xx-network-launching-the-next-layer-1-blockchain/"
   status = 301
 
 [[redirects]]
   from = "/work/designing-the-future-of-hitachi/"
-  to = "/work/hitachi/"
+  to = "/work/hitachi-futurecasting-2030/"
   status = 301
 
 [[redirects]]
   from = "/work/next-generation-legal-solutions/"
-  to = "/work/legalzoom/"
+  to = "/work/legalzoom-next-generation-legal-solutions/"
   status = 301
 
 [[redirects]]
   from = "/work/legalzoom/"
-  to = "/work/legalzoom-seo/"
+  to = "/work/legalzoom-maximizing-seo-performance/"
   status = 301
 
 # Work category and tag archives → work index
