@@ -79,7 +79,30 @@ if (heroImageWide) {
   const heroWideFs = path.join(process.cwd(), 'src/assets/images/marquee/blog.jpg');
   logoVariant = await getLogoVariant(heroWideFs);
 }
+
+// JSON-LD: Article
+const siteUrl = 'https://interactivism.com';
+const articleJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": title,
+  "description": summary,
+  "url": `${siteUrl}/blog/${entry.id}/`,
+  "datePublished": publishedDate.toISOString(),
+  "image": heroImage ? `${siteUrl}${heroImage.src}` : `${siteUrl}/og-default.png`,
+  "author": authorId === 'interactivism'
+    ? { "@type": "Organization", "name": "Interactivism", "url": siteUrl }
+    : { "@type": "Person", "name": authorEntry?.data.name ?? "Interactivism", "url": `${siteUrl}/team/${authorId}/` },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Interactivism",
+    "url": siteUrl,
+    "logo": { "@type": "ImageObject", "url": `${siteUrl}/web-app-manifest-512x512.png` }
+  }
+};
 ---
+
+<script type="application/ld+json" set:html={JSON.stringify(articleJsonLd)} />
 
 <BaseLayout
   title={title}

@@ -93,6 +93,33 @@ const pageTitle = `${title} — Interactivism`;
     <link rel="manifest" href="/site.webmanifest" />
     <meta name="theme-color" content="#F2DB07" />
 
+    <!-- JSON-LD: Organization -->
+    <script type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Interactivism",
+      "url": siteUrl,
+      "logo": `${siteUrl}/web-app-manifest-512x512.png`,
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "telephone": "+1-323-325-5080",
+        "contactType": "customer service"
+      },
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "40 E. Colorado Blvd, Suite A",
+        "addressLocality": "Pasadena",
+        "addressRegion": "CA",
+        "postalCode": "91105",
+        "addressCountry": "US"
+      },
+      "sameAs": [
+        "https://www.linkedin.com/company/interactivism",
+        "https://medium.com/@interactivismco",
+        "https://www.instagram.com/interactivism/"
+      ]
+    })} />
+
     <!-- Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-387474205"></script>
     <script>
