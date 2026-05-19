@@ -164,6 +164,62 @@ async function stampRequest(request: Request): Promise<Request> {
 async function handler(context: Parameters<typeof _handler>[0]) {
   let req = await renameSlugAssets(context.request);
   req = await stampRequest(req);
+
+  // ── Temporary OAuth debug (remove after diagnosis) ──────────────────────────
+  // Intercepts the callback to surface the raw GitHub token-exchange response
+  // so we can see what's actually failing.
+  const urlPath = new URL(req.url, 'https://x').pathname;
+  if (urlPath.includes('/github/oauth/callback')) {
+    const sp = new URL(req.url, 'https://x').searchParams;
+    const code = sp.get('code');
+    const error = sp.get('error');
+    const errorDesc = sp.get('error_description');
+
+    if (error || errorDesc) {
+      return new Response(
+        JSON.stringify({ stage: 'github-redirect', error, errorDesc }),
+        { status: 400, headers: { 'content-type': 'application/json' } },
+      );
+    }
+
+    if (code) {
+      const clientId     = process.env.KEYSTATIC_GITHUB_CLIENT_ID;
+      const clientSecret = process.env.KEYSTATIC_GITHUB_CLIENT_SECRET;
+      const tokenUrl = new URL('https://github.com/login/oauth/access_token');
+      tokenUrl.searchParams.set('client_id',     clientId     ?? '(missing)');
+      tokenUrl.searchParams.set('client_secret', clientSecret ? `${clientSecret.slice(0, 4)}…` : '(missing)');
+      tokenUrl.searchParams.set('code', code);
+
+      let ghStatus = 0;
+      let ghBody: unknown = null;
+      try {
+        const res = await fetch(
+          `https://github.com/login/oauth/access_token?client_id=${encodeURIComponent(clientId ?? '')}&client_secret=${encodeURIComponent(clientSecret ?? '')}&code=${encodeURIComponent(code)}`,
+          { method: 'POST', headers: { Accept: 'application/json' } },
+        );
+        ghStatus = res.status;
+        ghBody = await res.json();
+      } catch (e) {
+        ghBody = String(e);
+      }
+
+      return new Response(
+        JSON.stringify({
+          stage: 'token-exchange',
+          clientIdPresent:     !!clientId,
+          clientIdLen:         clientId?.length,
+          clientIdHead:        clientId?.slice(0, 6),
+          clientSecretPresent: !!clientSecret,
+          clientSecretLen:     clientSecret?.length,
+          githubStatus:        ghStatus,
+          githubResponse:      ghBody,
+        }, null, 2),
+        { status: 200, headers: { 'content-type': 'application/json' } },
+      );
+    }
+  }
+  // ── End debug ────────────────────────────────────────────────────────────────
+
   return _handler({ ...context, request: req });
 }
 
