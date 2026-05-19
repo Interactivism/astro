@@ -7,39 +7,6 @@
   NODE_VERSION = "20"
 
 # ============================================================
-# Keystatic API — trailing-slash normalisation
-# Astro requires trailingSlash:'always', but the Keystatic UI
-# navigates to these paths without a trailing slash. Netlify
-# processes [[redirects]] before invoking the SSR function, so
-# these 301s ensure the function receives the slash-terminated URL.
-# ============================================================
-
-[[redirects]]
-  from = "/api/keystatic/github/login"
-  to   = "/api/keystatic/github/login/"
-  status = 301
-
-[[redirects]]
-  from = "/api/keystatic/github/oauth/callback"
-  to   = "/api/keystatic/github/oauth/callback/"
-  status = 301
-
-[[redirects]]
-  from = "/api/keystatic/github/logout"
-  to   = "/api/keystatic/github/logout/"
-  status = 301
-
-[[redirects]]
-  from = "/api/keystatic/github/refresh-token"
-  to   = "/api/keystatic/github/refresh-token/"
-  status = 301
-
-[[redirects]]
-  from = "/api/keystatic/github/repo-not-found"
-  to   = "/api/keystatic/github/repo-not-found/"
-  status = 301
-
-# ============================================================
 # Services — top-level renames
 # ============================================================
 
