@@ -215,8 +215,8 @@ const tagClass      = 'inline-flex items-center bg-ink-900 text-inverse font-mon
   // paused = true means auto-advance has been permanently stopped by user interaction.
   // Hover/focus temporarily cancel the timer without setting this flag;
   // explicit navigation (pagination, swipe) sets it and never restarts.
-  // Also permanently disabled when prefers-reduced-motion is set.
-  let paused = reduceMotion;
+  // prefers-reduced-motion only suppresses the CSS fade; auto-advance still runs.
+  let paused = false;
 
   // ── Logo variant (desktop only) ────────────────────────────────
   // Samples the logo region (80×80 inset, 200×200px crop) of the active
