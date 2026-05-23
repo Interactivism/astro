@@ -101,6 +101,11 @@ export default config({
           label: 'Client',
           validation: { isRequired: true },
         }),
+        industry: fields.select({
+          label: 'Industry',
+          options: industryOptions,
+          defaultValue: 'consumer',
+        }),
         publishedDate: fields.date({
           label: 'Published Date',
           validation: { isRequired: true },
@@ -175,11 +180,6 @@ export default config({
         }),
 
         // Taxonomy
-        industry: fields.select({
-          label: 'Industry',
-          options: industryOptions,
-          defaultValue: 'consumer',
-        }),
         services: fields.multiselect({
           label: 'Services',
           description: 'At least one required.',

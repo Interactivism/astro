@@ -12,7 +12,7 @@ import clientsData from '../../data/clients.json';
 const marqueeImagePath = path.join(process.cwd(), 'src/assets/images/marquee/clients-wide.jpg');
 const logoVariant = await getLogoVariant(marqueeImagePath);
 
-const clients = clientsData as { name: string; href?: string }[];
+const clients = clientsData as { name: string; href?: string; suffix?: string }[];
 ---
 
 <BaseLayout
@@ -43,13 +43,14 @@ const clients = clientsData as { name: string; href?: string }[];
         role="list"
         aria-label="Client list"
       >
-        {clients.map(({ name, href }) => (
+        {clients.map(({ name, href, suffix }) => (
           <li class="py-3 pr-8 border-b border-subtle font-body text-base text-body">
             {href ? (
               <a href={href} class="hover:text-headline transition duration-fast">
                 {name}
               </a>
             ) : name}
+            {suffix && <span class="text-muted"> {suffix}</span>}
           </li>
         ))}
       </ul>
