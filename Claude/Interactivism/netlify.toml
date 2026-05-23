@@ -1,5 +1,7 @@
 [build]
-  command = "npm run build"
+  # Clear the Astro 5 Content Layer database before each build so that
+  # content changes committed via Keystatic always appear in SSR preview pages.
+  command = "rm -rf .astro && npm run build"
   publish = "dist"
   ignore = "git diff --quiet HEAD^ HEAD -- . ':!*.md'"
 
