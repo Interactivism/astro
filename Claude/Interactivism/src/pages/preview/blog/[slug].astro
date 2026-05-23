@@ -27,6 +27,9 @@ import BeforeAfter from '../../../components/case-study/BeforeAfter.astro';
 import PullQuote from '../../../components/case-study/PullQuote.astro';
 import Aside from '../../../components/case-study/Aside.astro';
 
+// Prevent any CDN or edge cache from serving a stale response.
+Astro.response.headers.set('Cache-Control', 'no-store');
+
 const { slug } = Astro.params;
 
 // Get ALL blog posts — no status or date filter.
