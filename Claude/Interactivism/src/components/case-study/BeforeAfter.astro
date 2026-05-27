@@ -151,8 +151,21 @@ const id = `ba-${Math.random().toString(36).slice(2, 9)}`;
       applyFraction(Math.max(-over, Math.min(1 + over, (clientX - left) / width)));
     }
 
-    // Set initial angled state at 50%
-    applyFraction(0.5);
+    // Set initial angled state at 50%.
+    // Must wait until the container has real dimensions — lazy-loaded images
+    // mean height is 0 at script-execution time, which makes halfTilt = 0
+    // and leaves the clip as a straight vertical while the CSS line is rotated.
+    let initialized = false;
+    function maybeInit() {
+      if (!initialized && container.getBoundingClientRect().height > 0) {
+        initialized = true;
+        applyFraction(0.5);
+        ro.disconnect();
+      }
+    }
+    const ro = new ResizeObserver(maybeInit);
+    ro.observe(container);
+    maybeInit(); // also try immediately for eager-loaded images
 
     // Mouse
     container.addEventListener('mousedown', (e) => {
