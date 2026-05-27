@@ -309,14 +309,14 @@ export default config({
               schema: {
                 before: fields.image({
                   label: 'Before image',
-                  directory: 'src/content/caseStudies',
-                  publicPath: './',
+                  directory: 'public/images',
+                  publicPath: '/images/',
                   validation: { isRequired: true },
                 }),
                 after: fields.image({
                   label: 'After image',
-                  directory: 'src/content/caseStudies',
-                  publicPath: './',
+                  directory: 'public/images',
+                  publicPath: '/images/',
                   validation: { isRequired: true },
                 }),
                 alt: fields.text({ label: 'Alt text' }),
@@ -491,14 +491,14 @@ export default config({
               schema: {
                 before: fields.image({
                   label: 'Before image',
-                  directory: 'src/content/blog',
-                  publicPath: './',
+                  directory: 'public/images',
+                  publicPath: '/images/',
                   validation: { isRequired: true },
                 }),
                 after: fields.image({
                   label: 'After image',
-                  directory: 'src/content/blog',
-                  publicPath: './',
+                  directory: 'public/images',
+                  publicPath: '/images/',
                   validation: { isRequired: true },
                 }),
                 alt: fields.text({ label: 'Alt text' }),
