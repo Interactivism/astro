@@ -33,6 +33,9 @@ const {
   afterLabel = 'After',
 } = Astro.props;
 
+// Render nothing if images are missing (e.g. Keystatic stripped props during a save)
+if (!before || !after) return;
+
 const id = `ba-${Math.random().toString(36).slice(2, 9)}`;
 ---
 
