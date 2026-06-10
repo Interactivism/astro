@@ -12,7 +12,9 @@ import clientsData from '../../data/clients.json';
 const marqueeImagePath = path.join(process.cwd(), 'src/assets/images/marquee/clients-wide.jpg');
 const logoVariant = await getLogoVariant(marqueeImagePath);
 
-const clients = clientsData as { name: string; href?: string; suffix?: string }[];
+const clients = (clientsData as { name: string; href?: string; suffix?: string }[])
+  .slice()
+  .sort((a, b) => a.name.localeCompare(b.name));
 ---
 
 <BaseLayout
@@ -32,19 +34,19 @@ const clients = clientsData as { name: string; href?: string; suffix?: string }[
         From early-stage<br />to Fortune 500.
       </h1>
       <p class="text-lg text-body leading-body max-w-prose">
-        We’ve worked with remarkable companies across industries — seed-stage startups finding product-market fit, scale-ups racing to ship, and enterprise teams rethinking legacy products. The teams we remember best aren’t the biggest ones — they’re the ones who care about the work as much as we do.
+        We’ve worked with remarkable companies across industries — seed-stage startups finding product-market fit, scale-ups racing to ship, and enterprise teams rethinking legacy products. The teams we remember best are the ones who care about the work as much as we do.
       </p>
     </div>
 
     <!-- ── Client list ─────────────────────────────────────────── -->
     <div class="py-16 lg:py-24">
       <ul
-        class="grid grid-cols-1 lg:grid-cols-2"
+        class="lg:columns-2 lg:gap-x-16"
         role="list"
         aria-label="Client list"
       >
         {clients.map(({ name, href, suffix }) => (
-          <li class="py-3 pr-8 border-b border-subtle font-body text-base text-body">
+          <li class="py-2 break-inside-avoid font-body text-base text-body">
             {href ? (
               <a href={href} class="hover:text-headline transition duration-fast">
                 {name}
