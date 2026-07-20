@@ -157,112 +157,117 @@
   to = "/work/legalzoom-maximizing-seo-performance/"
   status = 301
 
-# Work category and tag archives → work index
+# Work category and tag archives — permanently gone, no equivalent
 [[redirects]]
   from = "/work/category/*"
-  to = "/work/"
-  status = 301
+  to = "/"
+  status = 410
 
 [[redirects]]
   from = "/work/tag/*"
-  to = "/work/"
-  status = 301
+  to = "/"
+  status = 410
+
+# Old /our-work/* path (WordPress slug before it became /work/)
+[[redirects]]
+  from = "/our-work/*"
+  to = "/"
+  status = 410
 
 # ============================================================
-# Blog — unmigrated posts → blog index
-# (posts that exist on live site but were not carried forward)
+# Blog — unmigrated posts
 # ============================================================
 
 [[redirects]]
   from = "/blog/connect-17-urb-e-derby/"
-  to = "/blog/"
-  status = 301
+  to = "/"
+  status = 410
 
 [[redirects]]
   from = "/blog/designing-successful-startups/"
-  to = "/blog/"
-  status = 301
+  to = "/"
+  status = 410
 
 [[redirects]]
   from = "/blog/the-roi-of-design-in-tech/"
-  to = "/blog/"
-  status = 301
+  to = "/"
+  status = 410
 
 [[redirects]]
   from = "/blog/you-cant-afford-not-to-hire-ux-designers/"
-  to = "/blog/"
-  status = 301
+  to = "/"
+  status = 410
 
 [[redirects]]
   from = "/blog/designing-immersive-experiences/"
-  to = "/blog/"
-  status = 301
+  to = "/"
+  status = 410
 
 [[redirects]]
   from = "/blog/enterprise-tech-la-launch-event-enterprise-vs-consumer-software/"
-  to = "/blog/"
-  status = 301
+  to = "/"
+  status = 410
 
 [[redirects]]
   from = "/blog/investing-in-ux-design/"
-  to = "/blog/"
-  status = 301
+  to = "/"
+  status = 410
 
 [[redirects]]
   from = "/blog/may-office-hours/"
-  to = "/blog/"
-  status = 301
+  to = "/"
+  status = 410
 
 [[redirects]]
   from = "/blog/ux-design-is-smart-business/"
-  to = "/blog/"
-  status = 301
+  to = "/"
+  status = 410
 
 [[redirects]]
   from = "/blog/inside-the-minds-of-brilliant-designers/"
-  to = "/blog/"
-  status = 301
+  to = "/"
+  status = 410
 
 [[redirects]]
   from = "/blog/april-office-hours/"
-  to = "/blog/"
-  status = 301
+  to = "/"
+  status = 410
 
 [[redirects]]
   from = "/blog/why-good-ux-design-is-smart-business/"
-  to = "/blog/"
-  status = 301
+  to = "/"
+  status = 410
 
 [[redirects]]
   from = "/blog/sola-hack-3rd-annual-design-thinking-and-social-entrepreneurship-hackathon-for-south-la/"
-  to = "/blog/"
-  status = 301
+  to = "/"
+  status = 410
 
 [[redirects]]
   from = "/blog/march-office-hours/"
-  to = "/blog/"
-  status = 301
+  to = "/"
+  status = 410
 
 [[redirects]]
   from = "/blog/winter-social/"
-  to = "/blog/"
-  status = 301
+  to = "/"
+  status = 410
 
 [[redirects]]
   from = "/blog/the-roi-of-ux/"
-  to = "/blog/"
-  status = 301
+  to = "/"
+  status = 410
 
-# Blog category and tag archives → blog index
+# Blog category and tag archives — permanently gone, no equivalent
 [[redirects]]
   from = "/blog/category/*"
-  to = "/blog/"
-  status = 301
+  to = "/"
+  status = 410
 
 [[redirects]]
   from = "/blog/tag/*"
-  to = "/blog/"
-  status = 301
+  to = "/"
+  status = 410
 
 # ============================================================
 # Team — WordPress custom post type → new URLs
@@ -293,6 +298,18 @@
   to = "/team/ricky-barbosa/"
   status = 301
 
+# Ex-team member — no forwarding destination
+[[redirects]]
+  from = "/team_members/jonatas-daniel-hermann/"
+  to = "/"
+  status = 410
+
+# Alternate URL format (dash instead of underscore) — ex-team member
+[[redirects]]
+  from = "/team-members/*"
+  to = "/"
+  status = 410
+
 # ============================================================
 # Miscellaneous WordPress pages
 # ============================================================
@@ -309,22 +326,50 @@
   to = "/services/"
   status = 301
 
+[[redirects]]
+  from = "/remote-ux-design-and-dev/"
+  to = "/"
+  status = 410
+
 # Cookie policy — no new equivalent
 [[redirects]]
   from = "/cookie-policy/"
   to = "/"
   status = 301
 
+# Old /service/* path (without the 's')
+[[redirects]]
+  from = "/service/*"
+  to = "/"
+  status = 410
+
+# Personal author page
+[[redirects]]
+  from = "/erik-wingren"
+  to = "/"
+  status = 410
+
+# WordPress asset paths
+[[redirects]]
+  from = "/wp-content/*"
+  to = "/"
+  status = 410
+
+[[redirects]]
+  from = "/wp-includes/*"
+  to = "/"
+  status = 410
+
 # ============================================================
-# WordPress top-level archives → home
+# WordPress top-level archives
 # ============================================================
 
 [[redirects]]
   from = "/category/*"
-  to = "/blog/"
-  status = 301
+  to = "/"
+  status = 410
 
 [[redirects]]
   from = "/tag/*"
   to = "/"
-  status = 301
+  status = 410
