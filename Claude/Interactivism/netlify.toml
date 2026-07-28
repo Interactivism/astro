@@ -157,6 +157,11 @@
   to = "/work/legalzoom-maximizing-seo-performance/"
   status = 301
 
+[[redirects]]
+  from = "/work/boom/"
+  to = "/work/boom-hands-free-checkout/"
+  status = 301
+
 # Work category and tag archives — permanently gone, no equivalent
 [[redirects]]
   from = "/work/category/*"
