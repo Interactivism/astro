@@ -67,7 +67,10 @@ export default defineConfig({
     tailwind({
       applyBaseStyles: false,
     }),
-    sitemap(),
+    // Draft preview routes are gated and must not be advertised to crawlers
+    sitemap({
+      filter: (page) => !page.includes('/preview'),
+    }),
     keystatic(),
   ],
 
