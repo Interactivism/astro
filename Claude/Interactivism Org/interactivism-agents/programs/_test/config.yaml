@@ -1,0 +1,102 @@
+# Dummy Program — Agnosticism Test Fixture
+# Instance of contracts/program-config-schema.yaml
+#
+# PURPOSE: This program exists only to prove that BD agents are genuinely
+# parameterized. It uses a completely synthetic vertical ("Sustainable
+# Infrastructure") with fake credential anchors, a synthetic voice corpus,
+# and fixture prospect records. Nothing here is real.
+#
+# The agnosticism test (tests/program_agnosticism_test.py) instantiates this
+# config and asserts that both R2 and R3 run correctly against it with zero
+# prompt edits, and that their output contains no residue from any real program
+# (no A&D terms, no AdTech terms).
+
+program:
+  id: prog.test
+  slug: _test
+  label: Sustainable Infrastructure (Test)
+  status: active    # active for test purposes only — not a real program
+  launched: 2026-06-22
+  operating_partner: TBD
+  disclosure_domain: ~   # no disclosure domain for this test program
+
+vertical:
+  name: Sustainable Infrastructure
+  description: >
+    Companies designing and building the physical and software systems
+    underlying the clean-energy transition: grid modernization, smart
+    building platforms, water management, and climate-infrastructure
+    monitoring. Operator-facing software is the common thread — field
+    technicians, grid operators, and building managers using complex
+    dashboards under high-stakes conditions.
+  icp:
+    company_type:
+      - climate-tech startup (Series A–C)
+      - grid-modernization software company
+      - smart-building platform
+      - municipal water utility with software investment
+    company_size: "30–300 employees"
+    geography:
+      - United States
+      - Canada
+    titles:
+      - VP of Product
+      - Director of Product
+      - Head of Design
+      - CTO
+      - Co-founder (product-focused)
+    pain_points:
+      - Operator interfaces built by engineers without UX investment
+      - Design system absent — every screen is a one-off
+      - Field-technician tools failing in low-connectivity or high-stress conditions
+      - Scaling the product team without scaling design quality
+    disqualifiers:
+      - Consumer product only (no operator or B2B product surface)
+      - Hardware-only company (no software interface)
+      - Pre-seed or bootstrapped (no design budget)
+
+credential_anchors:
+  - credential_id: cred.consumer-products
+    positioning_notes: >
+      Anchor on the Meridian Climate Solutions case study — a fictitious
+      but internally consistent case study used for test purposes only.
+      Frame as: building operator tools for high-stakes environments
+      where interface clarity directly affects field-technician outcomes.
+    reference_clients:
+      - Meridian Climate Solutions (TEST FIXTURE — NOT A REAL CLIENT)
+    anchor_status: published
+    anchor_url: https://example.com/test-case-study-meridian
+
+voice_corpus:
+  - type: email-sample
+    path: programs/_test/voice/sample-1.md
+    notes: First-touch sample — grid operator tool hook
+  - type: email-sample
+    path: programs/_test/voice/sample-2.md
+    notes: Follow-up sample — design-system maturity hook
+  - type: email-sample
+    path: programs/_test/voice/sample-3.md
+    notes: Objection response — timeline / capacity objection
+
+sequence_config:
+  max_touches: 4
+  touch_cadence_days: [0, 5, 12, 21]
+  channels: [email]
+  personalization_depth: deep
+
+crm:
+  tool: ~
+  list_id: ~
+  stage_field: ~
+  notes: "File-based for agnosticism test. Records in programs/_test/pipeline/."
+
+escalation:
+  positive_reply: lead-partner
+  objection_reply: lead-partner
+  unknown_reply: lead-partner
+  disclosure_question: register-lookup
+
+review_gate:
+  - All sequence messages reviewed and approved by operating Partner before deployment
+  - ICP confirmed against current register
+  - Voice corpus seeded with ≥3 samples

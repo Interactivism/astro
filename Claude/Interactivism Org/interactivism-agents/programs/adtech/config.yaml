@@ -1,0 +1,107 @@
+# AdTech Outbound Program Configuration
+# Instance of contracts/program-config-schema.yaml
+#
+# STATUS: ready — config complete, anchor published, agnosticism test passed.
+# DORMANT — not live. No sequences running.
+# operating_partner is TBD; activation requires Partner decision + voice corpus.
+#
+# Activation checklist (human step — not automated):
+#   1. Assign operating_partner: partner.*
+#   2. Assemble voice corpus in programs/adtech/voice/ (≥3 approved samples)
+#   3. Tier-2 QEC: async Second-Partner consult on sequence templates
+#   4. Set status: active
+# Do not set status: active in this file without completing all four steps.
+
+program:
+  id: prog.adtech
+  slug: adtech
+  label: AdTech
+  status: ready
+  launched: ~           # to be set at activation
+  operating_partner: partner.erik
+  disclosure_domain: ~  # AdTech is not disclosure-sensitive
+
+vertical:
+  name: AdTech
+  description: >
+    Product-driven AdTech companies building operator and advertiser-facing
+    product surfaces — spanning CTV/streaming, programmatic, measurement,
+    attribution, data clean rooms, retail media, and campaign management —
+    where design quality affects retention, onboarding speed, and perceived
+    platform credibility. The target sweet spot: post-Series A companies with
+    a growth-stage product team that has outpaced its design investment.
+  icp:
+    company_type:
+      - CTV / streaming ad tech (SSP, DSP, measurement, attribution)
+      - Programmatic advertising platform
+      - Performance advertising platform
+      - Retail media network (technology layer, not retailer)
+      - Data clean room / audience intelligence
+      - Ad-verification or brand-safety tool
+      - Campaign management / creative optimization platform
+    company_size: "Series A–C; 30–200 employees"
+    geography:
+      - United States
+    titles:
+      - VP of Product
+      - Director of Product
+      - Head of Design
+      - CPO
+      - Co-founder (product-focused)
+    pain_points:
+      - Product UX lagging behind engineering; losing deals to competitors with
+        better-designed dashboards
+      - Campaign creation flows that require customer success hand-holding
+      - No design system — every feature re-creates UI patterns from scratch
+      - Onboarding drop-off attributed to interface complexity, not product-market fit
+      - Design team capacity constraints blocking feature roadmap execution
+    disqualifiers:
+      - Pure ad-network or media buying without a product interface
+      - Agency (not product company)
+      - Enterprise-only with long enterprise sales cycles and no self-serve tier
+      - Walled garden (Google, Meta, Amazon) — not a prospect
+
+credential_anchors:
+  - credential_id: cred.consumer-products
+    positioning_notes: >
+      Anchor on the tvScientific case study: Interactivism joined the founders
+      at inception in 2020 and designed the full dual-track campaign creation
+      interface — a manual path for sophisticated performance marketers and
+      tvSciQ, a guided automated flow for novice advertisers. Company grew
+      from 5 to 120+ people during the engagement. Acquired by Pinterest on
+      2026-02-17. Frame as: design for AdTech platforms at the growth stage
+      where interface quality determines whether advertisers self-serve or
+      churn to a competitor.
+    reference_clients:
+      - tvScientific (acquired by Pinterest, Feb 2026)
+    anchor_status: published
+    anchor_url: https://interactivism.com/work/tvscientific-bringing-performance-to-ctv-advertising/
+
+voice_corpus:
+  # Voice corpus is EMPTY — must be assembled before activation.
+  # See programs/adtech/voice/README.md for instructions.
+  # Do not fabricate samples. The operating Partner must provide approved samples.
+
+sequence_config:
+  max_touches: 5
+  touch_cadence_days: [0, 4, 10, 18, 28]
+  channels: [email]
+  personalization_depth: deep
+
+crm:
+  tool: apollo
+  list_id: ~        # set at activation
+  stage_field: ~    # confirm Apollo stage field name at activation
+  notes: "See contracts/crm-conventions.md. Apollo list ID to be configured at activation."
+
+escalation:
+  positive_reply: lead-partner
+  objection_reply: lead-partner
+  unknown_reply: lead-partner
+  disclosure_question: register-lookup
+
+review_gate:
+  - All sequence messages reviewed and approved by operating Partner before deployment
+  - ICP confirmed against current register
+  - Voice corpus seeded with ≥3 approved samples from operating Partner
+  - Tier-2 QEC: Second-Partner async consult on templates before first send
