@@ -1,0 +1,109 @@
+# How to Use Vibe Coding in User-Centered Product Design
+
+**Author:** Erik Wingren, Co-Founder & Partner
+**Published:** December 22, 2025
+**Read time:** 5 minutes
+**Topics:** Point-of-View, Process, AI
+
+---
+
+Vibe coding tools are execution accelerators. But speed without understanding is a trap. Here's how to integrate AI tools into a user-centered design process.
+
+**TL;DR** Vibe coding tools are execution accelerators. Use them to build concepts and iterate faster. But products only get better when we first understand what "better" means.
+
+## 1-10-100
+
+The rule-of-thumb cost calculus for developing new software follows a simple pattern: costs increase by a factor of 10 at each step. It costs 1x to design a new product, 10x to build it, and 100x to launch it. Put another way, a mistake made along the way has a 10x impact downstream.
+
+## Speed Is King, but the Devil Is in the Details
+
+The promise of vibe coding is intoxicating. Tools like Loveable, Cursor, Replit, v0, and the latest darling, Claude Code, let us spin up working prototypes in an afternoon. For entrepreneurs conditioned to move fast and break things, this feels like a superpower.
+
+And it is, but like any superpower, it comes with a vulnerability: The illusion that rapid iteration equals progress.
+
+When we can generate a working prototype in minutes, why not just jump in, show it to users, and adjust as we go?
+
+Because, skipping straight to a high-fidelity prototype — built with AI or not — gives stakeholders a false sense of clarity.
+
+The goal of user-centered design isn't to design things faster. It's to design the right things faster.
+
+### Finish Implies Finality
+
+When something looks and feels finished, it's seen as "the" solution rather than "a" solution. The polish of the execution distracts from answering whether it's solving the right problem.
+
+### Usable ≠ Useful
+
+When testing high-fidelity prototypes with users, they tend to comment on UI details such as layout, button colors, and copywriting. Vibe coded prototypes amplify this dynamic by often including delightful animations and microinteractions. This feedback is important, but pointless unless the solution's usefulness is first validated.
+
+### Sunk Cost Momentum
+
+Once a team has run key stakeholder demos and secured internal alignment on a concept, unwinding it becomes costly — not so much in time and resources, but politically and emotionally.
+
+### Featuritis
+
+The speed and ease of modification with vibe coding encourage a specific kind of iteration: The interface gets prettier, features get added, and interactions get smoother. But none of this answers the fundamental question: are we solving a problem users actually have?
+
+Without an understanding of user needs, we're building solutions in search of a problem.
+
+## New Toolchain, New Priorities
+
+For product leaders, this shift in the toolchain demands a recalibration of priorities. What matters most is not how quickly we can build, but how quickly we can learn what to build.
+
+The good news is that vibe coding makes this investment more valuable. When you can build fast, the quality of your direction becomes a leverage point.
+
+An afternoon spent with users — really listening — can save you weeks of building beautiful things no one needs.
+
+User research isn't about asking users what they want. It's about understanding the texture of their problems, the context of their workflows, and the subtle — often tacit — factors that determine whether a solution fits into their lives. It reveals the gaps between what people say they do and what they actually do. It uncovers the workarounds they've developed, the pain points they've normalized, and the needs that aren't obvious from the outside. These insights should inform your prompts.
+
+## How to Integrate Vibe Coding Tools Effectively
+
+Once we have a crisp problem definition and user stories grounded in research, vibe coding becomes a powerful accelerator for the next step in the process: concepting and iteration.
+
+### Preparation
+
+- Document clear user stories and requirements based on research.
+- Create annotated lower-fidelity wireframes and specs before prompting.
+- Define measurable acceptance criteria.
+
+### Prompting Strategy
+
+- Provide user context drawn from research.
+- Reference your design system and component library explicitly.
+- Include accessibility and performance requirements in the prompts from the start.
+- Ask for implementation reasoning to expose the assumptions the AI is making.
+
+### Gradually Increase Fidelity
+
+Even though the tools can generate high-fidelity, on-brand prototypes in minutes, it doesn't mean we should — at least not early on.
+
+Starting with lower-fidelity prototypes forces stakeholders to focus feedback on function rather than form. It keeps the concept in its larval stage, where change is expected.
+
+### Faster Iteration
+
+User feedback almost always reveals opportunities for improvement. In traditional workflows, these changes take days or weeks. With vibe coding, they can happen in minutes. Faster loops mean more time with users, more learning, and better products.
+
+## Common Pitfalls to Avoid
+
+- Skipping upfront research because prototyping is quick and easy.
+- Validating usability instead of usefulness.
+- Letting tool capabilities steer design decisions.
+
+## Best Practices Checklist
+
+- Research first — no exceptions.
+- Use vibe coding for ideation, not for strategy.
+- Test with real users, early and often.
+- Start with lower-fidelity prototypes and gradually increase fidelity as your confidence in the solution grows.
+- Stay anchored to the problems you observed, not the solutions you imagine.
+
+## Conclusion
+
+The bottleneck in product development is no longer execution. It's understanding.
+
+When you can build anything in minutes, the constraining factor becomes knowing what to build. The companies that win won't be those that ship the fastest, but those that learn the fastest and turn those learnings into useful products.
+
+The 1-10-100 rule stands: The biggest bang for the buck is still making sure you understand the problem.
+
+Vibe coding tools supercharge execution, enabling faster iteration and the exploration of more ideas. But the research, empathy, strategic insight, and nuanced judgment that define products people actually want to use are more important than ever.
+
+Build fast. But first, understand deeply. The tools are changing. The fundamentals are not.
