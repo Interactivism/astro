@@ -51,7 +51,7 @@ Erik Wingren - co-founder & partner of Interactivism here.
 
 Does {company} ever go outside for help with UX/UI design, user research, and prototype development? I would love the opportunity to tell you about Interactivism and our capabilities in these areas.
 
-If this is something you are interested in, just shoot me a note with a good time and date for a quick call, or schedule a time directly on my calendar: https://calendly.com/erikwingren
+If this is something you are interested in, just shoot me a note with a good time and date for a quick call, or schedule a time directly on my calendar: https://calendar.app.google/h6nJW6RQZEmXwRSq8
 
 Cheers.
 
