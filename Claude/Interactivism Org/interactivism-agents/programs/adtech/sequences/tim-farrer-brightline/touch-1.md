@@ -38,7 +38,7 @@ Erik Wingren — co-founder & partner at Interactivism.
 
 We've been watching BrightLine add headcount steadily over the past year while holding your position as the leading interactive ad creative platform in CTV. Growing a product team in that position usually means the design surface is expanding faster than the design capacity behind it.
 
-We spent the last five years at the core of tvScientific — starting at inception in 2020, designing the full campaign creation platform through five funding rounds and 120+ employees, and the Pinterest acquisition in February. The central design challenge there was building one product that could serve both sophisticated performance marketers and first-time advertisers. It's a problem that shows up in a lot of CTV ad platforms, though not all.
+We spent the last six years at the core of tvScientific — starting at inception in 2020, designing the full campaign creation platform through five funding rounds and 120+ employees, and the Pinterest acquisition in February. The central design challenge there was building one product that could serve both sophisticated performance marketers and first-time advertisers. It's a problem that shows up in a lot of CTV ad platforms, though not all.
 
 I'd be curious whether that kind of problem is something BrightLine is wrestling with right now.
 

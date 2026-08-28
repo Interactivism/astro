@@ -127,6 +127,25 @@ Two intake channels feeding one qualification funnel:
 | **Duration** | Ongoing (Kratos at 9 years is the existence proof) |
 | **Failure modes** | Reactive posture — waiting for the client to ask. No account plan, so expansion depends on the Lead Partner's ambient attention. Retainer scoped as "hours" instead of outcomes. |
 
+### Phase 8.5 — Optimization Sprint (optional loop, not a step)
+
+*Numbered 8.5 deliberately: this is an **optional, repeatable loop** that fires after delivery for some engagements — not a mandatory step in the main line. It sits between retainer (8) and case study (9) because it is retainer-adjacent measurement work; the decimal preserves every downstream reference to phases 1–9 and signals the branch honestly. Case study (9) happens regardless of whether an optimization sprint runs.*
+
+A measurement-driven, post-delivery engagement offered selectively: take a shipped product and improve it against real usage data, using the **HEART framework** (Google's UX-metrics methodology — Happiness, Engagement, Adoption, Retention, Task Success, each worked Goals → Signals → Metrics) to define what "better" means before changing anything.
+
+| | |
+|---|---|
+| **Objective** | Improve a shipped product against real usage, with success defined by client-agreed UX metrics rather than opinion |
+| **Entry** | Product live with usage history; client appetite for optimization; analytics/instrumentation accessible (or instrumentable) |
+| **Exit** | Agreed HEART metrics defined and baselined; a prioritized change set shipped; before/after measured and read out — or a logged decision not to proceed |
+| **Key deliverables** | HEART framework worksheet (Goals → Signals → Metrics, 1–2 categories in focus); metric baseline; prioritized optimization backlog; shipped changes; before/after readout |
+| **Typical duration** | 2–6 week sprint; may repeat |
+| **Failure modes** | **Vanity metrics** — tracking what's easy to measure instead of what maps to the goal (the framework's own central warning). Defining goals in terms of existing business metrics ("more leads") instead of user-experience signals. Optimizing before a clean baseline exists, so improvement can't be proven. Scope creep from "sprint" into open-ended retainer without a defined exit. Measuring five categories shallowly instead of one or two well. |
+
+**The judgment boundary (why this is Partner-led, not agent-led):** the core of HEART — taking a fuzzy client goal down through candidate signals to the two or three metrics actually worth tracking — is synthesis and client conversation, exactly the judgment the operating model reserves for Partners. Agent support, *if* this motion proves frequent enough to warrant it, is a thin throughput layer only: drafting the HEART worksheet structure, pulling **candidate** signals/metrics from existing analytics for the Partner to prune (candidates-with-evidence, never "the metrics"), formatting the framework as a client deliverable, and assembling the before/after readout once the Partner has interpreted the numbers. Same candidate-not-findings discipline R6/R14/R15 hold.
+
+**Agent status — deferred, with a contract-shaped path.** No agent is built for this phase, and none should be until optimization sprints recur often enough to measure the need (building ahead of an unmeasured, sometimes-offered motion is the one place building-ahead stops being smart). When warranted, the right shape is **not a standalone agent** but a small `optimization-sprint` capability folded into `research-analyst` (R6) — it is evidence-processing-adjacent: pull candidate metrics from analytics, structure the worksheet — plus a **HEART method contract** (`contracts/methods/heart.md`, the same pattern as `contracts/heuristics/`) that the capability reads at runtime. The Goals → Signals → Metrics judgment stays Partner-owned; the agent does worksheet scaffolding and analytics pulls. Until then, this phase is fully Partner-run.
+
 ### Phase 9 — Case Study & Referral Harvest (BD-engine input, not epilogue)
 
 | | |

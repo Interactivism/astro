@@ -1,5 +1,5 @@
 ---
-qec: pending
+qec: approved
 tier: 1
 engagement: studio
 touch: 5
