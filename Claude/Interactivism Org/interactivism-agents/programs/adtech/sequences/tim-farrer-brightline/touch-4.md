@@ -1,6 +1,7 @@
 ---
-qec: pending
+qec: approved
 tier: 1
+engagement: studio
 touch: 4
 day: 18
 channel: email
@@ -10,6 +11,14 @@ signal_source: https://www.linkedin.com/company/brightline
 anchor_url: https://interactivism.com/work/tvscientific-bringing-performance-to-ctv-advertising/
 drafted: 2026-08-25
 drafted_by: outbound-sequence-operator
+evidence_trail:
+  - claim: "No factual claims in this touch — check-in only"
+    source: ~
+    type: ~
+partner_ruling:
+  - date: 2026-08-25
+    actor: partner.erik
+    ruling: "Name rule is scoped to agent prompts and internal artifacts. Outbound email salutations and signatures are exempt."
 ---
 
 # Touch 4 — Day 18
