@@ -87,6 +87,14 @@ sequence_config:
   touch_cadence_days: [0, 4, 10, 18, 28]
   channels: [email]
   personalization_depth: deep
+  send_window:
+    preferred_days: [Tuesday, Wednesday, Thursday]
+    preferred_times_et: ["08:00-09:00", "13:00-14:00"]
+    notes: >
+      Touch 1: Tuesday or Wednesday 08:00-09:00 ET preferred.
+      Follow-ups: match or go one slot earlier than the prior touch.
+      Avoid Monday (backlogged inboxes) and Friday (mentally checked out).
+      All times in recipient's local time — most AdTech prospects are US Eastern or Central.
 
 crm:
   tool: apollo
