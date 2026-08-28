@@ -16,8 +16,8 @@ program:
   id: prog.adtech
   slug: adtech
   label: AdTech
-  status: ready
-  launched: ~           # to be set at activation
+  status: active
+  launched: "2026-08-28"
   operating_partner: partner.erik
   disclosure_domain: ~  # AdTech is not disclosure-sensitive
 
@@ -39,7 +39,7 @@ vertical:
       - Data clean room / audience intelligence
       - Ad-verification or brand-safety tool
       - Campaign management / creative optimization platform
-    company_size: "Series A–C; 30–200 employees"
+    company_size: "Series A–C; typically 30–200 employees at time of outbound; warm intros accepted earlier"
     geography:
       - United States
     titles:
