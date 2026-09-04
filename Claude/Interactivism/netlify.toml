@@ -376,6 +376,11 @@
   to = "/industries/adtech/"
   status = 301
 
+[[redirects]]
+  from = "/enterprise-saas"
+  to = "/industries/enterprise-saas/"
+  status = 301
+
 # ============================================================
 # WordPress top-level archives
 # ============================================================
