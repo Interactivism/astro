@@ -1,0 +1,115 @@
+# Fintech Outbound Program Configuration
+# Instance of contracts/program-config-schema.yaml
+#
+# STATUS: active — anchor published (industry page), voice corpus copied from adtech.
+
+program:
+  id: prog.fintech
+  slug: fintech
+  label: Fintech
+  status: active
+  launched: "2026-09-04"
+  operating_partner: partner.erik
+  disclosure_domain: ~  # Fintech is not disclosure-sensitive
+
+vertical:
+  name: Fintech
+  description: >
+    Product-driven fintech companies building consumer or SMB-facing financial
+    product surfaces — payments, lending, credit, banking/neobank, insurance,
+    wealth management, and crypto/blockchain — where UX quality determines
+    whether users trust the product enough to complete the transaction. The
+    target sweet spot: post-Series A companies with a growth-stage product team
+    where failure states, compliance flows, and trust-building moments have been
+    designed for the happy path only.
+  icp:
+    company_type:
+      - Payments platform (B2C or B2B)
+      - Neobank / challenger bank
+      - Lending or credit platform
+      - Insurtech (consumer or SMB)
+      - Wealth management / investing app
+      - Payroll or HR fintech
+      - Crypto / blockchain product with a user-facing interface
+    company_size: "Series A–C; typically 20–150 employees at time of outbound; warm intros accepted earlier"
+    geography:
+      - United States
+    titles:
+      - VP of Product
+      - Head of Product
+      - Head of Design
+      - CPO
+      - Co-founder (product-focused)
+    pain_points:
+      - Failure states (declined cards, holds, reversals, pending states) not
+        designed — improvised after the fact or left as engineering defaults
+      - Trust gaps at high-stakes moments: fees revealed late, verification
+        flows that feel like an interrogation, dispute resolution that reads
+        as deliberately discouraging
+      - Compliance and identity verification bolted on as legal requirement
+        rather than designed as part of the experience
+      - Conversion drop-off at moments where the product asked for confidence
+        it hadn't yet earned
+      - Design team capacity constraints blocking feature roadmap execution
+    disqualifiers:
+      - Pure financial institution (bank, credit union) without a product-focused team
+      - Infrastructure-only (no direct user-facing product)
+      - Enterprise-only with no consumer or SMB product surface
+      - Agency or consulting firm
+
+credential_anchors:
+  - credential_id: cred.fintech-page
+    positioning_notes: >
+      Reference the Fintech industry page at interactivism.com/industries/fintech/.
+      Lead with the trust and failure-state framing: "We design the moments where
+      people decide whether to trust a system — and the failure states where most
+      products quietly lose them." Reference clients include Boom! Payments,
+      Scratch Financial, PopID, and Simplivest. Specific work: Boom (frictionless
+      checkout replacing passwords with device-based pin codes), Scratch (mobile
+      credit application for veterinary financing — full launch experience),
+      XX Network (dApps and block explorer for blockchain launch). Frame as:
+      design for fintech products where interface honesty and failure-state clarity
+      are the difference between a completed transaction and an abandoned one.
+    reference_clients:
+      - Boom! Payments
+      - Scratch Financial
+      - PopID
+      - Simplivest
+    anchor_status: published
+    anchor_url: https://interactivism.com/industries/fintech/
+
+voice_corpus:
+  # Copied from programs/adtech/voice/ — same operating partner, same voice.
+  # See programs/fintech/voice/ for files.
+
+sequence_config:
+  max_touches: 5
+  touch_cadence_days: [0, 4, 10, 18, 28]
+  channels: [email]
+  personalization_depth: deep
+  send_window:
+    preferred_days: [Tuesday, Wednesday, Thursday]
+    preferred_times_et: ["08:00-09:00", "13:00-14:00"]
+    notes: >
+      Touch 1: Tuesday or Wednesday 08:00-09:00 in recipient's local time preferred.
+      Follow-ups: match or go one slot earlier than the prior touch.
+      Avoid Monday (backlogged inboxes) and Friday (mentally checked out).
+      Send time based on prospect_location from pipeline record, not company HQ.
+
+crm:
+  tool: apollo
+  list_id: ~
+  stage_field: ~
+  notes: "See contracts/crm-conventions.md. Apollo list ID to be configured at activation."
+
+escalation:
+  positive_reply: lead-partner
+  objection_reply: lead-partner
+  unknown_reply: lead-partner
+  disclosure_question: register-lookup
+
+review_gate:
+  - All sequence messages reviewed and approved by operating Partner before deployment
+  - ICP confirmed against current register
+  - Voice corpus seeded (copied from adtech — same Partner voice)
+  - Tier-2 QEC: Second-Partner async consult on templates before first send

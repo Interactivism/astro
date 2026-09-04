@@ -1,0 +1,123 @@
+# Enterprise SaaS Outbound Program Configuration
+# Instance of contracts/program-config-schema.yaml
+#
+# STATUS: active — anchor published (industry page), voice corpus copied from adtech.
+
+program:
+  id: prog.enterprise-saas
+  slug: enterprise-saas
+  label: Enterprise SaaS
+  status: active
+  launched: "2026-09-04"
+  operating_partner: partner.erik
+  disclosure_domain: ~  # Enterprise SaaS is not disclosure-sensitive
+
+vertical:
+  name: Enterprise SaaS
+  description: >
+    B2B SaaS companies building software that organizations buy and teams use
+    daily — spanning operations, sales enablement, infrastructure management,
+    analytics, HR tech, legal tech, and field service — where UX quality
+    determines adoption rates, renewal health, and whether the buyer's internal
+    champion can defend the purchase decision. The target sweet spot: growth-stage
+    or scaling companies navigating the buyer/user split, legacy migration, or
+    design-system coherence across a multi-product portfolio.
+  icp:
+    company_type:
+      - Sales enablement or CRM-adjacent platform
+      - Operations / workflow management software
+      - Infrastructure or DevOps tooling with a UI layer
+      - Analytics or business intelligence platform
+      - HR tech or workforce management platform
+      - Field service or scheduling software
+      - Legal tech or compliance platform
+      - Multi-product portfolio company undergoing design system consolidation
+    company_size: "Series B–D or established growth stage; also legacy modernization projects at larger orgs"
+    geography:
+      - United States
+    titles:
+      - VP of Product
+      - Head of Design
+      - Head of UX
+      - CPO
+      - CTO (product-focused)
+      - Co-founder (product-focused)
+    pain_points:
+      - Buyer/user split: product shaped by the sales demo and feature matrix
+        rather than the daily job — high-friction workflows that power users
+        tolerate but new users abandon
+      - Legacy migration blocked not by the new product being worse but by
+        accumulated habits, saved workflows, and muscle memory the redesign
+        invalidates
+      - No design system — or a style guide someone maintains on the side
+        while the portfolio diverges across product lines and acquisitions
+      - Settings screens with sixty fields because six customers each asked
+        for ten; onboarding shaped by the enterprise sale rather than the job
+      - Design team capacity constraints blocking roadmap execution or
+        platform modernization
+    disqualifiers:
+      - Consumer app (not B2B)
+      - Pure API or infrastructure with no direct user-facing product surface
+      - Pre-product or idea-stage startup
+      - Agency or consulting firm
+
+credential_anchors:
+  - credential_id: cred.enterprise-saas-page
+    positioning_notes: >
+      Reference the Enterprise SaaS industry page at
+      interactivism.com/industries/enterprise-saas/. Lead with the buyer/user
+      split framing: "Enterprise software is bought by people who won't use it
+      and used by people who didn't buy it. We design for the second group without
+      losing the first." Reference clients include Cisco, Intel, Microsoft Live
+      Labs, Hitachi, Epson, and Sony Design Center. Specific work: Metacloud
+      (scalable UX framework and UI component library for OpenStack offering,
+      through Cisco acquisition), LocalIQ / ReachEdge (ground-up redesign of
+      lead management platform — major engagement and revenue gains), Velocify
+      (sales acceleration software suite including click-to-call dialer and
+      reporting dashboards). Frame as: design for enterprise products where
+      adoption is decided by the daily user, not the procurement team.
+    reference_clients:
+      - Cisco
+      - Intel
+      - Microsoft Live Labs
+      - Metacloud (acquired by Cisco)
+      - Velocify
+      - LocalIQ / Gannett
+    anchor_status: published
+    anchor_url: https://interactivism.com/industries/enterprise-saas/
+
+voice_corpus:
+  # Copied from programs/adtech/voice/ — same operating partner, same voice.
+  # See programs/enterprise-saas/voice/ for files.
+
+sequence_config:
+  max_touches: 5
+  touch_cadence_days: [0, 4, 10, 18, 28]
+  channels: [email]
+  personalization_depth: deep
+  send_window:
+    preferred_days: [Tuesday, Wednesday, Thursday]
+    preferred_times_et: ["08:00-09:00", "13:00-14:00"]
+    notes: >
+      Touch 1: Tuesday or Wednesday 08:00-09:00 in recipient's local time preferred.
+      Follow-ups: match or go one slot earlier than the prior touch.
+      Avoid Monday (backlogged inboxes) and Friday (mentally checked out).
+      Send time based on prospect_location from pipeline record, not company HQ.
+
+crm:
+  tool: apollo
+  list_id: ~
+  stage_field: ~
+  notes: "See contracts/crm-conventions.md. Apollo list ID to be configured at activation."
+
+escalation:
+  positive_reply: lead-partner
+  objection_reply: lead-partner
+  unknown_reply: lead-partner
+  disclosure_question: register-lookup
+
+review_gate:
+  - All sequence messages reviewed and approved by operating Partner before deployment
+  - ICP confirmed against current register
+  - Voice corpus seeded (copied from adtech — same Partner voice)
+  - Tier-2 QEC: Second-Partner async consult on templates before first send
