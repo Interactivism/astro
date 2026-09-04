@@ -1,0 +1,51 @@
+---
+program: adtech
+batch: R3-2026-08-28
+updated: 2026-09-01
+note: >
+  Non-PII operational index for cloud routines (week-ahead brief, pipeline health check).
+  No prospect names or contact info — read pipeline/ records locally for full CRM data.
+  thread_id values are Gmail thread IDs used for reply detection.
+
+sequences:
+  - company: BrightLine
+    thread_id: "1a0498f94bc43109"
+    stage: sequence-active
+    sequence_start_date: "2026-09-01"
+    touch_count: 1
+    prospect_tz: ET
+
+  - company: Infillion
+    thread_id: "1a04995d65c07183"
+    stage: sequence-active
+    sequence_start_date: "2026-09-02"
+    touch_count: 1
+    prospect_tz: PT
+
+  - company: CognitionAds
+    thread_id: "1a04995f0902e3fb"
+    stage: sequence-active
+    sequence_start_date: "2026-09-03"
+    touch_count: 1
+    prospect_tz: PT
+
+  - company: Podscribe
+    thread_id: "1a049960dca79588"
+    stage: sequence-active
+    sequence_start_date: "2026-09-09"
+    touch_count: 1
+    prospect_tz: CT
+
+  - company: Magellan AI
+    thread_id: "1a04996281913aad"
+    stage: sequence-active
+    sequence_start_date: "2026-09-10"
+    touch_count: 1
+    prospect_tz: ET
+
+  - company: Onescreen
+    thread_id: "1a0499643cf565d2"
+    stage: sequence-active
+    sequence_start_date: "2026-09-15"
+    touch_count: 1
+    prospect_tz: ET
