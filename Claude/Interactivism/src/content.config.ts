@@ -211,7 +211,42 @@ const services = defineCollection({
 });
 
 // ============================================================
+// Industries
+// One MDX file per industry vertical. ID is the filename (without .mdx)
+// and must be one of INDUSTRY_IDS, so pages can filter case studies by it.
+//
+// These are business-development landing pages, linked from outbound
+// outreach rather than site navigation. They are deliberately excluded
+// from the sitemap (see astro.config.mjs) so that traffic is attributable.
+// ============================================================
+
+const industries = defineCollection({
+  loader: glob({ pattern: '**/*.mdx', base: './src/content/industries' }),
+  schema: ({ image }) =>
+    z.object({
+      title: z.string(),
+      // Must match the filename. Case studies carry a matching `industry` value.
+      id: z.enum(INDUSTRY_IDS),
+      summary: z.string(),
+      // Client names to display as a credibility roster. Not all have case studies.
+      clients: z.array(z.string()).min(1),
+      // Headline above the booking CTA. Set per-industry so the wording can be
+      // tuned to the vertical; templating it would force an article ("a"/"an")
+      // that is wrong for vowel-initial names like AdTech.
+      ctaHeadline: z.string().optional(),
+      // Case study slugs (filenames without .mdx) to show alongside those matched
+      // automatically by `industry`. Lets a vertical surface adjacent work that
+      // carries a different industry tag — a sales page should choose its proof
+      // rather than inherit whatever the taxonomy happens to return.
+      featuredCaseStudies: z.array(z.string()).optional(),
+      heroImage: image().optional(),
+      heroImageWide: image().optional(),
+      photoCredit: z.string().optional(),
+    }),
+});
+
+// ============================================================
 // Export
 // ============================================================
 
-export const collections = { caseStudies, blog, authors, services };
+export const collections = { caseStudies, blog, authors, services, industries };

@@ -67,9 +67,11 @@ export default defineConfig({
     tailwind({
       applyBaseStyles: false,
     }),
-    // Draft preview routes are gated and must not be advertised to crawlers
+    // Draft preview routes are gated and must not be advertised to crawlers.
+    // Industry pages are outbound-outreach landing pages, kept out of the
+    // sitemap so their traffic stays attributable to that outreach.
     sitemap({
-      filter: (page) => !page.includes('/preview'),
+      filter: (page) => !page.includes('/preview') && !page.includes('/industries'),
     }),
     keystatic(),
   ],
