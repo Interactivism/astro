@@ -381,6 +381,11 @@
   to = "/industries/enterprise-saas/"
   status = 301
 
+[[redirects]]
+  from = "/fintech"
+  to = "/industries/fintech/"
+  status = 301
+
 # ============================================================
 # WordPress top-level archives
 # ============================================================
