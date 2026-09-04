@@ -366,6 +366,17 @@
   status = 410
 
 # ============================================================
+# Industry landing pages — short root-level aliases
+# The short form is what goes in outbound email; the canonical page
+# lives under /industries/ alongside the rest of the site structure.
+# ============================================================
+
+[[redirects]]
+  from = "/adtech"
+  to = "/industries/adtech/"
+  status = 301
+
+# ============================================================
 # WordPress top-level archives
 # ============================================================
 

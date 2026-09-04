@@ -1,0 +1,155 @@
+---
+/**
+ * Industry landing page — business-development target for outbound outreach.
+ *
+ * Deliberately different from /services/[slug]:
+ *   - Not in site navigation, not in the sitemap (see astro.config.mjs).
+ *     All traffic therefore arrives from outreach, which makes it attributable
+ *     without UTM parameters that plain-text emails would mangle.
+ *   - CTA books a call directly rather than routing through the contact form.
+ *   - Leads with a client roster, since credibility does more work than
+ *     volume of case studies for a prospect arriving from a cold email.
+ */
+import path from 'node:path';
+import { existsSync } from 'node:fs';
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Marquee from '../../components/layout/Marquee.astro';
+import PhotoCredit from '../../components/layout/PhotoCredit.astro';
+import CaseStudyCard from '../../components/work/CaseStudyCard.astro';
+import Button from '../../components/ui/Button.astro';
+import { getLogoVariant } from '../../lib/imageBrightness';
+
+const BOOKING_URL = 'https://calendar.app.google/Rb7oxeFG6JCpMEVCA';
+
+export async function getStaticPaths() {
+  const industries = await getCollection('industries');
+  return industries.map((industry) => ({
+    params: { slug: industry.id },
+    props: { entry: industry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { title, summary, id, clients, ctaHeadline, featuredCaseStudies, heroImage, heroImageWide, photoCredit } = entry.data;
+
+// Fallback avoids an indefinite article, which would be wrong for
+// vowel-initial industry names ("a AdTech").
+const ctaText = ctaHeadline ?? `Let’s talk about your ${title} product.`;
+const { Content } = await render(entry);
+
+// Logo variant from the wide hero's brightness. Defaults to 'dark' for the
+// no-marquee case, where the logo sits on the light page background.
+let logoVariant: 'light' | 'dark' = 'dark';
+if (heroImageWide) {
+  const heroWideBase = path.join(process.cwd(), 'src/content/industries', entry.id, 'heroImageWide');
+  const heroWideFs = existsSync(heroWideBase + '.jpg') ? heroWideBase + '.jpg' : heroWideBase + '.png';
+  if (existsSync(heroWideFs)) {
+    logoVariant = await getLogoVariant(heroWideFs);
+  }
+}
+
+// Related case studies — entries tagged with this industry, plus any explicitly
+// featured ones carrying a different tag. Merged and sorted newest first, so the
+// most recent engagement leads regardless of how it was selected.
+const allCaseStudies = await getCollection('caseStudies');
+const now = new Date();
+const isLive = (cs: (typeof allCaseStudies)[number]) =>
+  cs.data.status === 'published' && cs.data.publishedDate <= now;
+
+// Unknown slugs fail the build rather than vanishing silently from a sales page.
+const featured = (featuredCaseStudies ?? []).map((slug) => {
+  const match = allCaseStudies.find((cs) => cs.id === slug);
+  if (!match) {
+    throw new Error(
+      `industries/${id}: featuredCaseStudies references "${slug}", which is not a case study.`,
+    );
+  }
+  return match;
+});
+
+const matched = allCaseStudies.filter((cs) => cs.data.industry === id);
+const deduped = new Map(
+  [...featured, ...matched].filter(isLive).map((cs) => [cs.id, cs]),
+);
+const related = [...deduped.values()]
+  .sort((a, b) => {
+    const endA = a.data.yearEnd === 'present' ? Infinity : (a.data.yearEnd ?? a.data.year);
+    const endB = b.data.yearEnd === 'present' ? Infinity : (b.data.yearEnd ?? b.data.year);
+    return endB - endA;
+  })
+  // Headroom above the current four, so adding a featured entry does not
+  // silently drop another off the end of the grid.
+  .slice(0, 6);
+---
+
+<BaseLayout
+  title={title}
+  description={summary}
+  hasMarquee={!!heroImage}
+  logoVariant={logoVariant}
+>
+  {heroImage && heroImageWide && (
+    <Marquee heroImage={heroImage} heroImageWide={heroImageWide} alt="" />
+  )}
+
+  <div class="px-6 lg:px-12 max-w-content mx-auto">
+
+    <!-- ── Header ──────────────────────────────────────────────── -->
+    <div class="pt-16 lg:pt-24 pb-12 lg:pb-16 border-b border-subtle">
+      <p class="font-mono text-xs text-muted mb-4 uppercase tracking-widest">
+        Industries / {title}
+      </p>
+      <h1 class="font-display leading-display text-headline mb-6 max-w-[20ch]">
+        {title}
+      </h1>
+      <p class="text-xl text-body leading-body max-w-prose">
+        {summary}
+      </p>
+    </div>
+
+    <!-- ── Client roster ───────────────────────────────────────── -->
+    <div class="py-12 lg:py-16 border-b border-subtle">
+      <p class="font-mono text-xs text-muted mb-6 uppercase tracking-widest">
+        Selected {title} clients
+      </p>
+      <ul class="flex flex-wrap gap-x-8 gap-y-3" role="list">
+        {clients.map((name) => (
+          <li class="font-body text-lg text-headline">{name}</li>
+        ))}
+      </ul>
+    </div>
+
+    <!-- ── Prose content ───────────────────────────────────────── -->
+    <div class="py-16 lg:py-24 prose prose-lg lg:prose-xl max-w-readable">
+      <Content />
+    </div>
+
+    <!-- ── Related work ────────────────────────────────────────── -->
+    {related.length > 0 && (
+      <div class="border-t border-subtle py-16 lg:py-24">
+        <p class="font-mono text-xs text-muted mb-4 uppercase tracking-widest">Selected work</p>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-20">
+          {related.map((cs) => (
+            <CaseStudyCard entry={cs} />
+          ))}
+        </div>
+      </div>
+    )}
+
+  </div>
+
+  <PhotoCredit credit={photoCredit} />
+
+  <!-- ── CTA — books a call directly rather than routing to the form ── -->
+  <section class="py-20 lg:py-28 border-t border-subtle">
+    <div class="px-6 max-w-content mx-auto flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
+      <h2 class="font-display text-3xl lg:text-4xl leading-display text-headline lg:max-w-[60%]">
+        {ctaText}
+      </h2>
+      <Button href={BOOKING_URL} class="shrink-0">
+        Book a call
+      </Button>
+    </div>
+  </section>
+</BaseLayout>
