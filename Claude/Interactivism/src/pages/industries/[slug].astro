@@ -49,8 +49,8 @@ if (heroImageWide) {
   }
 }
 
-// Related case studies — entries tagged with this industry, plus any explicitly
-// featured ones carrying a different tag. Merged and sorted newest first, so the
+// Related case studies — an explicit featuredCaseStudies list when present,
+// otherwise everything tagged with this industry. Sorted newest first, so the
 // most recent engagement leads regardless of how it was selected.
 const allCaseStudies = await getCollection('caseStudies');
 const now = new Date();
@@ -68,10 +68,12 @@ const featured = (featuredCaseStudies ?? []).map((slug) => {
   return match;
 });
 
-const matched = allCaseStudies.filter((cs) => cs.data.industry === id);
-const deduped = new Map(
-  [...featured, ...matched].filter(isLive).map((cs) => [cs.id, cs]),
-);
+// An explicit list replaces auto-matching rather than extending it, so a page
+// can leave out weakly-related work that happens to carry the same tag.
+const selected = featured.length > 0
+  ? featured
+  : allCaseStudies.filter((cs) => cs.data.industry === id);
+const deduped = new Map(selected.filter(isLive).map((cs) => [cs.id, cs]));
 const related = [...deduped.values()]
   .sort((a, b) => {
     const endA = a.data.yearEnd === 'present' ? Infinity : (a.data.yearEnd ?? a.data.year);

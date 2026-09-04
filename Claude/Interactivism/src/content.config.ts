@@ -234,10 +234,11 @@ const industries = defineCollection({
       // tuned to the vertical; templating it would force an article ("a"/"an")
       // that is wrong for vowel-initial names like AdTech.
       ctaHeadline: z.string().optional(),
-      // Case study slugs (filenames without .mdx) to show alongside those matched
-      // automatically by `industry`. Lets a vertical surface adjacent work that
-      // carries a different industry tag — a sales page should choose its proof
-      // rather than inherit whatever the taxonomy happens to return.
+      // Case study slugs (filenames without .mdx). When set, this list fully
+      // determines what appears — auto-matching by `industry` is skipped.
+      // A sales page needs to exclude as well as include: the industry tag is
+      // broad enough that matching on it alone surfaces weak proof alongside
+      // strong. Omit the field to fall back to auto-matching by tag.
       featuredCaseStudies: z.array(z.string()).optional(),
       heroImage: image().optional(),
       heroImageWide: image().optional(),
