@@ -1,0 +1,2 @@
+# Pipeline records contain prospect PII (email, LinkedIn, location) — never commit to public repo
+programs/*/pipeline/
