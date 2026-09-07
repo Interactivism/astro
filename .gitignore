@@ -1,0 +1,14 @@
+# Local Netlify folder
+.netlify
+
+# ── Agent infrastructure lives in its own PRIVATE repo ────────────────────────
+# github.com/Interactivism/interactivism-agents
+#
+# This directory was purged from this repo's history on 2026-09-07. It carried
+# prospect PII (six real email addresses in outbound sequence drafts) plus
+# internal operating docs, in a PUBLIC repo.
+#
+# It is its own git repository now. Do not re-add it here: this repo is rooted
+# at the home directory and has a public remote, so anything committed from
+# here is published.
+Claude/Interactivism Org/interactivism-agents/
