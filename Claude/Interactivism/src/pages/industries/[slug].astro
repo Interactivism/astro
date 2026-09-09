@@ -19,6 +19,7 @@ import PhotoCredit from '../../components/layout/PhotoCredit.astro';
 import CaseStudyCard from '../../components/work/CaseStudyCard.astro';
 import Button from '../../components/ui/Button.astro';
 import { getLogoVariant } from '../../lib/imageBrightness';
+import { selectIndustryCaseStudies } from '../../lib/industryCaseStudies';
 
 const BOOKING_URL = 'https://calendar.app.google/Rb7oxeFG6JCpMEVCA';
 
@@ -31,7 +32,7 @@ export async function getStaticPaths() {
 }
 
 const { entry } = Astro.props;
-const { title, summary, id, clients, ctaHeadline, featuredCaseStudies, heroImage, heroImageWide, photoCredit } = entry.data;
+const { title, summary, id, clients, ctaHeadline, heroImage, heroImageWide, photoCredit } = entry.data;
 
 // Fallback avoids an indefinite article, which would be wrong for
 // vowel-initial industry names ("a AdTech").
@@ -49,40 +50,10 @@ if (heroImageWide) {
   }
 }
 
-// Related case studies — an explicit featuredCaseStudies list when present,
-// otherwise everything tagged with this industry. Sorted newest first, so the
-// most recent engagement leads regardless of how it was selected.
+// Related case studies — see selectIndustryCaseStudies for selection rules.
+// /work/[slug] uses the same helper to scope its prev/next navigation.
 const allCaseStudies = await getCollection('caseStudies');
-const now = new Date();
-const isLive = (cs: (typeof allCaseStudies)[number]) =>
-  cs.data.status === 'published' && cs.data.publishedDate <= now;
-
-// Unknown slugs fail the build rather than vanishing silently from a sales page.
-const featured = (featuredCaseStudies ?? []).map((slug) => {
-  const match = allCaseStudies.find((cs) => cs.id === slug);
-  if (!match) {
-    throw new Error(
-      `industries/${id}: featuredCaseStudies references "${slug}", which is not a case study.`,
-    );
-  }
-  return match;
-});
-
-// An explicit list replaces auto-matching rather than extending it, so a page
-// can leave out weakly-related work that happens to carry the same tag.
-const selected = featured.length > 0
-  ? featured
-  : allCaseStudies.filter((cs) => cs.data.industry === id);
-const deduped = new Map(selected.filter(isLive).map((cs) => [cs.id, cs]));
-const related = [...deduped.values()]
-  .sort((a, b) => {
-    const endA = a.data.yearEnd === 'present' ? Infinity : (a.data.yearEnd ?? a.data.year);
-    const endB = b.data.yearEnd === 'present' ? Infinity : (b.data.yearEnd ?? b.data.year);
-    return endB - endA;
-  })
-  // Headroom above the current four, so adding a featured entry does not
-  // silently drop another off the end of the grid.
-  .slice(0, 6);
+const related = selectIndustryCaseStudies(entry, allCaseStudies);
 ---
 
 <BaseLayout
@@ -133,7 +104,7 @@ const related = [...deduped.values()]
         <p class="font-mono text-xs text-muted mb-4 uppercase tracking-widest">Selected work</p>
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-20">
           {related.map((cs) => (
-            <CaseStudyCard entry={cs} />
+            <CaseStudyCard entry={cs} from={id} />
           ))}
         </div>
       </div>

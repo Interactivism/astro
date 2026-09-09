@@ -1,6 +1,6 @@
 ---
 /**
- * Case study excerpt card — used on the Work index page.
+ * Case study excerpt card — used on the Work index, service and industry pages.
  *
  * Layout:
  *   - Hero image (16:9) with client name tag flush bottom-left
@@ -15,17 +15,17 @@ import type { CollectionEntry } from 'astro:content';
 
 interface Props {
   entry: CollectionEntry<'caseStudies'>;
+  /** Industry slug this card is shown on. Tags the link so the case study
+   *  can scope its prev/next navigation to that industry's set. */
+  from?: string;
 }
 
-const { entry } = Astro.props;
-const { title, client, summary, heroImage, services, year, yearEnd } = entry.data;
-const href = `/work/${entry.id}/`;
+const { entry, from } = Astro.props;
+const { title, client, summary, heroImage, services } = entry.data;
 
-const yearDisplay = yearEnd === undefined
-  ? String(year)
-  : yearEnd === 'present'
-    ? `${year}–Present`
-    : `${year}–${yearEnd}`;
+// `from` tags the link with the industry page it was opened from, so the case
+// study can scope its prev/next navigation to that vertical's set.
+const href = from ? `/work/${entry.id}/?from=${from}` : `/work/${entry.id}/`;
 
 // Map service IDs to display labels
 const SERVICE_LABELS: Record<string, string> = {
@@ -75,16 +75,13 @@ const SERVICE_LABELS: Record<string, string> = {
         {summary}
       </p>
 
-      <!-- Services + year -->
-      <div class="grid grid-cols-[1fr_auto] gap-x-6 items-start">
-        <div class="flex flex-wrap gap-2 content-start">
-          {services.map((id) => (
-            <span class="font-mono text-xs text-muted uppercase tracking-widest border border-subtle px-2 py-1">
-              {SERVICE_LABELS[id] ?? id}
-            </span>
-          ))}
-        </div>
-        <span class="font-mono text-xs text-muted pt-1">{yearDisplay}</span>
+      <!-- Services -->
+      <div class="flex flex-wrap gap-2 content-start">
+        {services.map((id) => (
+          <span class="font-mono text-xs text-muted uppercase tracking-widest border border-subtle px-2 py-1">
+            {SERVICE_LABELS[id] ?? id}
+          </span>
+        ))}
       </div>
     </div>
   </a>
