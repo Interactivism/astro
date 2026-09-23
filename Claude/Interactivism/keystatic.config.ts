@@ -605,6 +605,88 @@ export default config({
           multiline: true,
           validation: { isRequired: true },
         }),
+        // Marquee images live in a per-entry subdirectory, which fields.image
+        // cannot express. They must still be declared, or Keystatic refuses to
+        // open the entry at all — fields.ignored passes the paths through
+        // untouched without trying to manage the files.
+        heroImage: fields.ignored(),
+        heroImageWide: fields.ignored(),
+        photoCredit: fields.text({
+          label: 'Photo credit',
+          description: 'HTML. e.g. Marquee photo by <a href="...">Name</a> on <a href="...">Unsplash</a>',
+          multiline: true,
+        }),
+        content: fields.mdx({
+          label: 'Content',
+          components: {},
+        }),
+      },
+    }),
+
+    // ----------------------------------------------------------
+    // Industries — outbound BD landing pages
+    // ----------------------------------------------------------
+    industries: collection({
+      label: 'Industries',
+      slugField: 'title',
+      path: 'src/content/industries/*',
+      format: { contentField: 'content' },
+      entryLayout: 'content',
+      previewUrl: '/industries/{slug}/',
+      schema: {
+        title: fields.slug({
+          name: {
+            label: 'Title',
+            description: 'Display name, e.g. "AdTech". The slug must match the filename.',
+            validation: { isRequired: true },
+          },
+        }),
+        id: fields.select({
+          label: 'Industry ID',
+          description: 'Must match the filename and the tag used on case studies.',
+          options: industryOptions,
+          defaultValue: 'adtech',
+        }),
+        summary: fields.text({
+          label: 'Summary',
+          description: 'Sits under the page title and doubles as the meta description.',
+          multiline: true,
+          validation: { isRequired: true },
+        }),
+        // See the note on the services collection above.
+        heroImage: fields.ignored(),
+        heroImageWide: fields.ignored(),
+        photoCredit: fields.text({
+          label: 'Photo credit',
+          description: 'HTML. e.g. Marquee photo by <a href="...">Name</a> on <a href="...">Unsplash</a>',
+          multiline: true,
+        }),
+        ctaHeadline: fields.text({
+          label: 'CTA headline',
+          description: 'Above the booking button. Defaults to "Let\'s talk about your <Title> product." Set it per industry so the wording reads naturally — a generic template forces an article that is wrong for vowel-initial names like AdTech.',
+        }),
+        featuredCaseStudies: fields.array(
+          fields.relationship({
+            label: 'Case study',
+            collection: 'caseStudies',
+            validation: { isRequired: true },
+          }),
+          {
+            label: 'Featured Case Studies',
+            description: 'Replaces auto-matching entirely — leave empty to fall back to every case study tagged with this industry. Use it to exclude weakly-related work carrying the same tag.',
+            itemLabel: (props) => props.value ?? 'Case study',
+            validation: { length: { max: 6 } },
+          }
+        ),
+        clients: fields.array(
+          fields.text({ label: 'Client name' }),
+          {
+            label: 'Clients',
+            description: 'Roster shown near the top of the page. At least one required.',
+            itemLabel: (props) => props.value || 'Client',
+            validation: { length: { min: 1 } },
+          }
+        ),
         content: fields.mdx({
           label: 'Content',
           components: {},
