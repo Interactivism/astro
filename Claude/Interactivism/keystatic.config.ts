@@ -94,7 +94,8 @@ export default config({
         title: fields.slug({
           name: {
             label: 'Title',
-            validation: { isRequired: true },
+            description: 'Max 80 characters.',
+            validation: { isRequired: true, length: { max: 80 } },
           },
         }),
         client: fields.text({
@@ -154,7 +155,7 @@ export default config({
               label: 'Photographer name',
               description: 'Leave blank to hide the photo credit entirely.',
             }),
-            photographerUrl: fields.text({
+            photographerUrl: fields.url({
               label: 'Photographer URL',
               description: 'Link to the photographer\'s profile page.',
             }),
@@ -162,7 +163,7 @@ export default config({
               label: 'Platform',
               description: 'e.g. "Unsplash". Leave blank to omit.',
             }),
-            platformUrl: fields.text({
+            platformUrl: fields.url({
               label: 'Platform URL',
               description: 'Link to the specific photo on the platform.',
             }),
@@ -216,6 +217,7 @@ export default config({
             label: 'Metrics',
             description: '1–4 metrics. Omit entirely if none.',
             itemLabel: (props) => props.fields.value.value ?? 'Metric',
+            validation: { length: { max: 4 } },
           }
         ),
         relatedCaseStudies: fields.array(
@@ -223,6 +225,7 @@ export default config({
           {
             label: 'Related Case Studies',
             description: 'Slugs of related case studies. Max 2.',
+            validation: { length: { max: 2 } },
           }
         ),
         gallery: fields.array(
@@ -353,7 +356,8 @@ export default config({
         title: fields.slug({
           name: {
             label: 'Title',
-            validation: { isRequired: true },
+            description: 'Max 100 characters.',
+            validation: { isRequired: true, length: { max: 100 } },
           },
         }),
         author: fields.relationship({
@@ -397,7 +401,7 @@ export default config({
               label: 'Photographer name',
               description: 'Leave blank to hide the photo credit entirely.',
             }),
-            photographerUrl: fields.text({
+            photographerUrl: fields.url({
               label: 'Photographer URL',
               description: 'Link to the photographer\'s profile page.',
             }),
@@ -405,7 +409,7 @@ export default config({
               label: 'Platform',
               description: 'e.g. "Unsplash". Leave blank to omit.',
             }),
-            platformUrl: fields.text({
+            platformUrl: fields.url({
               label: 'Platform URL',
               description: 'Link to the specific photo on the platform.',
             }),

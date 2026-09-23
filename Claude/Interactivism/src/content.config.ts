@@ -82,11 +82,13 @@ const caseStudies = defineCollection({
       summary: z.string().min(100).max(160),
       heroImage: image().optional(),
       heroImageWide: image().optional(),
+      // URL fields are nullable because Keystatic's fields.url writes null
+      // rather than omitting the key when the input is left empty.
       photoCredit: z.object({
         photographer: z.string().optional(),
-        photographerUrl: z.string().url().optional(),
+        photographerUrl: z.string().url().nullable().optional(),
         platform: z.string().optional(),
-        platformUrl: z.string().url().optional(),
+        platformUrl: z.string().url().nullable().optional(),
       }).optional(),
       ogImage: image().optional(),
       services: z.array(z.enum(SERVICE_IDS)).min(1),
@@ -135,9 +137,14 @@ const blog = defineCollection({
         summary: z.string().min(100).max(200),
         heroImage: image().optional(),
         heroImageWide: image().optional(),
+        // Keystatic offers the URL fields and the template renders them, but
+        // they were missing here — Zod strips undeclared keys, so a URL entered
+        // in the CMS was silently dropped and the credit rendered unlinked.
         photoCredit: z.object({
           photographer: z.string().optional(),
+          photographerUrl: z.string().url().nullable().optional(),
           platform: z.string().optional(),
+          platformUrl: z.string().url().nullable().optional(),
         }).optional(),
         ogImage: image().optional(),
         tags: z.array(z.string()).optional(),
