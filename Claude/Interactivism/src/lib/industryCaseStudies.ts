@@ -26,8 +26,12 @@ export function selectIndustryCaseStudies(
   allCaseStudies: CaseStudy[],
   now: Date = new Date(),
 ): CaseStudy[] {
+  // Drafts are shown locally so an industry page can be previewed with work
+  // that is written but not yet released — matching how /work/[slug] builds its
+  // paths. Production still shows only published entries.
   const isLive = (cs: CaseStudy) =>
-    cs.data.status === 'published' && cs.data.publishedDate <= now;
+    import.meta.env.DEV ||
+    (cs.data.status === 'published' && cs.data.publishedDate <= now);
 
   const featured = (industry.data.featuredCaseStudies ?? []).map((slug) => {
     const match = allCaseStudies.find((cs) => cs.id === slug);
