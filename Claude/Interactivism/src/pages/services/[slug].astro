@@ -51,6 +51,18 @@ const related = allCaseStudies
   hasMarquee={!!heroImage}
   logoVariant={logoVariant}
 >
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "name": title,
+    "description": summary,
+    "serviceType": title,
+    "url": `https://interactivism.com/services/${id}/`,
+    // Points at the @id declared in BaseLayout so the service resolves to the
+    // same entity as the organization rather than a second, unrelated one.
+    "provider": { "@id": "https://interactivism.com/#organization" },
+  })} />
+
   {heroImage && heroImageWide && (
     <Marquee heroImage={heroImage} heroImageWide={heroImageWide} alt="" />
   )}

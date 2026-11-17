@@ -10,6 +10,7 @@
  *   ogType      — 'website' (default) or 'article' (blog posts, case studies)
  *   canonical   — explicit canonical URL (falls back to current page URL)
  */
+import { getCollection } from 'astro:content';
 import Header from '../components/layout/Header.astro';
 import Footer from '../components/layout/Footer.astro';
 import type { LogoVariant } from '../lib/imageBrightness';
@@ -40,7 +41,7 @@ interface Props {
 
 const {
   title,
-  description = 'Digital product design & development studio. Pasadena, CA.',
+  description = 'Digital product design & development studio. Los Angeles, CA.',
   ogImage = '/og-default.png',
   ogType = 'website',
   canonical,
@@ -57,6 +58,13 @@ const logoVariant: LogoVariant = logoVariantProp ?? (hasMarquee ? 'light' : 'til
 const siteUrl = 'https://interactivism.com';
 const pageUrl = canonical ?? `${siteUrl}${Astro.url.pathname}`;
 const pageTitle = `${title} — Interactivism`;
+
+// Services for the Organization schema's serviceType. Derived from the
+// collection rather than hand-listed, so it cannot drift out of sync.
+const serviceEntries = await getCollection('services');
+const serviceNames = serviceEntries
+  .sort((a, b) => a.data.order - b.data.order)
+  .map((s) => s.data.title);
 ---
 
 <!doctype html>
@@ -96,10 +104,20 @@ const pageTitle = `${title} — Interactivism`;
     <!-- JSON-LD: Organization -->
     <script type="application/ld+json" set:html={JSON.stringify({
       "@context": "https://schema.org",
-      "@type": "Organization",
+      // ProfessionalService rather than the generic Organization: it is a
+      // LocalBusiness subtype, so the address below carries more weight for
+      // location-shaped queries.
+      "@type": "ProfessionalService",
+      "@id": `${siteUrl}/#organization`,
       "name": "Interactivism",
       "url": siteUrl,
       "logo": `${siteUrl}/web-app-manifest-512x512.png`,
+      "image": `${siteUrl}/web-app-manifest-512x512.png`,
+      "description": "Interactivism is a digital product design and development studio in Los Angeles. We help teams build products that are engaging, efficient, and easy to use.",
+      "foundingDate": "2012",
+      "areaServed": ["Los Angeles", "Southern California", "Worldwide"],
+      "serviceType": serviceNames,
+      "knowsAbout": serviceNames,
       "contactPoint": {
         "@type": "ContactPoint",
         "telephone": "+1-323-325-5080",
@@ -115,6 +133,7 @@ const pageTitle = `${title} — Interactivism`;
       },
       "sameAs": [
         "https://www.linkedin.com/company/interactivism",
+        "https://clutch.co/profile/interactivism",
         "https://medium.com/@interactivismco",
         "https://www.instagram.com/interactivism/"
       ]

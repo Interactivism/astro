@@ -7,7 +7,7 @@ export async function GET(context: APIContext) {
 
   return rss({
     title: 'Interactivism',
-    description: 'Digital product design & development — articles from the Interactivism studio in Pasadena, CA.',
+    description: 'Digital product design & development — articles from the Interactivism studio in Los Angeles.',
     site: context.site!,
     items: posts.map((post) => ({
       title: post.data.title,
