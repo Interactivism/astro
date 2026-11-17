@@ -67,6 +67,13 @@ for (const ind of industriesForNav) {
 }
 const hasScopedNav = Object.keys(scopedNav).length > 0;
 
+// Which industries have a landing page, so the sidebar only links the ones
+// that resolve. Derived from the collection rather than listed here: 9
+// industry ids exist in the schema enum and only some have pages, so a
+// hand-kept list would rot into 404s the moment a page is added or removed.
+const industryPageIds = new Set(industriesForNav.map((ind) => ind.id));
+const industryHasPage = industryPageIds.has(industry);
+
 // "2020", "2020–2023", or "2020–Present"
 const yearDisplay = yearEnd === undefined
   ? String(year)
@@ -192,7 +199,18 @@ const INDUSTRY_LABELS: Record<string, string> = {
           </div>
           <div>
             <dt class="font-mono text-xs text-muted uppercase tracking-widest mb-1">Industry</dt>
-            <dd class="text-body">{INDUSTRY_LABELS[industry] ?? industry}</dd>
+            <dd class="text-body">
+              {industryHasPage ? (
+                <a
+                  href={`/industries/${industry}/`}
+                  class="text-body font-light underline decoration-accent decoration-2 underline-offset-4 hover:text-headline transition duration-fast"
+                >
+                  {INDUSTRY_LABELS[industry] ?? industry}
+                </a>
+              ) : (
+                INDUSTRY_LABELS[industry] ?? industry
+              )}
+            </dd>
           </div>
           <div>
             <dt class="font-mono text-xs text-muted uppercase tracking-widest mb-1">Services</dt>

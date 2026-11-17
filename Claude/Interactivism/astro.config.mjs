@@ -68,10 +68,13 @@ export default defineConfig({
       applyBaseStyles: false,
     }),
     // Draft preview routes are gated and must not be advertised to crawlers.
-    // Industry pages are outbound-outreach landing pages, kept out of the
-    // sitemap so their traffic stays attributable to that outreach.
+    // Industry pages ARE indexed: they answer vertical-shaped queries
+    // ("UX agency for adtech") that nothing else on the site does. Outreach
+    // traffic stays separable in GA4, which reports organic search apart from
+    // direct — a plain-text outreach email sends no referrer, so for a page
+    // with no other inbound path, direct is effectively the outreach number.
     sitemap({
-      filter: (page) => !page.includes('/preview') && !page.includes('/industries'),
+      filter: (page) => !page.includes('/preview'),
     }),
     keystatic(),
   ],
