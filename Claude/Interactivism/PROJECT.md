@@ -39,7 +39,7 @@ The site has the following top-level pages:
 
 ### Content collections
 
-The site has four Astro content collections (case studies, blog posts, authors, and service pages), plus two flat data files (`clients.json` and `homepage.json`). Schemas, fields, validation rules, and MDX components are documented in detail in **CONTENT.md** — this document is the source of truth for content structure.
+The site has five Astro content collections (case studies, blog posts, authors, service pages, and industry landing pages), plus two flat data files (`clients.json` and `homepage.json`). Schemas, fields, validation rules, and MDX components are documented in detail in **CONTENT.md** — this document is the source of truth for content structure.
 
 At a high level:
 
@@ -47,10 +47,11 @@ At a high level:
 - **`blog`** — articles and shorter posts. Migrating existing posts from WordPress; expect cleanup work on the imported content.
 - **`authors`** — author profiles referenced by blog posts (Erik, Petra, named team members, and a studio-byline "Interactivism" entry).
 - **`services`** — one MDX page per service offering, surfaced on the Services index and at `/services/[service]/`.
+- **`industries`** — one MDX page per industry vertical, at `/industries/[industry]/`. Business development landing pages; not in the nav. See CONTENT.md.
 - **`clients.json`** — flat data file driving the Clients page and homepage logo wall.
 - **`homepage.json`** — flat data file driving the homepage composition (hero + featured case studies + featured blog posts).
 
-`src/content/config.ts` (Astro / Zod) and `keystatic.config.ts` (CMS UI) implement the same schemas in different syntaxes. Both must stay in sync — see SCHEMA.md for the mapping.
+`src/content.config.ts` (Astro / Zod) and `keystatic.config.ts` (CMS UI) implement the same schemas in different syntaxes. Both must stay in sync — see SCHEMA.md for the mapping.
 
 ## URL strategy & redirects
 
@@ -69,6 +70,7 @@ The new site's URL structure is intentionally flatter than the live site. Most p
 /blog/[slug]/                       Blog post
 /team/                              Team page
 /contact/                           Contact
+/industries/[industry]/             Industry landing page (not in nav)
 
 /sitemap.xml                        Auto-generated via @astrojs/sitemap
 /rss.xml                            Auto-generated via @astrojs/rss
@@ -118,6 +120,43 @@ Pattern in `netlify.toml`:
 
 Test redirects on the staging deploy before cutover. A bad redirect map causes SEO damage that takes months to recover from.
 
+## Discoverability and structured data
+
+Optimizing for search engines and for LLM retrieval mostly asks for the same things: say what we do in plain language, make the facts machine-readable, and keep every statement of a fact identical everywhere it appears.
+
+### One entity, consistently
+
+`BaseLayout.astro` emits a `ProfessionalService` (a `LocalBusiness` subtype, so the address carries weight for location-shaped queries) with `@id` = `https://interactivism.com/#organization`. Every service page emits a `Service` that references that `@id` as its `provider`, so the whole site resolves to one entity rather than seven unrelated ones. `serviceType` and `knowsAbout` are derived from the `services` collection — never hand-listed.
+
+Anything new that describes the studio in structured data hangs off that same `@id`.
+
+### Facts that must match everywhere
+
+Conflicting facts are worse than missing ones: they weaken the entity signal and read as sloppy to anyone who notices.
+
+- **Founded 2012.** The site previously carried three different years. If this changes, grep for every occurrence before editing one of them, and update the third-party profiles too (Clutch, TechBehemoths, BrightLocal).
+- **Address is Pasadena; positioning is Los Angeles.** These are different fields doing different jobs and the split is deliberate:
+  - `PostalAddress` must stay literally true and match the Google Business Profile character for character. Google cross-references them, and a mismatch degrades local ranking or gets the GBP suspended. Never put "Los Angeles" here.
+  - Prose and meta descriptions say **Los Angeles**, because that is the term people actually search. Pasadena is in LA County, so this is a positioning claim, not a false address.
+  - `areaServed` is where the market claim belongs in structured data.
+  - Keep "Pasadena" wherever the address is doing the work: footer, contact page, map alt text, team page.
+  - Note this will not move us in the Google local pack or on Maps — those are driven by the GBP address and the searcher's proximity. The gain is in organic text results and LLM retrieval.
+- **`sameAs`** lists profiles we actually control or that are verifiably ours. Reviews and ratings consolidate onto the entity through it.
+
+### Sitemap policy
+
+`@astrojs/sitemap` excludes only `/preview` — draft routes are gated and must not be advertised to crawlers. Everything else, industry pages included, is indexed.
+
+Internal links matter more than sitemap inclusion. A sitemap entry tells a crawler a page exists; an internal link from an established page tells it the page matters and lets authority flow. When adding a page type, ask what links *to* it, not just whether it is listed.
+
+After adding pages, resubmit `https://interactivism.com/sitemap-index.xml` in Search Console and request indexing for the new URLs. Google retired the old `ping?sitemap=` endpoint in 2023.
+
+### Dead URLs
+
+Use 410, not 301, for WordPress-era URLs with no equivalent. A 301 to the homepage tells Google the content moved there, which it did not, and the URL lingers in Search Console. 410 removes it.
+
+---
+
 ## Tech stack
 
 - **Framework:** Astro (latest), with MDX support via `@astrojs/mdx`
@@ -164,7 +203,9 @@ The migration is successful when:
 When making changes via Claude Code or otherwise:
 
 - **Read DESIGN.md before any visual work.** Design decisions follow the tokens and patterns documented there. If a needed pattern doesn't exist, add it to DESIGN.md before implementing it.
-- **Read CONTENT.md before any schema or content-template work.** Content structure decisions follow CONTENT.md. Schema changes happen there first, then propagate to `src/content/config.ts` and `keystatic.config.ts` in the same commit.
+- **Read CONTENT.md before any schema or content-template work.** Content structure decisions follow CONTENT.md. Schema changes happen there first, then propagate to `src/content.config.ts` and `keystatic.config.ts` in the same commit.
+- **Derive lists, don't hand-maintain them.** Anything that enumerates content — service names in structured data, which industries have landing pages, counts of anything — is read from the collection at build time. Hand-written copies drift the moment content changes, and the failure is silent.
+- **Don't deploy without being asked.** Build and verify locally, then stop. Pushing to `main` publishes to production immediately.
 - **Commit frequently in small, reviewable chunks.** Page-by-page or component-by-component, not feature-branches-with-fifty-files.
 - **Match the existing voice.** Confident, expert, plainspoken. When in doubt, write less and be more specific.
 - **Don't add dependencies casually.** Astro + a few official integrations should cover almost everything. New runtime dependencies need a real justification.

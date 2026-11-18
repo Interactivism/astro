@@ -4,13 +4,13 @@
 
 This is the source of truth for content structure on interactivism.com — the schemas for case studies, blog posts, authors, and supporting collections. PROJECT.md handles intent; DESIGN.md handles how things look; CONTENT.md handles what gets written and how it's structured.
 
-When working in this repo (especially via Claude Code): **this document defines what `src/content/config.ts` (Astro) and `keystatic.config.ts` (CMS) must implement.** Both files derive from the same schema spec — they describe the same content shape from different angles. Schema changes happen here first, then propagate to `src/content/config.ts` and `keystatic.config.ts` in the same commit. The Keystatic↔Astro mapping table lives in SCHEMA.md.
+When working in this repo (especially via Claude Code): **this document defines what `src/content.config.ts` (Astro) and `keystatic.config.ts` (CMS) must implement.** Both files derive from the same schema spec — they describe the same content shape from different angles. Schema changes happen here first, then propagate to `src/content.config.ts` and `keystatic.config.ts` in the same commit. The Keystatic↔Astro mapping table lives in SCHEMA.md.
 
 ---
 
 ## Content collections overview
 
-The site has four content collections, each living under `src/content/`:
+The site has five content collections, each living under `src/content/`:
 
 | Collection | Path | Purpose | File format |
 |---|---|---|---|
@@ -18,6 +18,7 @@ The site has four content collections, each living under `src/content/`:
 | `blog` | `src/content/blog/` | Articles, points of view, notes | `.mdx` (or `.md` for simple posts) |
 | `authors` | `src/content/authors/` | Author profiles referenced by blog posts | `.json` |
 | `services` | `src/content/services/` | Service detail page bodies | `.mdx` |
+| `industries` | `src/content/industries/` | Industry landing pages for BD outreach and vertical search | `.mdx` |
 
 Plus two supporting data files (not content collections — flat data files imported as needed):
 
@@ -119,6 +120,12 @@ Industry is a single value from this list. Add new industries here before using 
 | `nonprofit-civic` | Nonprofit & Civic |
 
 The list is alphabetical for ease of scanning in editor UIs (Keystatic renders it as a select). Display order on a future Work-by-industry filter UI is a separate concern and can be controlled at render time.
+
+**Not every industry has a landing page.** The `industries` collection currently covers 4 of the 9 IDs. On a case study page the Industry value links to `/industries/[id]/` when a page exists and renders as plain text when it does not. The set of linked industries is derived from the collection at build time — never hand-list it, or the list rots into 404s the first time a page is added or removed.
+
+**Choosing a tag.** Pick the industry the buyer would use to describe themselves, and check what comparable work is already tagged before inventing a distinction. Precedent: Velocify (sales acceleration) and both Local IQ studies (sales enablement, lead management) are all `enterprise-saas` — functionally the same category of B2B product, so they share a bucket. Kin Community's Tandem is `martech` rather than `enterprise-saas` because a two-sided influencer/brand marketplace is not something a SaaS buyer would recognize as their own category.
+
+**The tag and the industry page's selected work are independent.** An industry page's `featuredCaseStudies` *replaces* tag matching rather than adding to it (see the Industries section below). A case study can therefore appear on an industry page it is not tagged with, and vice versa. That is allowed — the tag drives the sidebar link, the page field drives the page — but a long-standing mismatch usually means the tag is wrong.
 
 ### Deliverables list (controlled vocabulary)
 
@@ -391,6 +398,43 @@ Service IDs are stable. Once a service ID is published, changing it requires upd
 
 ---
 
+## Industries
+
+Landing pages at `/industries/[id]/`, one MDX file per industry, built for business development: a prospect in a given vertical should land on proof that we have worked in their world. They are also the only pages that answer vertical-shaped search queries ("UX agency for adtech"), which nothing else on the site covers.
+
+### File location
+
+`src/content/industries/[id].mdx`, where `[id]` is an ID from the industry controlled vocabulary above. Only some industries have a page; see "Industry list" for how that interacts with case study tags.
+
+### Frontmatter schema
+
+| Field | Required | Notes |
+|---|---|---|
+| `title` | yes | Display name, matching the industry list ("Aerospace & Defense") |
+| `id` | yes | Must be an ID from the industry controlled vocabulary |
+| `summary` | yes | Lede under the H1, and the meta description |
+| `clients` | yes | At least 1. Roster of client names, not case study slugs |
+| `ctaHeadline` | no | Falls back to a generated line. Write it article-free — the fallback has no leading article, so "AdTech product problem" works where "an AdTech product" does not |
+| `featuredCaseStudies` | no | Case study slugs. **Replaces** tag matching — see below |
+| `heroImage` / `heroImageWide` | no | Marquee. Same 900x506 / 2400x600 convention as case studies |
+| `photoCredit` | no | Attribution line for the marquee image |
+
+The MDX body holds the point-of-view sections — typically 3 to 4 H2 sections about how design work in that vertical actually goes.
+
+### featuredCaseStudies replaces tag matching
+
+With `featuredCaseStudies` set, the Selected work section shows exactly those studies, in that order. With it absent, the page falls back to every published case study tagged with the industry.
+
+This is deliberate: auto-matching could only ever *add*, so a page could not exclude a tagged study that did not belong. The selection runs through `src/lib/industryCaseStudies.ts`, shared by the industry page and the case study prev/next navigation so the two cannot drift. A slug in `featuredCaseStudies` that is not a real case study fails the build rather than rendering an empty card.
+
+A page with no featured list and no tagged studies simply does not render the section — `aerospace-defense` is the live example, where the roster and the confidentiality section carry the page instead.
+
+### Indexing
+
+These pages are in the sitemap and are indexed. They were originally excluded to keep their traffic cleanly attributable to outreach; that is no longer necessary, because GA4 reports organic search separately from direct, and a plain-text outreach email sends no referrer. For a page with no other inbound path, direct is effectively the outreach number.
+
+Short root-level aliases (`/adtech`, `/fintech`, …) 301 to the canonical `/industries/[id]/`. Use the short form in outbound email; never link the short form internally.
+
 ## Clients (data file)
 
 Not a content collection — a flat JSON data file at `src/data/clients.json`.
@@ -513,7 +557,7 @@ This helper is the single chokepoint — every page that lists content goes thro
 
 ## Validation rules
 
-Build-time validation is enforced via Zod schemas in `src/content/config.ts`. The full rule set is documented in SCHEMA.md. Key rules to know:
+Build-time validation is enforced via Zod schemas in `src/content.config.ts`. The full rule set is documented in SCHEMA.md. Key rules to know:
 
 - `status: "draft"` excludes content from all production builds.
 - `summary` length: 100–160 chars for case studies, 100–200 for blog posts.

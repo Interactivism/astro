@@ -316,7 +316,7 @@ This order matches the live site and is intentional — capability, then proof, 
 
 Nav item labels are rendered in **sentence case** — no `uppercase` or `tracking-widest`. Size: `text-2xl` (30px), weight: `font-light` (300). Nav items are indented `108px` from the left edge of the sidenav, visually aligning with the logo silhouette.
 
-**Current page indicator:** `state.on` — nav item text color changes to `#9B9B9B` (light grey) to indicate the active page.
+**Current page indicator:** `state.on` — nav item text color changes to `#9B9B9B` (light gray) to indicate the active page.
 
 **Component:** `src/components/layout/Header.astro`
 
@@ -364,6 +364,24 @@ Text links are styled globally via a base `a` rule in `global.css` — there is 
 - Pressed: underline darkens per `state.pressed`.
 
 Nav links are styled within the Header component and override these defaults.
+
+> **Implementation note.** The global rule in `global.css` currently applies only `text-ink-900 font-medium`. The hover underline described above is not implemented there, and `accent.surface` is not a token in `tailwind.config.mjs` — the accent tokens are `accent.DEFAULT`, `accent.hover`, `accent.pressed` and `accent.subtle`. Treat the bullets above as intent and the subsection below as what actually ships.
+
+#### Inline links inside body or meta text
+
+For a link that sits inside running text or a metadata value — the Industry value in the case study sidebar, for example — the global `a` rule works against you: it forces `ink-900` and weight 500, so an unstyled link renders darker and heavier than the text around it. Always override both explicitly, then add the accent underline:
+
+```
+text-body font-light underline decoration-accent decoration-2 underline-offset-4
+hover:text-headline transition duration-fast
+```
+
+Two rules this encodes:
+
+1. **Match the surrounding text's color and weight.** Compare computed styles against a neighboring value, not against what the classes look like they should do. The body default is weight 300, so `font-normal` (400) is still wrong.
+2. **The underline carries the link signal, in brand yellow.** `decoration-accent` at `decoration-2` — at 1px the yellow is close to invisible on white.
+
+Only `colors` entries can be used as `decoration-*` values. `subtle` lives under `borderColor` and `headline` under `textColor`, so `decoration-subtle` and `decoration-headline` silently generate nothing and the decoration falls back to `currentColor`.
 
 ### Icons
 

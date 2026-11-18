@@ -14,7 +14,7 @@ For project intent and IA: see PROJECT.md.
 
 Both configs implement the same schemas, but in different syntaxes:
 
-- **`src/content/config.ts`** (Astro) — uses Zod schemas. Validates content at build time. Generates TypeScript types for use in templates.
+- **`src/content.config.ts`** (Astro) — uses Zod schemas. Validates content at build time. Generates TypeScript types for use in templates.
 - **`keystatic.config.ts`** (Keystatic) — uses Keystatic's field functions. Generates the editor UI.
 
 When a schema changes, **both files update in the same commit**. Drift between the two will cause one of two failure modes:
@@ -34,13 +34,13 @@ A short reference for the mapping:
 | Reference to another collection | `reference('authors')` | `fields.relationship({ collection: 'authors' })` |
 | Markdown body | (handled by Astro) | `fields.markdoc({ ... })` or `fields.mdx({ ... })` |
 
-The full configs live in `src/content/config.ts` and `keystatic.config.ts`. CONTENT.md is the spec they implement.
+The full configs live in `src/content.config.ts` and `keystatic.config.ts`. CONTENT.md is the spec they implement.
 
 ---
 
 ## Validation rules
 
-These are enforced at build time via Zod schemas in `src/content/config.ts`. Build fails if any rule is violated.
+These are enforced at build time via Zod schemas in `src/content.config.ts`. Build fails if any rule is violated.
 
 **All collections:**
 - `title`, `summary`, and required string fields must be non-empty.
@@ -67,6 +67,11 @@ These are enforced at build time via Zod schemas in `src/content/config.ts`. Bui
 - `id` must match the filename.
 - `order` must be a positive integer.
 
+**Industries:**
+- `id` must be a value from the industry controlled vocabulary.
+- `clients` must contain at least 1 entry.
+- Every slug in `featuredCaseStudies` must resolve to a real case study. An unresolvable slug throws at build time rather than rendering an empty card.
+
 **Homepage data file:**
 - `featuredCaseStudies` slugs must each reference a published case study.
 - `featuredCaseStudies` length: 3–8.
@@ -74,6 +79,18 @@ These are enforced at build time via Zod schemas in `src/content/config.ts`. Bui
 - `hero.image` must resolve to a real file in `public/`.
 
 When a build fails on validation, the error message points to the file and field. Fix in place rather than disabling validation.
+
+### Where Astro and Keystatic disagree
+
+Zod validates at build time; Keystatic validates at edit time. They are not equivalent, and the gaps are worth knowing:
+
+- **Keystatic refuses to open an entry with frontmatter keys it does not declare.** It does not silently strip them — the entry becomes uneditable with `Field validation failed: Key on object value "x" is not allowed`. Any field Astro reads must be declared in `keystatic.config.ts`, using `fields.ignored()` for ones editors should not touch.
+- **`fields.multiselect` accepts no validation**, so `services` and `deliverables` cannot enforce `min(1)` in the CMS. Zod still catches it, but as a failed build rather than a blocked save.
+- **`fields.url` writes `null`, not `undefined`**, for an empty value. Optional URL fields in Zod therefore need `.nullable()` as well as `.optional()`.
+- **Zod silently strips keys the schema does not declare.** A field present in the content and in Keystatic but missing from the Zod object is simply absent at runtime, with no error anywhere. When adding a field, add it to both configs in the same commit.
+- **Length caps are enforced in both**, but only for edits made through the CMS. A direct file edit can exceed a cap and the build is what catches it.
+
+After changing either config, open one entry of **every** affected collection in Keystatic and round-trip a save. A change that fixes one collection routinely breaks another.
 
 ---
 
