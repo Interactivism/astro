@@ -2,8 +2,8 @@
  * Keystatic CMS configuration — local storage mode.
  *
  * Mirrors the content collection schemas in src/content.config.ts.
- * Source of truth for both is CONTENT.md — update that doc first,
- * then keep this file and content.config.ts in sync.
+ * Source of truth for both is CONTENT.md — update that doc first.
+ * Controlled vocabularies are shared via src/lib/vocabularies.ts.
  *
  * Admin UI: http://localhost:4321/keystatic  (dev only in local mode)
  */
@@ -11,51 +11,12 @@ import { config, collection, singleton, fields } from '@keystatic/core';
 import { block, wrapper } from '@keystatic/core/content-components';
 
 // ============================================================
-// Controlled vocabularies — must mirror content.config.ts
+// Controlled vocabularies
+// Defined once in src/lib/vocabularies.ts, which content.config.ts and the
+// page templates read too. Add new values there, not here.
 // ============================================================
 
-const industryOptions = [
-  { label: 'AdTech',              value: 'adtech' },
-  { label: 'Aerospace & Defense', value: 'aerospace-defense' },
-  { label: 'AI & Content',        value: 'ai-content' },
-  { label: 'Consumer',            value: 'consumer' },
-  { label: 'Enterprise SaaS',     value: 'enterprise-saas' },
-  { label: 'Fintech',             value: 'fintech' },
-  { label: 'MarTech',             value: 'martech' },
-  { label: 'Media & Publishing',  value: 'media-publishing' },
-  { label: 'Nonprofit & Civic',   value: 'nonprofit-civic' },
-] as const;
-
-const serviceOptions = [
-  { label: 'Product Design',        value: 'product-design' },
-  { label: 'Human + AI Experience', value: 'human-ai-experience' },
-  { label: 'User Research',         value: 'user-research' },
-  { label: 'Development',           value: 'development' },
-  { label: 'Product Strategy',      value: 'product-strategy' },
-  { label: 'Brand Development',     value: 'brand-development' },
-] as const;
-
-const deliverableOptions = [
-  { label: 'Experience Strategy',       value: 'experience-strategy' },
-  { label: 'Heuristic Evaluation',      value: 'heuristic-evaluation' },
-  { label: 'Usability Assessment',      value: 'usability-assessment' },
-  { label: 'Personas',                  value: 'personas' },
-  { label: 'Information Architecture',  value: 'information-architecture' },
-  { label: 'Brand Strategy',            value: 'brand-strategy' },
-  { label: 'Brand Identity',            value: 'brand-identity' },
-  { label: 'Positioning Framework',     value: 'positioning-framework' },
-  { label: 'Messaging Framework',       value: 'messaging-framework' },
-  { label: 'Print Collateral',          value: 'print-collateral' },
-  { label: 'Illustration',              value: 'illustration' },
-  { label: 'Animation',                 value: 'animation' },
-  { label: 'Content Strategy',          value: 'content-strategy' },
-  { label: 'UI/UX Design',              value: 'ui-ux-design' },
-  { label: 'Design System',             value: 'design-system' },
-  { label: 'Data Visualization',        value: 'data-visualization' },
-  { label: 'Web Development',           value: 'web-development' },
-  { label: 'Mobile App Development',    value: 'mobile-app-development' },
-  { label: 'Futurecasting',             value: 'futurecasting' },
-] as const;
+import { industryOptions, serviceOptions, deliverableOptions } from './src/lib/vocabularies';
 
 // ============================================================
 // Export
@@ -699,51 +660,81 @@ export default config({
   singletons: {
 
     // ----------------------------------------------------------
-    // Book a call — which calendar the CTA buttons point at.
+    // Book a call — where the CTA buttons send people.
     //
-    // The window is compared against the current time on every request to
-    // /book, so dates set here in advance flip on their own. Saving this
-    // commits to main and triggers a deploy; the deploy publishes the new
-    // dates, it does not perform the switch.
+    // The override period is static and changing it needs a deploy, but
+    // /book compares it against the current time on every request. Dates set
+    // weeks ahead therefore take effect on their own. Saving here commits to
+    // main and triggers a build that publishes the dates; that build does not
+    // perform the switch.
     // ----------------------------------------------------------
     booking: singleton({
       label: 'Book a call',
       path: 'src/data/booking',
       format: { data: 'json' },
       schema: {
-        mode: fields.select({
-          label: 'Whose calendar',
-          description:
-            'Automatic uses the cover window below. The two overrides ignore it entirely — useful for an unplanned absence.',
-          options: [
-            { label: 'Automatic — use the cover window below', value: 'auto' },
-            { label: 'Always Erik', value: 'erik' },
-            { label: 'Always Petra', value: 'petra' },
-          ],
-          defaultValue: 'auto',
-        }),
-        erikUrl: fields.url({
-          label: "Erik's scheduling link",
-          validation: { isRequired: true },
-        }),
-        petraUrl: fields.url({
-          label: "Petra's scheduling link",
-          validation: { isRequired: true },
-        }),
-        coverStart: fields.datetime({
-          label: 'Petra covers from',
-          description: 'Leave both dates empty when nobody is covering.',
-        }),
-        coverEnd: fields.datetime({
-          label: 'Petra covers until',
-          description: 'Bookings go back to Erik at this moment. Both dates are needed — one alone is ignored.',
-        }),
-        timeZone: fields.text({
-          label: 'Time zone',
-          description: 'IANA name the two dates above are written in. Leave as America/Los_Angeles unless traveling.',
-          defaultValue: 'America/Los_Angeles',
-          validation: { isRequired: true },
-        }),
+
+        // Conditional rather than a flat select plus always-visible dates:
+        // the date fields appear only when an override is actually being
+        // scheduled, so the normal state is unambiguous on screen.
+        scheduling: fields.conditional(
+          fields.select({
+            label: 'Where the “Book a call” buttons go',
+            description:
+              'Normally every “Book a call” button on the site opens Erik’s scheduling page. Pick an override only when that should change.',
+            options: [
+              { label: 'Erik — normal', value: 'erik' },
+              { label: 'Petra — between two dates you choose', value: 'scheduled' },
+              { label: 'Petra — starting now, until you set this back', value: 'petra' },
+            ],
+            defaultValue: 'erik',
+          }),
+          {
+            erik: fields.empty(),
+            petra: fields.empty(),
+            scheduled: fields.object(
+              {
+                start: fields.datetime({
+                  label: 'Switch to Petra at',
+                  description: 'Up until this moment, buttons still go to Erik.',
+                }),
+                end: fields.datetime({
+                  label: 'Switch back to Erik at',
+                  description: 'From this moment on, buttons go to Erik again.',
+                }),
+                timeZone: fields.text({
+                  label: 'Time zone for both dates',
+                  description: 'IANA name. Leave as America/Los_Angeles unless you are setting these from another time zone.',
+                  defaultValue: 'America/Los_Angeles',
+                  validation: { isRequired: true },
+                }),
+              },
+              {
+                label: 'Override period',
+                description:
+                  'Both dates are required. If either is missing the override is ignored and buttons keep going to Erik.',
+              },
+            ),
+          },
+        ),
+
+        links: fields.object(
+          {
+            erikUrl: fields.url({
+              label: 'Erik’s scheduling page',
+              validation: { isRequired: true },
+            }),
+            petraUrl: fields.url({
+              label: 'Petra’s scheduling page',
+              validation: { isRequired: true },
+            }),
+          },
+          {
+            label: 'Scheduling pages',
+            description: 'The two Google Calendar booking links. These rarely change.',
+          },
+        ),
+
       },
     }),
 

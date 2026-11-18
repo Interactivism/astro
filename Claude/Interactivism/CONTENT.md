@@ -106,7 +106,9 @@ relatedCaseStudies:                  # optional, max 2; manual curation override
 
 ### Industry list (controlled vocabulary)
 
-Industry is a single value from this list. Add new industries here before using them in a case study; both the Astro schema and Keystatic config validate against this list.
+Industry is a single value from this list. Add new industries here before using them in a case study.
+
+In code the list lives once, in `src/lib/vocabularies.ts`, as `{ value, label }` pairs. The Zod enum, the Keystatic select and the display label on a case study page are all derived from it — adding a value means editing one array.
 
 | ID | Display name |
 |---|---|
@@ -130,7 +132,9 @@ The list is alphabetical for ease of scanning in editor UIs (Keystatic renders i
 
 ### Deliverables list (controlled vocabulary)
 
-`deliverables` is an array of one or more values from this list. Add new deliverables here before using them in a case study.
+`deliverables` is an array of one or more values from this list. Add new deliverables here before using them in a case study, then add the `{ value, label }` pair to `src/lib/vocabularies.ts`.
+
+A missing label used to render the raw slug on the page: before the vocabularies were shared, `mobile-app-development` was absent from the live case study template's label map and four published case studies displayed the slug. The template still falls back to the raw ID, so the failure is cosmetic and silent — the shared module is what prevents it.
 
 | ID | Display name |
 |---|---|
@@ -463,31 +467,37 @@ The Clients page renders all entries alphabetically, linking to the case study w
 
 ## Book a call (data file + singleton)
 
-`src/data/booking.json`, edited in Keystatic under **Book a call** — the only Keystatic singleton. Decides which calendar every "Book a call" button sends someone to.
+`src/data/booking.json`, edited in Keystatic under **Book a call** — the only Keystatic singleton. Decides where every "Book a call" button on the site sends people.
 
-| Field | Notes |
+### The control
+
+One select, "Where the Book a call buttons go":
+
+| Option | Effect |
 |---|---|
-| `mode` | `auto` uses the cover window. `erik` / `petra` ignore it entirely — for an unplanned absence |
-| `erikUrl` / `petraUrl` | The two Google scheduling links |
-| `coverStart` / `coverEnd` | Local wall-clock, `YYYY-MM-DDTHH:mm`, read in `timeZone`. Petra takes bookings from start until end |
-| `timeZone` | IANA name the two dates are written in |
+| **Erik — normal** | The default. Every button opens Erik's scheduling page |
+| **Petra — between two dates you choose** | Reveals an Override period: switch to Petra at one moment, back to Erik at another |
+| **Petra — starting now, until you set this back** | Immediate switch, for an unplanned absence |
+
+The date fields only exist when a scheduled override is selected, so the normal state cannot be misread as a half-configured one. The two scheduling links sit at the bottom under "Scheduling pages" — they rarely change.
 
 ### How the timing works
 
-Buttons link to `/book`, never to a calendar URL directly. `src/pages/book.ts` runs per request (`prerender = false`), compares the current time against the window, and issues a **302** to the right calendar.
+Buttons link to `/book`, never to a calendar URL directly. `src/pages/book.ts` runs per request (`prerender = false`), compares the current time against the override period, and issues a **302** to the right calendar.
 
-The split matters: the *window* is static and changing it needs a deploy, but the *comparison* happens on every request. So dates set weeks ahead flip on their own at the right moment, with nothing to remember and no deploy at the boundary. Saving in Keystatic commits to `main` and triggers a build, which publishes the new dates — that build does not perform the switch.
+The split matters: the *period* is static and changing it needs a deploy, but the *comparison* happens on every request. So dates set weeks ahead flip on their own at the right moment, with nothing to remember and no deploy at the boundary. Saving in Keystatic commits to `main` and triggers a build, which publishes the new dates — that build does not perform the switch.
 
-`/book?debug` prints the decision as plain text instead of redirecting — use it to check a window without opening a booking page.
+`/book?debug` prints the decision as plain text instead of redirecting — use it to check an override without opening a booking page.
 
 ### Rules this encodes
 
-- **302, never 301.** A permanent redirect gets cached by browsers indefinitely and would keep sending people to the wrong calendar long after the window closes. The response also sets `Cache-Control: no-store`, since a cached redirect at the CDN has the same problem.
-- **A half-set window is ignored.** Both ends are required; one alone falls back to Erik. A half-finished edit can't strand bookings on the wrong calendar.
-- **Every failure falls back to Erik** — unparseable dates, an inverted window, a missing value. The default is the common case, so a broken config degrades to correct-most-of-the-time rather than to nothing.
+- **302, never 301.** A permanent redirect gets cached by browsers indefinitely and would keep sending people to the wrong calendar long after the override ends. The response also sets `Cache-Control: no-store`, since a cached redirect at the CDN has the same problem.
+- **Every failure path falls back to Erik** — a missing date, an inverted period, an unreadable value, an unrecognized setting. The default is the common case, so a broken config degrades to correct-most-of-the-time rather than to nothing.
 - `/book` is `noindex` and absent from the sitemap. It is a redirect, not a page.
 
-Logic and its reasoning live in `src/lib/booking.ts`; it is pure and separable from the endpoint so the window math can be tested without a server.
+The stored shape follows Keystatic's `fields.conditional` serialization — `{ discriminant, value }` — so the data file mirrors the form rather than needing a translation layer.
+
+Logic and its reasoning live in `src/lib/booking.ts`; it is pure and separable from the endpoint so the period math can be tested without a server.
 
 ## Homepage (data file)
 

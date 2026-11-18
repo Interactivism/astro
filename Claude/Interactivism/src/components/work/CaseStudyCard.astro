@@ -12,6 +12,7 @@
  */
 import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
+import { SERVICE_LABELS } from '../../lib/vocabularies';
 
 interface Props {
   entry: CollectionEntry<'caseStudies'>;
@@ -26,16 +27,6 @@ const { title, client, summary, heroImage, services } = entry.data;
 // `from` tags the link with the industry page it was opened from, so the case
 // study can scope its prev/next navigation to that vertical's set.
 const href = from ? `/work/${entry.id}/?from=${from}` : `/work/${entry.id}/`;
-
-// Map service IDs to display labels
-const SERVICE_LABELS: Record<string, string> = {
-  'product-design':       'Product Design',
-  'human-ai-experience':  'Human + AI Experience',
-  'user-research':        'User Research',
-  'development':          'Development',
-  'product-strategy':     'Product Strategy',
-  'brand-development':    'Brand Development',
-};
 ---
 
 <article>

@@ -27,6 +27,7 @@ import ImageGrid from '../../../components/case-study/ImageGrid.astro';
 import PullQuote from '../../../components/case-study/PullQuote.astro';
 import BeforeAfter from '../../../components/case-study/BeforeAfter.astro';
 import Aside from '../../../components/case-study/Aside.astro';
+import { SERVICE_LABELS, DELIVERABLE_LABELS, INDUSTRY_LABELS } from '../../../lib/vocabularies';
 
 // Prevent any CDN or edge cache from serving a stale response.
 Astro.response.headers.set('Cache-Control', 'no-store');
@@ -71,52 +72,6 @@ function buildCredit(pc: typeof photoCredit): string | undefined {
   return `Marquee photo by ${name} on ${platform}`;
 }
 const credit = buildCredit(photoCredit);
-
-const SERVICE_LABELS: Record<string, string> = {
-  'product-design':       'Product Design',
-  'human-ai-experience':  'Human + AI Experience',
-  'user-research':        'User Research',
-  'development':          'Development',
-  'product-strategy':     'Product Strategy',
-  'brand-development':    'Brand Development',
-};
-
-const DELIVERABLE_LABELS: Record<string, string> = {
-  'ui-ux-design':                 'UI/UX Design',
-  'design-system':                'Design System',
-  'personas':                     'Personas',
-  'usability-assessment':         'Usability Assessment',
-  'heuristic-evaluation':         'Heuristic Evaluation',
-  'data-visualization':           'Data Visualization',
-  'brand-identity':               'Brand Identity',
-  'brand-strategy':               'Brand Strategy',
-  'illustration':                 'Illustration',
-  'animation':                    'Animation',
-  'print-collateral':             'Print Collateral',
-  'content-strategy':             'Content Strategy',
-  'information-architecture':     'Information Architecture',
-  'web-development':              'Web Development',
-  'mobile':                       'Mobile',
-  'native-mobile-app':            'Native Mobile App',
-  'futurecasting':                'Futurecasting',
-  'augmented-reality-experience': 'Augmented Reality Experience',
-  'experience-strategy':          'Experience Strategy',
-  'positioning-framework':        'Positioning Framework',
-  'messaging-framework':          'Messaging Framework',
-  'mobile-app-development':       'Mobile App Development',
-};
-
-const INDUSTRY_LABELS: Record<string, string> = {
-  'adtech':            'AdTech',
-  'aerospace-defense': 'Aerospace & Defense',
-  'ai-content':        'AI & Content',
-  'consumer':          'Consumer',
-  'enterprise-saas':   'Enterprise SaaS',
-  'fintech':           'Fintech',
-  'martech':           'MarTech',
-  'media-publishing':  'Media & Publishing',
-  'nonprofit-civic':   'Nonprofit & Civic',
-};
 ---
 
 <BaseLayout

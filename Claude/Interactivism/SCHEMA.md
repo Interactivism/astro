@@ -21,6 +21,16 @@ When a schema changes, **both files update in the same commit**. Drift between t
 - Keystatic shows fields that Astro doesn't validate → silent garbage in frontmatter
 - Astro requires fields that Keystatic doesn't expose → editors can't publish via the UI
 
+**The controlled vocabularies are the exception** — industries, services and deliverables live once in `src/lib/vocabularies.ts`, and both configs import from it:
+
+| Consumer | Imports |
+|---|---|
+| `src/content.config.ts` | `INDUSTRY_IDS`, `SERVICE_IDS`, `DELIVERABLE_IDS` — tuples for the Zod enums |
+| `keystatic.config.ts` | `industryOptions`, `serviceOptions`, `deliverableOptions` — for the CMS selects |
+| case study templates | `INDUSTRY_LABELS`, `SERVICE_LABELS`, `DELIVERABLE_LABELS` — for display |
+
+The module deliberately has no imports of its own, because it is pulled into both the Astro content layer and the Keystatic config. Adding a vocabulary value is a one-line edit there; everything else follows.
+
 A short reference for the mapping:
 
 | Schema concept | Astro (Zod) | Keystatic |

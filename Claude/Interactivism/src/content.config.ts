@@ -3,59 +3,18 @@
  * Source of truth: CONTENT.md — all changes there first, then here.
  *
  * File location: src/content.config.ts (Astro 5 preferred location).
- * CONTENT.md references src/content/config.ts (old Astro 4 path);
- * the schemas are identical, only the file location differs.
  */
 import { defineCollection, z } from 'astro:content';
 import { glob } from 'astro/loaders';
 
 // ============================================================
 // Controlled vocabularies
-// Mirrors CONTENT.md exactly. Add new values here first.
+// Defined once in src/lib/vocabularies.ts, which keystatic.config.ts and the
+// page templates read too — so an ID, its CMS option and its display label
+// cannot drift apart. Add new values there.
 // ============================================================
 
-const INDUSTRY_IDS = [
-  'adtech',
-  'aerospace-defense',
-  'ai-content',
-  'consumer',
-  'enterprise-saas',
-  'fintech',
-  'martech',
-  'media-publishing',
-  'nonprofit-civic',
-] as const;
-
-const SERVICE_IDS = [
-  'product-design',
-  'human-ai-experience',
-  'user-research',
-  'development',
-  'product-strategy',
-  'brand-development',
-] as const;
-
-const DELIVERABLE_IDS = [
-  'experience-strategy',
-  'heuristic-evaluation',
-  'usability-assessment',
-  'personas',
-  'information-architecture',
-  'brand-strategy',
-  'brand-identity',
-  'positioning-framework',
-  'messaging-framework',
-  'print-collateral',
-  'illustration',
-  'animation',
-  'content-strategy',
-  'ui-ux-design',
-  'design-system',
-  'data-visualization',
-  'web-development',
-  'mobile-app-development',
-  'futurecasting',
-] as const;
+import { INDUSTRY_IDS, SERVICE_IDS, DELIVERABLE_IDS } from './lib/vocabularies';
 
 // ============================================================
 // Case Studies

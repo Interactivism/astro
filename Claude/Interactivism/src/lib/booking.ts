@@ -1,30 +1,39 @@
 /**
- * Which calendar a "Book a call" button sends someone to.
+ * Where the "Book a call" buttons send people.
  *
- * The config lives in `src/data/booking.json` and is editable in Keystatic
- * under "Book a call". The *window* is static — changing it needs a deploy —
- * but the comparison against "now" happens per request in `src/pages/book.ts`,
- * so a window set in advance flips on its own at the right moment with no
- * deploy and nothing to remember.
+ * Config lives in `src/data/booking.json`, edited in Keystatic under
+ * "Book a call". The default is Erik; an override either runs between two
+ * dates or starts immediately.
+ *
+ * The override period is static — changing it needs a deploy — but the
+ * comparison against "now" happens per request in `src/pages/book.ts`, so a
+ * period set weeks ahead takes effect on its own with no deploy at the
+ * boundary and nothing to remember.
  */
 
-export type BookingMode = 'auto' | 'erik' | 'petra';
+/** Matches Keystatic's `fields.conditional` serialization. */
+export type Scheduling =
+  | { discriminant: 'erik'; value?: unknown }
+  | { discriminant: 'petra'; value?: unknown }
+  | {
+      discriminant: 'scheduled';
+      value: {
+        /** Local wall-clock, 'YYYY-MM-DDTHH:mm', read in `timeZone`. */
+        start: string | null;
+        end: string | null;
+        timeZone: string;
+      };
+    };
 
 export interface BookingConfig {
-  mode: BookingMode;
-  erikUrl: string;
-  petraUrl: string;
-  /** Local wall-clock time, 'YYYY-MM-DDTHH:mm', read in `timeZone`. */
-  coverStart: string | null;
-  coverEnd: string | null;
-  /** IANA zone the two values above are written in. */
-  timeZone: string;
+  scheduling: Scheduling;
+  links: { erikUrl: string; petraUrl: string };
 }
 
 export interface BookingTarget {
   url: string;
   who: 'Erik' | 'Petra';
-  /** Why this target was chosen — surfaced in the endpoint's debug output. */
+  /** Why this target was chosen — surfaced by /book?debug. */
   reason: string;
 }
 
@@ -55,7 +64,7 @@ function zoneOffsetMs(instant: Date, timeZone: string): number {
  *
  * Two passes: the first guesses the offset from the naive instant, the second
  * re-reads it at the corrected instant. That second pass is what keeps the
- * hour right for a window that starts within a day or so of a DST change.
+ * hour right for a period starting within a day or so of a DST change.
  */
 export function zonedToUtc(local: string, timeZone: string): Date | null {
   // Accept a bare date, 'YYYY-MM-DDTHH:mm', or the same with seconds.
@@ -72,30 +81,32 @@ export function zonedToUtc(local: string, timeZone: string): Date | null {
 /**
  * Resolve the booking target for a moment in time.
  *
- * `auto` needs BOTH ends of the window. A half-set window is treated as no
- * window at all and falls back to Erik, so a half-finished edit can never
- * strand bookings on the wrong calendar indefinitely.
+ * Every failure path returns Erik: a scheduled override needs BOTH dates, in
+ * the right order, both parseable. A half-finished or malformed edit degrades
+ * to the normal state rather than stranding bookings on the wrong calendar.
  */
 export function resolveBooking(config: BookingConfig, now: Date = new Date()): BookingTarget {
-  const erik: BookingTarget = { url: config.erikUrl, who: 'Erik', reason: 'default' };
-  const petra: BookingTarget = { url: config.petraUrl, who: 'Petra', reason: 'manual override' };
+  const erik = (reason: string): BookingTarget => ({ url: config.links.erikUrl, who: 'Erik', reason });
+  const petra = (reason: string): BookingTarget => ({ url: config.links.petraUrl, who: 'Petra', reason });
 
-  if (config.mode === 'erik') return { ...erik, reason: 'manual override' };
-  if (config.mode === 'petra') return petra;
+  const { scheduling } = config;
 
-  if (!config.coverStart || !config.coverEnd) {
-    return { ...erik, reason: 'no cover window set' };
-  }
+  if (scheduling?.discriminant === 'petra') return petra('override: set to Petra until changed back');
+  if (scheduling?.discriminant !== 'scheduled') return erik('normal: no override set');
 
-  const start = zonedToUtc(config.coverStart, config.timeZone);
-  const end = zonedToUtc(config.coverEnd, config.timeZone);
+  const { start: startLocal, end: endLocal, timeZone } = scheduling.value ?? {};
 
-  if (!start || !end) return { ...erik, reason: 'cover window could not be parsed' };
-  if (end <= start) return { ...erik, reason: 'cover window ends before it starts' };
+  if (!startLocal || !endLocal) return erik('override ignored: both dates are required');
+
+  const start = zonedToUtc(startLocal, timeZone);
+  const end = zonedToUtc(endLocal, timeZone);
+
+  if (!start || !end) return erik('override ignored: a date could not be read');
+  if (end <= start) return erik('override ignored: it ends before it starts');
 
   if (now >= start && now < end) {
-    return { ...petra, reason: `inside cover window (${config.coverStart} to ${config.coverEnd} ${config.timeZone})` };
+    return petra(`override active: ${startLocal} to ${endLocal} ${timeZone}`);
   }
 
-  return { ...erik, reason: now < start ? 'before cover window' : 'after cover window' };
+  return erik(now < start ? 'override has not started yet' : 'override has ended');
 }

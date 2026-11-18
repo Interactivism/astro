@@ -21,7 +21,7 @@ If a pattern you need doesn't exist, add it to the owning doc in the same commit
 
 **The Kratos case study is archived and must not be published.** The client declined publication. It lives in `archive/` with restore steps; `status: draft` was not enough, because its screenshots under `public/` were served at HTTP 200 regardless of content status. Kratos stays on the client list.
 
-**Schema changes touch two files.** `src/content.config.ts` (Zod, build time) and `keystatic.config.ts` (editor UI) implement the same spec and must change in the same commit. See SCHEMA.md, "Where Astro and Keystatic disagree" — the failure modes are silent in both directions. After any change, open one entry of every affected collection in Keystatic and round-trip a save.
+**Schema changes touch two files.** `src/content.config.ts` (Zod, build time) and `keystatic.config.ts` (editor UI) implement the same spec and must change in the same commit. Controlled vocabularies are the exception — industries, services and deliverables live once in `src/lib/vocabularies.ts` and both configs import from it. See SCHEMA.md, "Where Astro and Keystatic disagree" — the failure modes are silent in both directions. After any change, open one entry of every affected collection in Keystatic and round-trip a save.
 
 **Derive lists, don't hand-maintain them.** Service names in structured data, which industries have landing pages, counts of anything: read them from the collection at build time. Every hand-kept copy in this repo's history has drifted.
 
