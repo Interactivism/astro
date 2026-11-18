@@ -7,7 +7,7 @@
  *
  * Admin UI: http://localhost:4321/keystatic  (dev only in local mode)
  */
-import { config, collection, fields } from '@keystatic/core';
+import { config, collection, singleton, fields } from '@keystatic/core';
 import { block, wrapper } from '@keystatic/core/content-components';
 
 // ============================================================
@@ -690,6 +690,59 @@ export default config({
         content: fields.mdx({
           label: 'Content',
           components: {},
+        }),
+      },
+    }),
+
+  },
+
+  singletons: {
+
+    // ----------------------------------------------------------
+    // Book a call — which calendar the CTA buttons point at.
+    //
+    // The window is compared against the current time on every request to
+    // /book, so dates set here in advance flip on their own. Saving this
+    // commits to main and triggers a deploy; the deploy publishes the new
+    // dates, it does not perform the switch.
+    // ----------------------------------------------------------
+    booking: singleton({
+      label: 'Book a call',
+      path: 'src/data/booking',
+      format: { data: 'json' },
+      schema: {
+        mode: fields.select({
+          label: 'Whose calendar',
+          description:
+            'Automatic uses the cover window below. The two overrides ignore it entirely — useful for an unplanned absence.',
+          options: [
+            { label: 'Automatic — use the cover window below', value: 'auto' },
+            { label: 'Always Erik', value: 'erik' },
+            { label: 'Always Petra', value: 'petra' },
+          ],
+          defaultValue: 'auto',
+        }),
+        erikUrl: fields.url({
+          label: "Erik's scheduling link",
+          validation: { isRequired: true },
+        }),
+        petraUrl: fields.url({
+          label: "Petra's scheduling link",
+          validation: { isRequired: true },
+        }),
+        coverStart: fields.datetime({
+          label: 'Petra covers from',
+          description: 'Leave both dates empty when nobody is covering.',
+        }),
+        coverEnd: fields.datetime({
+          label: 'Petra covers until',
+          description: 'Bookings go back to Erik at this moment. Both dates are needed — one alone is ignored.',
+        }),
+        timeZone: fields.text({
+          label: 'Time zone',
+          description: 'IANA name the two dates above are written in. Leave as America/Los_Angeles unless traveling.',
+          defaultValue: 'America/Los_Angeles',
+          validation: { isRequired: true },
         }),
       },
     }),

@@ -24,6 +24,7 @@ Plus two supporting data files (not content collections — flat data files impo
 
 - `src/data/clients.json` — list of all clients for the Clients page
 - `src/data/homepage.json` — homepage composition (hero content + featured case studies)
+- `src/data/booking.json` — which calendar the "Book a call" buttons point at (edited via the one Keystatic singleton)
 
 ---
 
@@ -459,6 +460,34 @@ Not a content collection — a flat JSON data file at `src/data/clients.json`.
 The Clients page renders all entries alphabetically, linking to the case study where `href` is set.
 
 ---
+
+## Book a call (data file + singleton)
+
+`src/data/booking.json`, edited in Keystatic under **Book a call** — the only Keystatic singleton. Decides which calendar every "Book a call" button sends someone to.
+
+| Field | Notes |
+|---|---|
+| `mode` | `auto` uses the cover window. `erik` / `petra` ignore it entirely — for an unplanned absence |
+| `erikUrl` / `petraUrl` | The two Google scheduling links |
+| `coverStart` / `coverEnd` | Local wall-clock, `YYYY-MM-DDTHH:mm`, read in `timeZone`. Petra takes bookings from start until end |
+| `timeZone` | IANA name the two dates are written in |
+
+### How the timing works
+
+Buttons link to `/book`, never to a calendar URL directly. `src/pages/book.ts` runs per request (`prerender = false`), compares the current time against the window, and issues a **302** to the right calendar.
+
+The split matters: the *window* is static and changing it needs a deploy, but the *comparison* happens on every request. So dates set weeks ahead flip on their own at the right moment, with nothing to remember and no deploy at the boundary. Saving in Keystatic commits to `main` and triggers a build, which publishes the new dates — that build does not perform the switch.
+
+`/book?debug` prints the decision as plain text instead of redirecting — use it to check a window without opening a booking page.
+
+### Rules this encodes
+
+- **302, never 301.** A permanent redirect gets cached by browsers indefinitely and would keep sending people to the wrong calendar long after the window closes. The response also sets `Cache-Control: no-store`, since a cached redirect at the CDN has the same problem.
+- **A half-set window is ignored.** Both ends are required; one alone falls back to Erik. A half-finished edit can't strand bookings on the wrong calendar.
+- **Every failure falls back to Erik** — unparseable dates, an inverted window, a missing value. The default is the common case, so a broken config degrades to correct-most-of-the-time rather than to nothing.
+- `/book` is `noindex` and absent from the sitemap. It is a redirect, not a page.
+
+Logic and its reasoning live in `src/lib/booking.ts`; it is pure and separable from the endpoint so the window math can be tested without a server.
 
 ## Homepage (data file)
 

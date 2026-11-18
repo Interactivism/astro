@@ -21,7 +21,8 @@ import Button from '../../components/ui/Button.astro';
 import { getLogoVariant } from '../../lib/imageBrightness';
 import { selectIndustryCaseStudies } from '../../lib/industryCaseStudies';
 
-const BOOKING_URL = 'https://calendar.app.google/Rb7oxeFG6JCpMEVCA';
+// Resolved per request by src/pages/book.ts — see src/lib/booking.ts.
+const BOOKING_URL = '/book';
 
 export async function getStaticPaths() {
   const industries = await getCollection('industries');
