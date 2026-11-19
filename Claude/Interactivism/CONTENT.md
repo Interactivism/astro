@@ -570,6 +570,63 @@ This is one mechanism, not two — but the editorial inputs for slide 1 (the her
 
 ---
 
+## Velocity Profile (collection + singleton)
+
+The lead-gen self-assessment at `/velocity-profile`. Content is split across
+three places, deliberately.
+
+### What lives where
+
+| What | Where | Why |
+|---|---|---|
+| Questions, options, archetype tags, calc values | `src/data/velocity-profile.ts` | Scoring depends on them. Changing an option's tag changes everyone's result, so this is a code change with a test behind it, not a CMS edit. |
+| Archetype names, teaser lines, strength and failure-mode labels | `src/data/velocity-profile.ts` | Identity, not copy. The scoring returns a tag; these turn it into a name. |
+| Archetype report prose, the three moves, case study slot | `velocityArchetypes` collection | Erik rewrites these. |
+| Industry notes, offering paragraphs, cost assumptions | `velocityReport` singleton | Same, and they are not per-archetype. |
+
+Nothing is duplicated across the two. The teaser line appears only on the
+teaser screen; the report's longer write-up appears only in the report.
+
+### Archetypes
+
+Exactly five entries, one per tag (F, C, E, S, X). `getArchetypeContent()`
+throws if a tag is missing or claimed twice, because the alternative is a
+prospect receiving a report with a blank section.
+
+- **What they are good at** — two sentences. First thing they read after
+  handing over an email, so it needs to land as recognition, not flattery.
+- **The failure mode** — the report quotes two or three of their own answers
+  underneath it. Generic is worse than wrong here.
+- **Three moves** — exactly three, and each must be useful *without hiring us*.
+  That is what makes the report worth forwarding to a colleague, which is
+  where most of the reach comes from.
+- **Case study** — the proof slot beside the offering. Optional.
+- **Draft** — marks copy as unreviewed. It still renders; the flag is a note
+  to ourselves.
+
+### Report copy singleton
+
+The industry notes and offering paragraphs are **generated** into the Keystatic
+UI from `src/data/velocity-profile.ts`. Adding a Q12 option with a new offering
+makes a new field appear here; removing one makes it disappear. Do not add keys
+to `src/data/velocity-report.json` by hand — they will not have a field, and a
+test will fail.
+
+Three industries get their own note: AdTech, Enterprise SaaS and Fintech — the
+same three the lead score awards a point for, derived from one list so they
+cannot drift. Everything else, including Marcom, Aerospace & Defense, Consumer
+and anyone who skipped the field, gets the `other` paragraph.
+
+### The industry list is not the content vocabulary
+
+`LEAD_INDUSTRIES` in the quiz config is separate from `INDUSTRIES` in
+`src/lib/vocabularies.ts`. The content vocabulary classifies *our* work; the
+quiz list qualifies a lead, so it carries "Other" and "Marcom" and omits the
+verticals we have no note for. Where a value exists in both, the slug and
+label are identical, and a test enforces that.
+
+---
+
 ## Status, drafts, and scheduling
 
 - `status: "draft"` excludes content from production builds. Drafts are visible in `astro dev` (so you can preview locally) but never deploy.

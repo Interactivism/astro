@@ -17,6 +17,22 @@ import { block, wrapper } from '@keystatic/core/content-components';
 // ============================================================
 
 import { industryOptions, serviceOptions, deliverableOptions } from './src/lib/vocabularies';
+import {
+  ARCHETYPES,
+  INDUSTRY_NOTE_KEYS,
+  LEAD_INDUSTRIES,
+  OFFERINGS,
+} from './src/data/velocity-profile';
+
+// Velocity Profile option lists and field sets, generated from the config so
+// the CMS cannot offer a tag, offering or industry that the code does not know.
+const archetypeOptions = Object.entries(ARCHETYPES).map(([tag, meta]) => ({
+  label: `${tag} — ${meta.name}`,
+  value: tag,
+}));
+
+const industryNoteLabel = (key: string) =>
+  LEAD_INDUSTRIES.find((i) => i.value === key)?.label ?? 'Everyone else';
 
 // ============================================================
 // Export
@@ -655,6 +671,75 @@ export default config({
       },
     }),
 
+    // ----------------------------------------------------------
+    // Velocity Profile archetypes — report copy for each of the five.
+    //
+    // Only the prose lives here. Names, teaser lines and the scoring tags are
+    // in src/data/velocity-profile.ts and are not editable, because the
+    // scoring depends on them.
+    // ----------------------------------------------------------
+    velocityArchetypes: collection({
+      label: 'Velocity Profile — Archetypes',
+      slugField: 'title',
+      path: 'src/content/velocityArchetypes/*',
+      format: { contentField: 'content' },
+      entryLayout: 'content',
+      schema: {
+        title: fields.slug({
+          name: {
+            label: 'Title',
+            description: 'The archetype name, e.g. "Feature Factory".',
+            validation: { isRequired: true },
+          },
+        }),
+        tag: fields.select({
+          label: 'Archetype',
+          description: 'Which archetype this copy belongs to. Exactly one entry per archetype.',
+          options: archetypeOptions,
+          defaultValue: 'F',
+        }),
+        strengthCopy: fields.text({
+          label: 'What they are good at',
+          description: 'Two sentences. Opens the report, so it should land as recognition, not flattery.',
+          multiline: true,
+          validation: { isRequired: true },
+        }),
+        failureModeCopy: fields.text({
+          label: 'The failure mode',
+          description: 'Where this archetype breaks down. The report quotes their own answers back underneath this.',
+          multiline: true,
+          validation: { isRequired: true },
+        }),
+        moves: fields.array(
+          fields.object({
+            title: fields.text({ label: 'Move', validation: { isRequired: true } }),
+            body: fields.text({ label: 'What it means', multiline: true, validation: { isRequired: true } }),
+          }),
+          {
+            label: 'Three moves',
+            description: 'Exactly three. Each must be useful without hiring us — that is what makes the report worth forwarding.',
+            itemLabel: (props) => props.fields.title.value || 'Move',
+            validation: { length: { min: 3, max: 3 } },
+          },
+        ),
+        caseStudy: fields.relationship({
+          label: 'Case study',
+          collection: 'caseStudies',
+          description: 'Proof shown beside the offering. Leave empty until you have picked one.',
+        }),
+        draft: fields.checkbox({
+          label: 'Draft',
+          description: 'Draft copy still shows in the report — this flag only marks it as unreviewed.',
+          defaultValue: true,
+        }),
+        content: fields.mdx({
+          label: 'Notes',
+          description: 'Not rendered. Scratch space for rationale.',
+          components: {},
+        }),
+      },
+    }),
+
   },
 
   singletons: {
@@ -735,6 +820,75 @@ export default config({
           },
         ),
 
+      },
+    }),
+
+    // ----------------------------------------------------------
+    // Velocity Profile report — the copy that is not per-archetype.
+    //
+    // Both field sets are generated from src/data/velocity-profile.ts, so a
+    // new offering or industry note appears here automatically and a removed
+    // one disappears.
+    // ----------------------------------------------------------
+    velocityReport: singleton({
+      label: 'Velocity Profile — Report copy',
+      path: 'src/data/velocity-report',
+      format: { data: 'json' },
+      schema: {
+        intro: fields.text({
+          label: 'Report intro',
+          description: 'One or two sentences at the top, above the archetype.',
+          multiline: true,
+        }),
+        industryNotes: fields.object(
+          Object.fromEntries(
+            INDUSTRY_NOTE_KEYS.map((key) => [
+              key,
+              fields.text({
+                label: industryNoteLabel(key),
+                description:
+                  key === 'other'
+                    ? 'Shown to every industry without its own note.'
+                    : `Shown when the respondent selects ${industryNoteLabel(key)}.`,
+                multiline: true,
+                validation: { isRequired: true },
+              }),
+            ]),
+          ),
+          {
+            label: 'Industry notes',
+            description: 'One paragraph each. Generated from the industries the quiz scores.',
+          },
+        ),
+        offerings: fields.object(
+          Object.fromEntries(
+            Object.entries(OFFERINGS).map(([key, name]) => [
+              key,
+              fields.text({
+                label: name,
+                description: `Shown when their one thing to fix maps to ${name}.`,
+                multiline: true,
+                validation: { isRequired: true },
+              }),
+            ]),
+          ),
+          {
+            label: 'Offerings',
+            description: 'One paragraph each, chosen by the respondent\u2019s Q12 answer.',
+          },
+        ),
+        assumptions: fields.text({
+          label: 'Cost assumptions',
+          description: 'Shown under every dollar figure. The numbers themselves are filled in automatically.',
+          multiline: true,
+          validation: { isRequired: true },
+        }),
+        unmeasuredNote: fields.text({
+          label: 'Note for "Not sure" on rework',
+          description: 'Replaces the range with a single figure and this note.',
+          multiline: true,
+          validation: { isRequired: true },
+        }),
       },
     }),
 

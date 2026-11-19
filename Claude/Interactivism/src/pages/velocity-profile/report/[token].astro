@@ -1,0 +1,190 @@
+---
+/**
+ * /velocity-profile/report/[token] — the web version of the emailed report.
+ *
+ * Rendered per request: the token is the only key, so there is nothing to
+ * prerender and nothing to invalidate when the copy changes in Keystatic.
+ *
+ * Private by URL, not by auth. The token is 32 random hex characters and the
+ * page carries noindex plus an X-Robots-Tag header, but anyone holding the
+ * link can read it — which is the point, since people forward these.
+ */
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Button from '../../../components/ui/Button.astro';
+import { getSubmission } from '../../../lib/velocity-profile/storage';
+import { getArchetypeContent } from '../../../lib/velocity-profile/content';
+import { buildReport } from '../../../lib/velocity-profile/report';
+
+export const prerender = false;
+
+const { token } = Astro.params;
+
+const record = token ? await getSubmission(token) : null;
+if (!record) {
+  return new Response('Report not found.', {
+    status: 404,
+    headers: { 'Cache-Control': 'no-store', 'X-Robots-Tag': 'noindex, nofollow' },
+  });
+}
+
+const report = buildReport(record, await getArchetypeContent());
+const bookingUrl = '/book?src=velocity-profile-report';
+
+Astro.response.headers.set('Cache-Control', 'no-store');
+Astro.response.headers.set('X-Robots-Tag', 'noindex, nofollow');
+
+const eyebrow = 'font-mono text-xs text-muted uppercase tracking-widest';
+const inlineLink =
+  'font-light underline decoration-accent decoration-2 underline-offset-4 hover:text-headline transition duration-fast';
+---
+
+<BaseLayout
+  title={`${report.archetype.name} — Velocity Profile`}
+  description="Your Product Velocity Profile report."
+  noindex
+>
+  <div class="px-6 lg:px-12 py-16 lg:py-24 max-w-content mx-auto">
+
+    <p class={eyebrow}>Your Velocity Profile</p>
+
+    <h1 class="font-display leading-display text-headline mt-4 mb-2">
+      {report.archetype.name}
+    </h1>
+    {report.archetype.secondaryName && (
+      <p class={`${eyebrow} mb-6`}>with a {report.archetype.secondaryName} streak</p>
+    )}
+
+    <div class="max-w-prose">
+      <p class="text-lg text-body leading-body">{report.intro}</p>
+
+      {report.archetype.settledByTiebreak && (
+        <p class="text-sm text-muted leading-body">
+          Your answers were close between archetypes, so read the one below as
+          the strongest signal rather than the only one.
+        </p>
+      )}
+
+      <!-- 1 — What you are good at -->
+      <section class="border-t border-subtle pt-8 mt-10">
+        <p class={eyebrow}>{report.archetype.strength}</p>
+        <h2 class="font-display leading-display text-headline text-3xl mt-3 mb-4">
+          What you are good at
+        </h2>
+        <p class="text-base text-body leading-body">{report.archetype.strengthCopy}</p>
+      </section>
+
+      <!-- 2 — Where it breaks down -->
+      <section class="border-t border-subtle pt-8 mt-10">
+        <h2 class="font-display leading-display text-headline text-3xl mb-4">
+          Where it breaks down
+        </h2>
+        <p class="text-base text-body leading-body">{report.failureMode.copy}</p>
+
+        {report.failureMode.evidence.length > 0 && (
+          <div class="bg-surface-alt rounded-sm px-6 py-5 mt-2">
+            <p class={`${eyebrow} mb-4`}>In your own answers</p>
+            <dl class="space-y-3">
+              {report.failureMode.evidence.map((item) => (
+                <div>
+                  <dt class="text-sm text-muted">{item.prompt}</dt>
+                  <dd class="text-base text-headline">{item.answer}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+        )}
+      </section>
+
+      <!-- 3 — What it is costing you -->
+      {report.cost && (
+        <section class="border-t border-subtle pt-8 mt-10">
+          <h2 class="font-display leading-display text-headline text-3xl mb-4">
+            What it is costing you
+          </h2>
+
+          <p class="font-display leading-display text-headline text-4xl mb-2">
+            {report.cost.display}
+          </p>
+          <p class={`${eyebrow} mb-6`}>a year, in rework</p>
+
+          <p class="text-sm text-muted leading-body">{report.cost.assumptionsLine}</p>
+          <p class="text-base text-body leading-body">{report.cost.assumptions}</p>
+
+          {report.cost.unmeasuredNote && (
+            <p class="text-base text-body leading-body border-l-2 border-accent pl-5">
+              {report.cost.unmeasuredNote}
+            </p>
+          )}
+
+          {report.cost.flags.length > 0 && (
+            <div class="mt-2">
+              <p class={`${eyebrow} mb-3`}>Worth a look</p>
+              <ul class="space-y-2">
+                {report.cost.flags.map((flag) => (
+                  <li class="text-base text-body leading-body">
+                    <span class="text-headline">{flag.label}</span>
+                    <span class="text-muted"> — you said “{flag.answer}”</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </section>
+      )}
+
+      <!-- 4 — Your industry -->
+      <section class="border-t border-subtle pt-8 mt-10">
+        <h2 class="font-display leading-display text-headline text-3xl mb-4">Your industry</h2>
+        <p class="text-base text-body leading-body">{report.industryNote}</p>
+      </section>
+
+      <!-- 5 — Three moves -->
+      <section class="border-t border-subtle pt-8 mt-10">
+        <h2 class="font-display leading-display text-headline text-3xl mb-6">
+          Three moves teams like yours make
+        </h2>
+        <ol class="space-y-8">
+          {report.moves.map((move, i) => (
+            <li>
+              <p class={`${eyebrow} mb-2`}>{String(i + 1).padStart(2, '0')}</p>
+              <h3 class="text-xl text-headline mb-2">{move.title}</h3>
+              <p class="text-base text-body leading-body">{move.body}</p>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      <!-- 6 — Where we come in -->
+      {report.offering && (
+        <section class="border-t border-subtle pt-8 mt-10">
+          <h2 class="font-display leading-display text-headline text-3xl mb-4">
+            Where we come in
+          </h2>
+          <p class={`${eyebrow} mb-3`}>{report.offering.name}</p>
+          <p class="text-base text-body leading-body">{report.offering.body}</p>
+
+          {report.offering.caseStudy && (
+            <p class="text-base text-body leading-body">
+              <a href={`/work/${report.offering.caseStudy}/`} class={inlineLink}>
+                See how this played out for another team
+              </a>
+            </p>
+          )}
+        </section>
+      )}
+
+      <!-- 7 — CTA -->
+      <section class="border-t border-subtle pt-8 mt-10">
+        <h2 class="font-display leading-display text-headline text-3xl mb-4">
+          Talk it through
+        </h2>
+        <p class="text-base text-body leading-body">
+          Twenty minutes with one of our partners, walking through your results
+          and what we would do first. No deck.
+        </p>
+        <Button href={bookingUrl}>Pick a time</Button>
+      </section>
+
+    </div>
+  </div>
+</BaseLayout>

@@ -1,0 +1,786 @@
+---
+/**
+ * /velocity-profile — Product Velocity Profile self-assessment.
+ *
+ * One question per screen, 12 screens, then a teaser result gated behind a
+ * work email. All 12 screens are rendered into the HTML at build time and
+ * revealed one at a time, so the questions are real markup — native radio
+ * groups inside fieldsets — rather than client-side templates.
+ *
+ * The client script deliberately does NOT import src/data/velocity-profile.ts.
+ * That module holds the archetype tags, and importing any part of it would
+ * pull the whole graph into the browser bundle. The script reads what it needs
+ * from data attributes instead, and the template iterates `toClientQuestions()`
+ * so it cannot render a tag even by accident.
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Button from '../../components/ui/Button.astro';
+import {
+  FREE_MAIL_DOMAINS,
+  FUNCTIONS,
+  LEAD_INDUSTRIES,
+  LEVELS,
+  toClientQuestions,
+} from '../../data/velocity-profile';
+
+const questions = toClientQuestions();
+
+/** Ordinal scales keep their order; unordered option sets get shuffled. */
+const SHUFFLE: Record<string, boolean> = {
+  q1: true, q2: true, q3: true, q4: true, q5: true, q6: true,
+  q7: false, q8: false, q9: false, q10: false, q11: false,
+  q12: true,
+};
+
+const optionCard = [
+  'flex items-start gap-4 rounded-sm border bg-surface-alt px-5 py-4',
+  'border-subtle transition duration-fast',
+  'group-hover:border-ink-900/30',
+  'peer-checked:border-ink-900 peer-checked:bg-accent peer-checked:text-headline',
+  'peer-focus-visible:ring-2 peer-focus-visible:ring-ink-900 peer-focus-visible:ring-offset-2',
+].join(' ');
+
+const eyebrow = 'font-mono text-xs text-muted uppercase tracking-widest';
+
+const field =
+  'w-full bg-surface-alt border border-subtle rounded-sm px-4 py-3 font-body text-base text-body placeholder:text-ink-300';
+---
+
+<BaseLayout
+  title="Product Velocity Profile"
+  description="A 12-question self-assessment for product, design and engineering leaders. Find your team archetype and what rework is costing you."
+>
+  <div class="px-6 lg:px-12 py-16 lg:py-24 max-w-content mx-auto">
+
+    <!-- ══ Intro ════════════════════════════════════════════════ -->
+    <section id="vp-intro">
+      <p class={eyebrow}>Self-assessment</p>
+      <h1 class="font-display leading-display text-headline mt-4 mb-6">
+        Product<br />Velocity Profile
+      </h1>
+      <div class="max-w-prose">
+        <p class="text-lg text-body leading-body">
+          Twelve questions about how your team actually ships. You’ll get your team
+          archetype, an estimate of what rework is costing you, and three moves
+          teams like yours make.
+        </p>
+        <p class="text-base text-muted leading-body">
+          About 3 minutes. Built for Director-level and above in product, design
+          or engineering.
+        </p>
+        <Button id="vp-begin">Start</Button>
+
+        <noscript>
+          <p class="text-base text-body leading-body border-t border-subtle pt-6 mt-6">
+            This assessment needs JavaScript. If you’d rather not turn it on,
+            <a
+              href="/contact/"
+              class="font-light underline decoration-accent decoration-2 underline-offset-4 hover:text-headline transition duration-fast"
+            >tell us what you’re working on</a> and we’ll walk you through it.
+          </p>
+        </noscript>
+      </div>
+    </section>
+
+    <!-- ══ Quiz ═════════════════════════════════════════════════ -->
+    <section id="vp-quiz" hidden>
+      <h1 class="sr-only">Product Velocity Profile</h1>
+
+      <!-- Progress -->
+      <div class="max-w-prose mb-10">
+        <div class="flex items-baseline justify-between mb-3">
+          <p class={eyebrow}>
+            Question <span id="vp-step">1</span> of {questions.length}
+          </p>
+          <p class={`${eyebrow} hidden sm:block`} id="vp-part">Part 1 — Archetype</p>
+        </div>
+        <div
+          class="h-[2px] w-full bg-ink-900/10"
+          role="progressbar"
+          aria-label="Quiz progress"
+          aria-valuemin="0"
+          aria-valuemax={questions.length}
+          aria-valuenow="1"
+          id="vp-progress"
+        >
+          <div id="vp-bar" class="h-full bg-accent transition-all duration-DEFAULT" style="width:0%"></div>
+        </div>
+      </div>
+
+      <form id="vp-form" novalidate class="max-w-prose">
+        {questions.map((question, i) => (
+          <fieldset
+            hidden
+            data-vp-question={question.id}
+            data-vp-index={i}
+            data-vp-multi={String(question.multi)}
+            data-vp-part={String(question.part)}
+            data-vp-shuffle={String(SHUFFLE[question.id] ?? false)}
+            class="border-0 p-0 m-0"
+          >
+            <legend
+              tabindex="-1"
+              class="font-display leading-display text-headline text-3xl lg:text-4xl mb-3 focus:outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
+            >
+              {question.prompt}
+            </legend>
+
+            <p class={`${eyebrow} mb-8`}>
+              {question.multi ? 'Select all that apply' : 'Select one'}
+            </p>
+
+            <div class="vp-options flex flex-col gap-3">
+              {question.options.map((option) => (
+                <label class="group block cursor-pointer">
+                  <input
+                    type={question.multi ? 'checkbox' : 'radio'}
+                    name={question.id}
+                    value={option.id}
+                    class="peer sr-only"
+                  />
+                  <span class={optionCard}>
+                    <span
+                      class="vp-key shrink-0 w-6 h-6 grid place-items-center rounded-sm border border-ink-900/20 font-mono text-xs text-muted"
+                      aria-hidden="true"
+                    ></span>
+                    <span class="text-base leading-body">{option.label}</span>
+                  </span>
+                </label>
+              ))}
+            </div>
+          </fieldset>
+        ))}
+      </form>
+
+      <!-- Navigation -->
+      <div class="max-w-prose mt-10 flex items-center gap-6 flex-wrap">
+        <button
+          id="vp-back"
+          type="button"
+          class="font-mono text-xs text-muted uppercase tracking-widest underline decoration-accent decoration-2 underline-offset-4 hover:text-headline transition duration-fast"
+        >
+          Back
+        </button>
+        <Button id="vp-next" class="disabled:opacity-40 disabled:cursor-not-allowed">Next</Button>
+        <p id="vp-error" class="hidden text-error font-mono text-xs" role="alert"></p>
+      </div>
+
+      <p class="max-w-prose mt-6 text-sm text-muted hidden sm:block">
+        Press <kbd class="font-mono">A</kbd>–<kbd class="font-mono">F</kbd> to choose,
+        <kbd class="font-mono">Enter</kbd> to continue.
+      </p>
+
+      <p id="vp-live" class="sr-only" role="status" aria-live="polite"></p>
+    </section>
+
+    <!-- ══ Teaser + email gate ══════════════════════════════════ -->
+    <section id="vp-teaser" hidden>
+      <p class={eyebrow}>Your result</p>
+
+      <h1
+        id="vp-teaser-heading"
+        tabindex="-1"
+        class="font-display leading-display text-headline mt-4 mb-2 focus:outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
+      >
+        <span id="vp-archetype">—</span>
+      </h1>
+      <p id="vp-streak" class={`${eyebrow} mb-6`} hidden></p>
+
+      <div class="max-w-prose">
+        <p id="vp-archetype-teaser" class="text-lg text-body leading-body"></p>
+
+        <div class="border-t border-subtle pt-8 mt-10">
+          <h2 class="text-3xl font-display leading-display text-headline mb-4">
+            The full report
+          </h2>
+          <p class="text-base text-body leading-body">
+            What this archetype is good at, where it breaks down, an estimated
+            annual cost of rework for a team your size, and three moves teams
+            like yours make. Sent to your inbox.
+          </p>
+
+          <form id="vp-gate" novalidate class="space-y-6">
+            <!-- Honeypot — hidden from real users, catches bots -->
+            <p class="hidden" aria-hidden="true">
+              <label>Don’t fill this out:
+                <input name="vp-bot" tabindex="-1" autocomplete="off" />
+              </label>
+            </p>
+
+            <div class="flex flex-col gap-2">
+              <label for="vp-email" class={eyebrow}>
+                Work email <span aria-hidden="true">*</span>
+              </label>
+              <input
+                type="email"
+                id="vp-email"
+                name="email"
+                required
+                autocomplete="email"
+                class="w-full bg-surface-alt border border-subtle rounded-sm px-4 py-3 font-body text-base text-body placeholder:text-ink-300"
+              />
+              <p id="vp-email-note" class="hidden text-sm text-muted" role="status"></p>
+              <p id="vp-email-error" class="hidden text-error font-mono text-xs" role="alert"></p>
+            </div>
+
+            <div class="flex items-center gap-6 flex-wrap">
+              <Button id="vp-gate-submit" type="submit" class="disabled:opacity-40 disabled:cursor-not-allowed">
+                Send my report
+              </Button>
+            </div>
+
+            <p class="text-sm text-muted">
+              We’ll email your report and may follow up once. No list, no sharing.
+              See our <a
+                href="/privacy/"
+                class="font-light underline decoration-accent decoration-2 underline-offset-4 hover:text-headline transition duration-fast"
+              >privacy policy</a>.
+            </p>
+          </form>
+
+          <!-- Post-gate fields — revealed once the email is captured -->
+          <form id="vp-details" novalidate hidden class="space-y-6">
+            <p class="text-base text-body leading-body">
+              Five quick details and we’ll tailor the report to your industry
+              and team.
+            </p>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div class="flex flex-col gap-2">
+                <label for="vp-name" class={eyebrow}>Name</label>
+                <input type="text" id="vp-name" name="name" autocomplete="name" class={field} />
+              </div>
+              <div class="flex flex-col gap-2">
+                <label for="vp-company" class={eyebrow}>Company</label>
+                <input
+                  type="text" id="vp-company" name="company" autocomplete="organization" class={field}
+                />
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div class="flex flex-col gap-2">
+                <label for="vp-level" class={eyebrow}>Level</label>
+                <select id="vp-level" name="level" class={field}>
+                  <option value="">Select…</option>
+                  {LEVELS.map((item) => <option value={item.value}>{item.label}</option>)}
+                </select>
+              </div>
+              <div class="flex flex-col gap-2">
+                <label for="vp-fn" class={eyebrow}>Function</label>
+                <select id="vp-fn" name="fn" class={field}>
+                  <option value="">Select…</option>
+                  {FUNCTIONS.map((item) => <option value={item.value}>{item.label}</option>)}
+                </select>
+              </div>
+            </div>
+
+            <div class="flex flex-col gap-2">
+              <label for="vp-industry" class={eyebrow}>Industry</label>
+              <select id="vp-industry" name="industry" class={field}>
+                <option value="">Select…</option>
+                {LEAD_INDUSTRIES.map((item) => <option value={item.value}>{item.label}</option>)}
+              </select>
+            </div>
+
+            <fieldset class="border-0 p-0 m-0">
+              <legend class={`${eyebrow} mb-3`}>
+                Want a 20-minute walkthrough of your results with one of our partners?
+              </legend>
+              <div class="flex gap-3">
+                {[
+                  { value: 'yes', label: 'Yes' },
+                  { value: 'no', label: 'No' },
+                ].map((choice) => (
+                  <label class="group block cursor-pointer flex-1">
+                    <input type="radio" name="walkthrough" value={choice.value} class="peer sr-only" />
+                    <span class={`${optionCard} justify-center`}>
+                      <span class="text-base leading-body">{choice.label}</span>
+                    </span>
+                  </label>
+                ))}
+              </div>
+            </fieldset>
+
+            <div class="flex items-center gap-6 flex-wrap">
+              <Button id="vp-details-submit" type="submit" class="disabled:opacity-40 disabled:cursor-not-allowed">
+                Send my report
+              </Button>
+              <p id="vp-details-error" class="hidden text-error font-mono text-xs" role="alert"></p>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ Thank you ════════════════════════════════════════════ -->
+    <section id="vp-thanks" hidden>
+      <p class={eyebrow}>On its way</p>
+      <h1
+        id="vp-thanks-heading"
+        tabindex="-1"
+        class="font-display leading-display text-headline mt-4 mb-6 focus:outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
+      >Check your inbox.</h1>
+      <div class="max-w-prose">
+        <p class="text-lg text-body leading-body">
+          Your full report is on its way to <span id="vp-thanks-email" class="text-headline"></span>.
+          It has the cost breakdown, the industry note, and three moves teams
+          like yours make.
+        </p>
+
+        <div id="vp-thanks-booking" hidden class="border-t border-subtle pt-8 mt-10">
+          <h2 class="text-3xl font-display leading-display text-headline mb-4">
+            Book your walkthrough
+          </h2>
+          <p class="text-base text-body leading-body">
+            Twenty minutes with one of our partners, walking through your
+            results and what we’d do first.
+          </p>
+          <Button href="/book?src=velocity-profile" id="vp-booking-link">Pick a time</Button>
+        </div>
+
+        <p class="text-base text-muted leading-body mt-10">
+          Nothing in your inbox in a few minutes? Check spam, or
+          <a
+            href="/contact/"
+            class="font-light underline decoration-accent decoration-2 underline-offset-4 hover:text-headline transition duration-fast"
+          >let us know</a>.
+        </p>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Free-mail domains, emitted from the config so the client never -->
+  <!-- holds a second copy of the list. Nothing else from that module -->
+  <!-- is serialized here. -->
+  <script
+    type="application/json"
+    id="vp-free-mail"
+    is:inline
+    set:html={JSON.stringify(FREE_MAIL_DOMAINS)}
+  ></script>
+</BaseLayout>
+
+<style>
+  /*
+   * The JS already honors prefers-reduced-motion for the auto-advance delay
+   * and the scroll to the thank-you screen. This covers the CSS side: the
+   * progress bar's width transition and the option cards' state transitions.
+   *
+   * Scoped to this page on purpose. The site has no global reduced-motion
+   * rule, and adding one here would change the homepage slider, which handles
+   * it its own way.
+   */
+  @media (prefers-reduced-motion: reduce) {
+    #vp-bar,
+    .vp-options label > span {
+      transition-duration: 0.01ms !important;
+    }
+  }
+</style>
+
+<script>
+  // ── Elements ───────────────────────────────────────────────────
+  const intro  = document.getElementById('vp-intro')!;
+  const quiz   = document.getElementById('vp-quiz')!;
+  const teaser = document.getElementById('vp-teaser')!;
+  const form    = document.getElementById('vp-form') as HTMLFormElement;
+  const gate    = document.getElementById('vp-gate') as HTMLFormElement;
+  const details = document.getElementById('vp-details') as HTMLFormElement;
+  const thanks  = document.getElementById('vp-thanks')!;
+
+  const stepEl     = document.getElementById('vp-step')!;
+  const partEl     = document.getElementById('vp-part')!;
+  const barEl      = document.getElementById('vp-bar')!;
+  const progressEl = document.getElementById('vp-progress')!;
+  const backBtn    = document.getElementById('vp-back') as HTMLButtonElement;
+  const nextBtn    = document.getElementById('vp-next') as HTMLButtonElement;
+  const errorEl    = document.getElementById('vp-error')!;
+  const liveEl     = document.getElementById('vp-live')!;
+
+  const screens = Array.from(
+    form.querySelectorAll<HTMLFieldSetElement>('[data-vp-question]'),
+  );
+  const total = screens.length;
+
+  const PART_LABELS: Record<string, string> = {
+    '1': 'Part 1 — Archetype',
+    '2': 'Part 2 — Cost of drag',
+    '3': 'Part 3 — What’s next',
+  };
+
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // ── State ──────────────────────────────────────────────────────
+  const answers: Record<string, string | string[]> = {};
+  let index = -1;            // -1 = intro, total = teaser
+  let advanceIntent = false; // set by pointer or letter key, not by arrow keys
+  let submitting = false;
+  let token: string | null = null; // returned by stage "email", used by stage "complete"
+
+  // ── Analytics ──────────────────────────────────────────────────
+  // GA4 is loaded in BaseLayout. Verified and documented in Phase 5.
+  function track(event: string, params: Record<string, unknown> = {}) {
+    (window as unknown as { gtag?: (...a: unknown[]) => void }).gtag?.('event', event, params);
+  }
+
+  // ── Attribution, captured on landing and kept for the submission ──
+  function captureAttribution() {
+    try {
+      if (sessionStorage.getItem('vp-attribution')) return;
+      const params = new URLSearchParams(location.search);
+      const utm: Record<string, string> = {};
+      for (const [key, value] of params) {
+        if (key.startsWith('utm_') || key === 'gclid' || key === 'fbclid') utm[key] = value;
+      }
+      sessionStorage.setItem(
+        'vp-attribution',
+        JSON.stringify({ ...utm, referrer: document.referrer || null, landedAt: new Date().toISOString() }),
+      );
+    } catch {
+      // Private mode or blocked storage. Attribution is nice to have, not required.
+    }
+  }
+
+  // ── Option order and letter keys ────────────────────────────────
+  function shuffle<T>(items: T[]): T[] {
+    for (let i = items.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [items[i], items[j]] = [items[j], items[i]];
+    }
+    return items;
+  }
+
+  const LETTERS = 'abcdef';
+
+  function prepare(screen: HTMLFieldSetElement) {
+    const container = screen.querySelector<HTMLElement>('.vp-options')!;
+    if (screen.dataset.vpShuffle === 'true') {
+      for (const label of shuffle(Array.from(container.children))) container.append(label);
+    }
+    Array.from(container.children).forEach((label, i) => {
+      const key = label.querySelector<HTMLElement>('.vp-key');
+      if (key) key.textContent = LETTERS[i].toUpperCase();
+    });
+  }
+
+  // ── Answers ────────────────────────────────────────────────────
+  function record(screen: HTMLFieldSetElement) {
+    const id = screen.dataset.vpQuestion!;
+    const checked = Array.from(
+      screen.querySelectorAll<HTMLInputElement>('input:checked'),
+    ).map((input) => input.value);
+
+    if (screen.dataset.vpMulti === 'true') answers[id] = checked;
+    else if (checked[0]) answers[id] = checked[0];
+    else delete answers[id];
+  }
+
+  function isAnswered(screen: HTMLFieldSetElement): boolean {
+    const value = answers[screen.dataset.vpQuestion!];
+    return Array.isArray(value) ? value.length > 0 : Boolean(value);
+  }
+
+  // ── Rendering ──────────────────────────────────────────────────
+  function render(next: number) {
+    index = next;
+    errorEl.classList.add('hidden');
+
+    intro.hidden  = index !== -1;
+    quiz.hidden   = index < 0 || index >= total;
+    teaser.hidden = index !== total;
+
+    if (index < 0 || index >= total) return;
+
+    const screen = screens[index];
+    for (const other of screens) other.hidden = other !== screen;
+
+    stepEl.textContent = String(index + 1);
+    partEl.textContent = PART_LABELS[screen.dataset.vpPart!] ?? '';
+    barEl.style.width = `${((index + 1) / total) * 100}%`;
+    progressEl.setAttribute('aria-valuenow', String(index + 1));
+
+    nextBtn.textContent = index === total - 1 ? 'See my result' : 'Next';
+    nextBtn.disabled = false;
+
+    screen.querySelector<HTMLLegendElement>('legend')!.focus();
+    liveEl.textContent = `Question ${index + 1} of ${total}.`;
+  }
+
+  function go(next: number) {
+    render(next);
+    history.pushState({ vp: next }, '');
+  }
+
+  // ── Navigation ─────────────────────────────────────────────────
+  function next() {
+    if (index >= 0 && index < total) {
+      record(screens[index]);
+      if (!isAnswered(screens[index])) {
+        errorEl.textContent = 'Pick an option to continue.';
+        errorEl.classList.remove('hidden');
+        return;
+      }
+      track('vp_question_answered', { step: index + 1, question_id: screens[index].dataset.vpQuestion });
+    }
+
+    if (index === total - 1) finish();
+    else go(index + 1);
+  }
+
+  function back() {
+    if (index <= -1) return;
+    go(index - 1);
+  }
+
+  // ── Teaser ─────────────────────────────────────────────────────
+  async function finish() {
+    const missing = screens.findIndex((screen) => !isAnswered(screen));
+    if (missing >= 0) {
+      go(missing);
+      errorEl.textContent = 'This one still needs an answer.';
+      errorEl.classList.remove('hidden');
+      return;
+    }
+
+    nextBtn.disabled = true;
+    nextBtn.textContent = 'Working…';
+    liveEl.textContent = 'Calculating your result.';
+
+    try {
+      const response = await fetch('/api/velocity-profile/teaser', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ answers }),
+      });
+      if (!response.ok) throw new Error(String(response.status));
+      const result = await response.json();
+
+      document.getElementById('vp-archetype')!.textContent = result.primary.name;
+      document.getElementById('vp-archetype-teaser')!.textContent = result.primary.teaser;
+
+      const streak = document.getElementById('vp-streak')!;
+      if (result.secondary) {
+        streak.textContent = `with a ${result.secondary.name} streak`;
+        streak.hidden = false;
+      } else {
+        streak.hidden = true;
+      }
+
+      render(total);
+      history.pushState({ vp: total }, '');
+      // The button that got us here is now hidden; without this, focus falls
+      // back to <body> and the next Tab restarts from the top of the page.
+      document.getElementById('vp-teaser-heading')!.focus();
+      track('vp_teaser_view');
+      liveEl.textContent = `Your result: ${result.primary.name}.`;
+    } catch {
+      nextBtn.disabled = false;
+      nextBtn.textContent = 'See my result';
+      errorEl.textContent = 'Something went wrong. Try again.';
+      errorEl.classList.remove('hidden');
+    }
+  }
+
+  // ── Email gate ─────────────────────────────────────────────────
+  let freeMail: string[] = [];
+  try {
+    freeMail = JSON.parse(document.getElementById('vp-free-mail')?.textContent || '[]');
+  } catch {
+    freeMail = [];
+  }
+
+  const emailInput = document.getElementById('vp-email') as HTMLInputElement;
+  const emailNote  = document.getElementById('vp-email-note')!;
+  const emailError = document.getElementById('vp-email-error')!;
+
+  function checkEmail() {
+    const value = emailInput.value.trim();
+    const domain = value.toLowerCase().split('@')[1] ?? '';
+    if (domain && freeMail.includes(domain)) {
+      emailNote.textContent = 'A work address gets you a more useful report, but this will do.';
+      emailNote.classList.remove('hidden');
+    } else {
+      emailNote.classList.add('hidden');
+    }
+  }
+
+  emailInput?.addEventListener('blur', checkEmail);
+
+  gate?.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    if (submitting) return;
+
+    emailError.classList.add('hidden');
+    if (!emailInput.checkValidity() || !emailInput.value.includes('@')) {
+      emailError.textContent = 'Enter an email address we can reach you at.';
+      emailError.classList.remove('hidden');
+      emailInput.focus();
+      return;
+    }
+    checkEmail();
+
+    submitting = true;
+    const submitBtn = document.getElementById('vp-gate-submit') as HTMLButtonElement;
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Saving…';
+
+    let attribution: unknown = null;
+    try {
+      attribution = JSON.parse(sessionStorage.getItem('vp-attribution') || 'null');
+    } catch {
+      attribution = null;
+    }
+
+    try {
+      const response = await fetch('/api/velocity-profile/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          stage: 'email',
+          answers,
+          email: emailInput.value.trim(),
+          attribution,
+          'vp-bot': (gate.querySelector('[name="vp-bot"]') as HTMLInputElement | null)?.value ?? '',
+        }),
+      });
+      if (!response.ok) throw new Error(String(response.status));
+
+      token = (await response.json()).token;
+      // Fired on success, not on click: a failed submission is not a captured
+      // lead, and counting it as one hides a broken endpoint in the funnel.
+      track('vp_email_submitted');
+      gate.hidden = true;
+      details.hidden = false;
+      (document.getElementById('vp-name') as HTMLInputElement).focus();
+      liveEl.textContent = 'Email saved. A few more details.';
+    } catch {
+      track('vp_email_failed');
+      emailError.textContent = 'We couldn’t save that just yet. Try again in a moment.';
+      emailError.classList.remove('hidden');
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Send my report';
+      submitting = false;
+    }
+  });
+
+  // ── Post-gate fields ───────────────────────────────────────────
+  details?.addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    const detailsBtn = document.getElementById('vp-details-submit') as HTMLButtonElement;
+    const detailsError = document.getElementById('vp-details-error')!;
+    detailsError.classList.add('hidden');
+    detailsBtn.disabled = true;
+    detailsBtn.textContent = 'Sending…';
+
+    const value = (id: string) =>
+      (document.getElementById(id) as HTMLInputElement | HTMLSelectElement | null)?.value || undefined;
+    const walkthrough =
+      (details.querySelector('input[name="walkthrough"]:checked') as HTMLInputElement | null)
+        ?.value === 'yes';
+
+    try {
+      const response = await fetch('/api/velocity-profile/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          stage: 'complete',
+          token,
+          lead: {
+            name: value('vp-name'),
+            company: value('vp-company'),
+            level: value('vp-level'),
+            fn: value('vp-fn'),
+            industry: value('vp-industry'),
+            walkthrough,
+          },
+        }),
+      });
+      if (!response.ok) throw new Error(String(response.status));
+      const result = await response.json();
+
+      track('vp_postgate_complete', { walkthrough });
+      if (walkthrough) track('vp_walkthrough_optin');
+
+      document.getElementById('vp-thanks-email')!.textContent = emailInput.value.trim();
+      const booking = document.getElementById('vp-thanks-booking')!;
+      booking.hidden = !result.walkthrough;
+      if (result.bookingUrl) {
+        (document.getElementById('vp-booking-link') as HTMLAnchorElement).href = result.bookingUrl;
+      }
+
+      teaser.hidden = true;
+      thanks.hidden = false;
+      document.getElementById('vp-thanks-heading')!.focus();
+      window.scrollTo({ top: 0, behavior: reduced ? 'auto' : 'smooth' });
+      liveEl.textContent = 'Your report is on its way.';
+    } catch {
+      track('vp_postgate_failed');
+      detailsError.textContent = 'That didn’t go through. Try again in a moment.';
+      detailsError.classList.remove('hidden');
+      detailsBtn.disabled = false;
+      detailsBtn.textContent = 'Send my report';
+    }
+  });
+
+  // ── Events ─────────────────────────────────────────────────────
+  document.getElementById('vp-begin')?.addEventListener('click', () => {
+    track('vp_start');
+    go(0);
+  });
+
+  nextBtn.addEventListener('click', next);
+  backBtn.addEventListener('click', back);
+
+  // Auto-advance only on a deliberate pick. Arrow-key navigation through a
+  // radio group fires `change` too, and advancing on that would make the
+  // group impossible to browse with a keyboard.
+  form.addEventListener('pointerdown', () => { advanceIntent = true; });
+
+  form.addEventListener('change', () => {
+    if (index < 0 || index >= total) return;
+    const screen = screens[index];
+    record(screen);
+    errorEl.classList.add('hidden');
+
+    const single = screen.dataset.vpMulti !== 'true';
+    if (single && advanceIntent) window.setTimeout(next, reduced ? 100 : 260);
+    advanceIntent = false;
+  });
+
+  quiz.addEventListener('keydown', (event) => {
+    const key = (event as KeyboardEvent).key;
+    if ((event as KeyboardEvent).metaKey || (event as KeyboardEvent).ctrlKey) return;
+
+    if (key === 'Enter' && document.activeElement !== nextBtn) {
+      event.preventDefault();
+      next();
+      return;
+    }
+
+    const position = LETTERS.indexOf(key.toLowerCase());
+    if (position === -1 || index < 0 || index >= total) return;
+
+    const inputs = screens[index].querySelectorAll<HTMLInputElement>('input');
+    const input = inputs[position];
+    if (!input) return;
+
+    event.preventDefault();
+    advanceIntent = true;
+    input.checked = screens[index].dataset.vpMulti === 'true' ? !input.checked : true;
+    input.dispatchEvent(new Event('change', { bubbles: true }));
+  });
+
+  window.addEventListener('popstate', (event) => {
+    const state = (event.state ?? {}) as { vp?: number };
+    render(typeof state.vp === 'number' ? state.vp : -1);
+  });
+
+  // ── Init ───────────────────────────────────────────────────────
+  captureAttribution();
+  for (const screen of screens) prepare(screen);
+  history.replaceState({ vp: -1 }, '');
+  render(-1);
+</script>

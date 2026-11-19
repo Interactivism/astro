@@ -9,6 +9,7 @@
  *   ogImage     — OG image path from public/ root (falls back to /og-default.png)
  *   ogType      — 'website' (default) or 'article' (blog posts, case studies)
  *   canonical   — explicit canonical URL (falls back to current page URL)
+ *   noindex     — keep this page out of search results (per-token report pages)
  */
 import { getCollection } from 'astro:content';
 import Header from '../components/layout/Header.astro';
@@ -22,6 +23,8 @@ interface Props {
   ogImage?: string;
   ogType?: 'website' | 'article';
   canonical?: string;
+  /** Adds a robots meta tag. For pages that are private by URL, not by auth. */
+  noindex?: boolean;
   fullBleed?: boolean;
   /**
    * Set true when the page begins with a <Marquee> component.
@@ -45,6 +48,7 @@ const {
   ogImage = '/og-default.png',
   ogType = 'website',
   canonical,
+  noindex = false,
   fullBleed = false,
   hasMarquee = false,
   bodyClass = '',
@@ -76,6 +80,7 @@ const serviceNames = serviceEntries
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
     {canonical && <link rel="canonical" href={canonical} />}
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
 
     <!-- Open Graph -->
     <meta property="og:title" content={pageTitle} />

@@ -73,8 +73,10 @@ export default defineConfig({
     // traffic stays separable in GA4, which reports organic search apart from
     // direct — a plain-text outreach email sends no referrer, so for a page
     // with no other inbound path, direct is effectively the outreach number.
+    // Per-token report pages are private by URL and carry noindex; listing
+    // them in the sitemap would hand them to crawlers directly.
     sitemap({
-      filter: (page) => !page.includes('/preview'),
+      filter: (page) => !page.includes('/preview') && !page.includes('/velocity-profile/report'),
     }),
     keystatic(),
   ],

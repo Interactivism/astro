@@ -15,6 +15,7 @@ import { glob } from 'astro/loaders';
 // ============================================================
 
 import { INDUSTRY_IDS, SERVICE_IDS, DELIVERABLE_IDS } from './lib/vocabularies';
+import { ARCHETYPE_TAGS } from './data/velocity-profile';
 
 // ============================================================
 // Case Studies
@@ -216,4 +217,41 @@ const industries = defineCollection({
 // Export
 // ============================================================
 
-export const collections = { caseStudies, blog, authors, services, industries };
+/**
+ * Velocity Profile archetypes — the report prose for each of the five.
+ *
+ * Holds only what Erik rewrites. The archetype's name, teaser line, strength
+ * and failure-mode labels live in src/data/velocity-profile.ts, because those
+ * define what the archetype *is* and are referenced by the scoring. Nothing is
+ * duplicated across the two.
+ *
+ * `tag` is the join key. getArchetypeContent() in src/lib/velocity-profile/
+ * report.ts asserts at build time that all five exist exactly once.
+ */
+const velocityArchetypes = defineCollection({
+  loader: glob({ pattern: '**/*.mdx', base: './src/content/velocityArchetypes' }),
+  schema: z.object({
+    title: z.string(),
+    tag: z.enum(ARCHETYPE_TAGS),
+    // Report section 1: two sentences on what this team is good at.
+    strengthCopy: z.string(),
+    // Report section 2: the failure mode, in prose.
+    failureModeCopy: z.string(),
+    // Report section 5: three moves, useful without hiring us.
+    moves: z
+      .array(z.object({ title: z.string(), body: z.string() }))
+      .length(3),
+    // Report section 6: the proof slot. Case study slug, as in the filename.
+    caseStudy: z.string().optional(),
+    draft: z.boolean().default(false),
+  }),
+});
+
+export const collections = {
+  caseStudies,
+  blog,
+  authors,
+  services,
+  industries,
+  velocityArchetypes,
+};

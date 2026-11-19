@@ -168,3 +168,42 @@ Content stamping and save behavior:
 - On slug rename, the handler automatically renames `public/images/slideshows/[old-slug]/` to match the new slug and updates all slideshow image paths in the MDX body.
 - In local dev, a post-save script in `src/pages/keystatic/[...params].astro` handles the transient "Could not find image" error that occurs while `content-assets.mjs` rebuilds after a save. It uses sessionStorage to survive the HMR reload and triggers one final reload after a 1800ms settle delay.
 - Stale Vite dep cache causes Keystatic blank screen. Fix: `rm -rf node_modules/.vite && npm run dev`.
+
+---
+
+## Velocity Profile
+
+Two schemas, same rule as everywhere else: `src/content.config.ts` and
+`keystatic.config.ts` change together.
+
+| Schema | Astro | Keystatic |
+|---|---|---|
+| Archetype report copy | `velocityArchetypes` collection | `velocityArchetypes` collection |
+| Industry notes, offerings | — (plain JSON import) | `velocityReport` singleton |
+
+The singleton has no Zod schema because nothing loads it through the content
+layer; `src/lib/velocity-profile/report.ts` imports the JSON directly. Its
+shape is enforced by tests instead, which also assert the keys match the
+offerings and industries the code knows about.
+
+### Generated Keystatic fields
+
+The `velocityReport` singleton builds its `industryNotes` and `offerings`
+field sets with `Object.fromEntries` over `INDUSTRY_NOTE_KEYS` and `OFFERINGS`
+from `src/data/velocity-profile.ts`. This is the same derive-don't-hand-maintain
+rule as `src/lib/vocabularies.ts`, applied to a Keystatic object field rather
+than a select.
+
+Consequence: adding an offering means editing `OFFERINGS` and adding the
+matching key to `src/data/velocity-report.json`. The field appears on its own;
+the copy does not.
+
+### The guard that actually matters
+
+`getArchetypeContent()` throws when the five archetype entries do not map
+one-to-one onto the five tags. The report page is SSR, so this fails at
+request time, not build time — meaning a bad Keystatic save in production can
+break live reports without failing a deploy. `archetypes.test.ts` catches the
+same mistake locally, but the Netlify build runs `npm run build`, not
+`npm test`. Adding `npm test &&` to the build command in `netlify.toml` would
+close that gap.
