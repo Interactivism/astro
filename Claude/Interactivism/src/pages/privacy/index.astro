@@ -1,0 +1,219 @@
+---
+/**
+ * /privacy — privacy policy.
+ *
+ * Written against what the code actually does, not from a template. Every
+ * claim here was checked against the source: the third-party list is the
+ * complete set of external requests the site makes, and the Velocity Profile
+ * section matches the record shape in src/lib/velocity-profile/storage.ts.
+ *
+ * If you add a tracking pixel, an embedded map, a chat widget, a font CDN, or
+ * a new place form data lands, this page is wrong until you update it. The
+ * same goes for changing what the quiz stores.
+ *
+ * Deliberately a static page rather than Keystatic content: it changes rarely,
+ * and precision matters more than editing convenience.
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const updated = 'November 18, 2026';
+
+const eyebrow = 'font-mono text-xs text-muted uppercase tracking-widest';
+const h2 = 'font-display leading-display text-headline text-3xl mt-12 mb-4';
+const h3 = 'text-xl text-headline mt-8 mb-3';
+const p = 'text-base text-body leading-body';
+const link =
+  'font-light underline decoration-accent decoration-2 underline-offset-4 hover:text-headline transition duration-fast';
+---
+
+<BaseLayout
+  title="Privacy"
+  description="What interactivism.com collects, why, and what you can do about it."
+>
+  <div class="px-6 lg:px-12 py-16 lg:py-24 max-w-content mx-auto">
+
+    <p class={eyebrow}>Last updated {updated}</p>
+    <h1 class="font-display leading-display text-headline mt-4 mb-6">Privacy</h1>
+
+    <div class="max-w-prose">
+      <p class="text-lg text-body leading-body">
+        This covers interactivism.com. It is written in plain language, because
+        a policy nobody can read is not much of a policy.
+      </p>
+
+      <!-- ── Short version ──────────────────────────────────── -->
+      <div class="bg-surface-alt rounded-sm px-6 py-5 mt-8">
+        <p class={`${eyebrow} mb-4`}>The short version</p>
+        <ul class="space-y-2">
+          <li class={p}>We do not sell your information, and we do not share it with advertisers.</li>
+          <li class={p}>We collect what you hand us — a form, the assessment — plus standard web analytics.</li>
+          <li class={p}>You can ask us what we hold about you, or ask us to delete it, and we will.</li>
+        </ul>
+      </div>
+
+      <!-- ── Who we are ─────────────────────────────────────── -->
+      <h2 class={h2}>Who we are</h2>
+      <p class={p}>
+        Interactivism is a product design and development studio at
+        40 E. Colorado Blvd, Suite A, Pasadena, CA 91105. For anything on this
+        page, write to
+        <a href="mailto:hello@interactivism.com" class={link}>hello@interactivism.com</a>.
+      </p>
+
+      <!-- ── What we collect ────────────────────────────────── -->
+      <h2 class={h2}>What we collect, and why</h2>
+
+      <h3 class={h3}>When you browse the site</h3>
+      <p class={p}>
+        Google Analytics records that a page was viewed, roughly where in the
+        world the request came from, and what kind of device and browser you
+        are using. It sets cookies to recognize a returning browser. We use it
+        to see which work and which writing people actually read.
+      </p>
+      <p class={p}>
+        Our web host keeps standard server logs, which include IP addresses, as
+        part of running and securing the site.
+      </p>
+      <p class={p}>
+        Fonts are served from this site rather than a font CDN, so no third
+        party sees your visit just because a page loaded a typeface. Two case
+        studies embed video through YouTube’s no-cookie domain, which does not
+        set tracking cookies unless you press play. The map on the contact page
+        is a static image, not an embedded map, so Google is not called when
+        you open it.
+      </p>
+
+      <h3 class={h3}>When you use the contact form</h3>
+      <p class={p}>
+        We get your name, email address, company if you fill it in, and your
+        message. It goes to our inbox through our host’s form handling. We use
+        it to reply to you.
+      </p>
+
+      <h3 class={h3}>When you take the Product Velocity Profile</h3>
+      <p class={p}>
+        The assessment stores your answers to the twelve questions, the result
+        we calculate from them, your email address, and the name, company,
+        level, function and industry you give us after the questions. It also
+        records how you arrived — the campaign tag in the link you clicked, or
+        the site that referred you — and the time you submitted.
+      </p>
+      <p class={p}>
+        We use it to send you your report and, if the conversation looks
+        relevant to both of us, to follow up. Two specifics worth stating:
+        <strong class="text-headline font-medium">we do not store your IP address with your answers</strong>,
+        and the link to your report online contains a random token rather than
+        anything about you, so the address itself gives nothing away. Anyone you
+        forward that link to can read the report, which is deliberate.
+      </p>
+      <p class={p}>
+        To keep the form from being abused we briefly keep a one-way scrambled
+        version of your IP address, in a separate place that is never connected
+        to a submission.
+      </p>
+
+      <h3 class={h3}>When you book a call</h3>
+      <p class={p}>
+        “Book a call” hands you to Google’s appointment scheduling. What you
+        enter there is covered by
+        <a href="https://policies.google.com/privacy" rel="noopener" class={link}>Google’s privacy policy</a>,
+        not this one. We see the booking.
+      </p>
+
+      <!-- ── Third parties ──────────────────────────────────── -->
+      <h2 class={h2}>Who else touches it</h2>
+      <p class={p}>
+        These are the only companies that handle information from this site.
+        They act on our instructions; none of them get it to use for their own
+        marketing.
+      </p>
+
+      <div class="overflow-x-auto mt-6">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="border-b border-subtle">
+              <th class={`${eyebrow} py-3 pr-4 font-normal`}>Who</th>
+              <th class={`${eyebrow} py-3 font-normal`}>What for</th>
+            </tr>
+          </thead>
+          <tbody>
+            {[
+              ['Netlify', 'Hosting the site, handling contact form submissions, and storing assessment results'],
+              ['Google Analytics', 'Understanding how the site is used'],
+              ['Resend', 'Delivering the assessment report and our internal notification'],
+              ['Google', 'Appointment scheduling, when you book a call'],
+            ].map(([who, what]) => (
+              <tr class="border-b border-subtle align-top">
+                <td class="py-3 pr-4 text-base text-headline whitespace-nowrap">{who}</td>
+                <td class={`py-3 ${p}`}>{what}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- ── Cookies ────────────────────────────────────────── -->
+      <h2 class={h2}>Cookies and similar storage</h2>
+      <p class={p}>
+        Google Analytics sets cookies to tell one browser from another and one
+        visit from another. That is the only cookie set on the public site.
+      </p>
+      <p class={p}>
+        While you are taking the assessment, your browser also holds the
+        campaign tag from the link you arrived through, so it can be submitted
+        with your answers. It is cleared when you close the tab.
+      </p>
+      <p class={p}>
+        You can block or clear cookies in your browser, or install
+        <a
+          href="https://tools.google.com/dlpage/gaoptout"
+          rel="noopener"
+          class={link}
+        >Google’s opt-out extension</a>, and the site will work exactly the same.
+      </p>
+
+      <!-- ── Retention ──────────────────────────────────────── -->
+      <h2 class={h2}>How long we keep it</h2>
+      <p class={p}>
+        Honestly: we do not delete this on a schedule. Contact messages stay in
+        our email, and assessment results stay in our storage, until we have no
+        use for them or you ask us to remove them. Google Analytics data expires
+        on Google’s own schedule.
+      </p>
+      <p class={p}>
+        If you would rather we did not hold on to yours, say so and we will
+        delete it.
+      </p>
+
+      <!-- ── Your choices ───────────────────────────────────── -->
+      <h2 class={h2}>What you can ask for</h2>
+      <p class={p}>
+        Write to <a href="mailto:hello@interactivism.com" class={link}>hello@interactivism.com</a>
+        and we will tell you what we hold about you, correct it, or delete it.
+        We offer this to everyone who asks, wherever you live, rather than only
+        where a law requires it. We will not make you jump through hoops, and
+        we will not charge you.
+      </p>
+      <p class={p}>
+        If you are in the EU or UK and are not satisfied with how we handled a
+        request, you can complain to your national data protection authority.
+      </p>
+
+      <!-- ── Children ───────────────────────────────────────── -->
+      <h2 class={h2}>Children</h2>
+      <p class={p}>
+        This is a business site and nothing here is aimed at children. We do not
+        knowingly collect information from anyone under 16.
+      </p>
+
+      <!-- ── Changes ────────────────────────────────────────── -->
+      <h2 class={h2}>Changes</h2>
+      <p class={p}>
+        If we start collecting something new, we will change this page and move
+        the date at the top. There is no archive of old versions; if that
+        matters to you, keep a copy.
+      </p>
+
+    </div>
+  </div>
+</BaseLayout>

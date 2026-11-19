@@ -331,7 +331,8 @@ Elements, in order:
    - Instagram — https://www.instagram.com/interactivism/
    - Medium — https://medium.com/@interactivismco
    - LinkedIn — https://www.linkedin.com/company/interactivism
-3. **Copyright** — `© {currentYear} Interactivism`. Year rendered dynamically via `{new Date().getFullYear()}`, never hardcoded.
+3. **Copyright** — `© Interactivism`. No year: it carries no legal weight, it dates the site every January, and dropping it leaves room for the privacy link on the same row.
+4. **Privacy link** — `Privacy`, on the same row as the copyright, separated by a middot (`mx-2`, `aria-hidden`). Fits on one line only because the copyright carries no year. The only standing link to `/privacy/`, which the Velocity Profile consent line also points at.
 
 **Behavior:**
 - Vertical padding: `py-16` mobile, `py-24` desktop

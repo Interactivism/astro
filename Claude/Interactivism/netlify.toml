@@ -336,10 +336,10 @@
   to = "/"
   status = 410
 
-# Cookie policy — no new equivalent
+# Cookie policy — the new privacy page covers cookies
 [[redirects]]
   from = "/cookie-policy/"
-  to = "/"
+  to = "/privacy/"
   status = 301
 
 # Old /service/* path (without the 's')

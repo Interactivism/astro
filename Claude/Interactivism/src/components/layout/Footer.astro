@@ -6,7 +6,6 @@
  *   2. Mobile overlay and mobile page footer, parent provides px-6.
  * No horizontal padding here — parent handles it.
  */
-const year = new Date().getFullYear();
 ---
 
 <div class="py-8 space-y-4">
@@ -95,6 +94,13 @@ const year = new Date().getFullYear();
       </a>
     </div>
 
-    <p class="text-xs text-muted leading-none mb-0">&copy; {year} Interactivism</p>
+    <p class="text-xs text-muted leading-none mb-0">
+      &copy; Interactivism
+      <span aria-hidden="true" class="mx-2">·</span>
+      <a
+        href="/privacy/"
+        class="font-light text-muted hover:text-headline underline decoration-accent decoration-2 underline-offset-2 transition duration-fast"
+      >Privacy</a>
+    </p>
   </div>
 </div>
