@@ -40,6 +40,9 @@ export type ArchetypeTag = (typeof ARCHETYPE_TAGS)[number];
 export const ARCHETYPES = {
   F: {
     name: 'Feature Factory',
+    // TODO(erik): persona descriptor, first pass. One line, said about them
+    // rather than to them — it sits under the name like a job title.
+    descriptor: 'The team that never stops shipping',
     teaser: 'You ship more than almost anyone, but more isn’t always better.',
     strength: 'Ships constantly',
     failureMode: 'Output gets mistaken for outcomes, and the product sprawls',
@@ -47,6 +50,8 @@ export const ARCHETYPES = {
   },
   C: {
     name: 'Committee',
+    // TODO(erik): persona descriptor, first pass.
+    descriptor: 'The team that needs everyone to agree',
     teaser: 'You rarely ship the wrong thing. You often ship the right thing late.',
     strength: 'Alignment, low risk',
     failureMode: 'Decisions stall, and designs get averaged into mush',
@@ -54,6 +59,8 @@ export const ARCHETYPES = {
   },
   E: {
     name: 'Engineering-Led',
+    // TODO(erik): persona descriptor, first pass.
+    descriptor: 'The team that builds it right before it builds it usable',
     teaser: 'Your product is built to last, and built like the database underneath it.',
     strength: 'Solid, scalable tech',
     failureMode: 'The UI mirrors the data model, and UX is an afterthought',
@@ -61,6 +68,8 @@ export const ARCHETYPES = {
   },
   S: {
     name: 'Sales-Driven',
+    // TODO(erik): persona descriptor, first pass.
+    descriptor: 'The team that never says no to a customer',
     teaser: 'You’re closer to revenue than most teams, and your roadmap shows it.',
     strength: 'Close to revenue',
     failureMode: 'The roadmap is the last big deal, so there are one-off features everywhere',
@@ -68,6 +77,8 @@ export const ARCHETYPES = {
   },
   X: {
     name: 'Firefighter',
+    // TODO(erik): persona descriptor, first pass.
+    descriptor: 'The team that is always one escalation behind',
     teaser: 'You’re great in a crisis. Trouble is, it’s always a crisis.',
     strength: 'Responds fast',
     failureMode: 'No room for planned work, so debt compounds',
@@ -75,6 +86,8 @@ export const ARCHETYPES = {
   },
 } as const satisfies Record<ArchetypeTag, {
   name: string;
+  /** One line under the name, like a job title. Persona, not prose. */
+  descriptor: string;
   teaser: string;
   strength: string;
   failureMode: string;
@@ -103,7 +116,7 @@ export const ARCHETYPE_TIEBREAK_ORDER = ['q2', 'q1', 'q3', 'q4', 'q5', 'q6'] as 
  * dollar range shown to a prospect can change without a deploy and without
  * sitting in a public repo. This is the documented fallback for local dev.
  */
-export const DEFAULT_LOADED_COST = 200_000;
+export const DEFAULT_LOADED_COST = 180_000;
 
 // ============================================================
 // Questions

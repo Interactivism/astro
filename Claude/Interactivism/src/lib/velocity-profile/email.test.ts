@@ -36,9 +36,9 @@ function record(overrides: Partial<SubmissionRecord> = {}): SubmissionRecord {
     email: 'jane@acme.com',
     answers: ANSWERS,
     lead,
-    results: scoreSubmission({ answers: ANSWERS, ...lead }, 200_000),
+    results: scoreSubmission({ answers: ANSWERS, ...lead }, 180_000),
     attribution: { utm_source: 'linkedin', utm_campaign: 'vp-test', referrer: null },
-    meta: { loadedCost: 200_000 },
+    meta: { loadedCost: 180_000 },
     ...overrides,
   };
 }
@@ -76,8 +76,8 @@ describe('buildInternalNotification', () => {
     const { text } = buildInternalNotification(record(), 'https://interactivism.com');
 
     expect(text).toContain('Feature Factory with a Committee streak');
-    expect(text).toContain('$5.2M–$9.1M a year');
-    expect(text).toContain('130 people × $200,000 × 20–35%');
+    expect(text).toContain('$4.7M–$8.2M a year');
+    expect(text).toContain('130 people × $180,000 × 20–35%');
     expect(text).toContain('A major launch or redesign');
     expect(text).toContain('Cost-cutting');
     expect(text).toContain('Make the product easier to learn and sell');
@@ -108,7 +108,7 @@ describe('buildInternalNotification', () => {
   it('says so plainly when the cost could not be calculated', () => {
     const partial = record({
       answers: { q1: 'q1-a', q2: 'q2-a', q3: 'q3-a', q4: 'q4-a', q5: 'q5-a', q6: 'q6-a' },
-      results: scoreSubmission({ answers: { q1: 'q1-a', q2: 'q2-a', q3: 'q3-a' } }, 200_000),
+      results: scoreSubmission({ answers: { q1: 'q1-a', q2: 'q2-a', q3: 'q3-a' } }, 180_000),
     });
     expect(buildInternalNotification(partial, 'https://x.test').text).toContain('Not calculated');
   });
@@ -120,7 +120,7 @@ describe('buildInternalNotification', () => {
       q1: 'q1-a', q2: 'q2-b', q3: 'q3-a', q4: 'q4-b', q5: 'q5-c', q6: 'q6-c',
     };
     const { text } = buildInternalNotification(
-      record({ answers: tied, results: scoreSubmission({ answers: tied }, 200_000) }),
+      record({ answers: tied, results: scoreSubmission({ answers: tied }, 180_000) }),
       'https://x.test',
     );
     expect(text).toContain('tie broken by Q2');

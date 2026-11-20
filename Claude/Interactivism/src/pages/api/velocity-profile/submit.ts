@@ -40,7 +40,7 @@ import {
   sendReportEmail,
 } from '../../../lib/velocity-profile/email';
 import { getArchetypeContent } from '../../../lib/velocity-profile/content';
-import { buildReport, renderReportText } from '../../../lib/velocity-profile/report';
+import { buildReport, renderReportEmail } from '../../../lib/velocity-profile/report';
 import { ARCHETYPES } from '../../../data/velocity-profile';
 
 export const prerender = false;
@@ -177,10 +177,11 @@ export const POST: APIRoute = async ({ request, url }) => {
     // report is readable on the web either way.
     try {
       const report = buildReport(existing, await getArchetypeContent());
-      const text = renderReportText(
+      const text = renderReportEmail(
         report,
         `${siteUrl}/velocity-profile/report/${existing.id}`,
         `${siteUrl}/book?src=velocity-profile-report`,
+        existing.lead.name?.trim().split(/\s+/)[0],
       );
       const sent = await sendReportEmail(
         existing,

@@ -22,6 +22,7 @@ import {
 } from '../../data/velocity-profile';
 import reportCopy from '../../data/velocity-report.json';
 import type { SubmissionRecord } from './storage';
+import type { CostAssumptions } from './scoring';
 
 export interface ArchetypeContent {
   tag: ArchetypeTag;
@@ -41,6 +42,8 @@ export interface Report {
   intro: string;
   archetype: {
     name: string;
+    /** One line under the name. Persona, not prose. */
+    descriptor: string;
     teaser: string;
     strength: string;
     strengthCopy: string;
@@ -87,6 +90,20 @@ const EVIDENCE_QUESTIONS: { id: 'q3' | 'q4' | 'q5' | 'q6' | 'q2'; prompt: string
   { id: 'q2', prompt: 'What makes the roadmap' },
 ];
 
+/**
+ * "7 people × $180,000 × 20–35% of their time".
+ *
+ * Collapses to a single percentage when the low and high match, which is the
+ * "Not sure" path: that option carries one figure rather than a range, and
+ * printing it as a range read "10–10% of their time".
+ */
+function assumptionsLine(a: CostAssumptions): string {
+  const low = Math.round(a.reworkLow * 100);
+  const high = Math.round(a.reworkHigh * 100);
+  const share = low === high ? `${low}%` : `${low}–${high}%`;
+  return `${a.teamSize} people × $${a.loadedCost.toLocaleString('en-US')} × ${share} of their time`;
+}
+
 export function buildReport(
   record: SubmissionRecord,
   content: Record<ArchetypeTag, ArchetypeContent>,
@@ -104,11 +121,7 @@ export function buildReport(
     ? {
         display: results.cost.display,
         single: results.cost.single,
-        assumptionsLine:
-          `${results.cost.assumptions.teamSize} people × ` +
-          `$${results.cost.assumptions.loadedCost.toLocaleString('en-US')} × ` +
-          `${Math.round(results.cost.assumptions.reworkLow * 100)}–` +
-          `${Math.round(results.cost.assumptions.reworkHigh * 100)}% of their time`,
+        assumptionsLine: assumptionsLine(results.cost.assumptions),
         assumptions: reportCopy.assumptions,
         unmeasuredNote: results.flags.some((flag) => flag.code === 'rework-unmeasured')
           ? reportCopy.unmeasuredNote
@@ -125,6 +138,7 @@ export function buildReport(
     intro: reportCopy.intro,
     archetype: {
       name: meta.name,
+      descriptor: meta.descriptor,
       teaser: meta.teaser,
       strength: meta.strength,
       strengthCopy: copy.strengthCopy,
@@ -158,68 +172,43 @@ export function buildReport(
 
 const rule = '─'.repeat(52);
 
-export function renderReportText(report: Report, reportUrl: string, bookingUrl: string): string {
+export function renderReportEmail(
+  report: Report,
+  reportUrl: string,
+  bookingUrl: string,
+  firstName?: string,
+): string {
+  const headline = report.archetype.secondaryName
+    ? `${report.archetype.name}, with a ${report.archetype.secondaryName} streak`
+    : report.archetype.name;
+
+  // What the report covers, named concretely rather than promised vaguely.
+  // The cost figure is the line that earns the click, so it goes in when we
+  // have one and the sentence reads without it when we do not.
+  const covers = report.cost
+    ? `It covers where that breaks down, what rework is likely costing you — around ${report.cost.display} a year on the numbers you gave us — and three moves teams like yours make.`
+    : 'It covers where that breaks down, what it is likely costing you, and three moves teams like yours make.';
+
   const parts: string[] = [
-    report.intro,
+    firstName ? `${firstName},` : 'Hi,',
     '',
-    rule,
-    report.archetype.secondaryName
-      ? `${report.archetype.name.toUpperCase()}, with a ${report.archetype.secondaryName} streak`
-      : report.archetype.name.toUpperCase(),
-    rule,
+    `Your team came out as ${headline} — ${report.archetype.descriptor.toLowerCase()}.`,
     '',
-    report.archetype.strengthCopy,
+    report.archetype.teaser,
     '',
-    'WHERE IT BREAKS DOWN',
-    report.failureMode.copy,
-  ];
-
-  if (report.failureMode.evidence.length) {
-    parts.push('', 'In your own answers:');
-    for (const item of report.failureMode.evidence) {
-      parts.push(`  ${item.prompt}: ${item.answer}`);
-    }
-  }
-
-  if (report.cost) {
-    parts.push(
-      '',
-      'WHAT IT IS COSTING YOU',
-      report.cost.single
-        ? `${report.cost.display} a year`
-        : `${report.cost.display} a year`,
-      `  ${report.cost.assumptionsLine}`,
-      '',
-      report.cost.assumptions,
-    );
-    if (report.cost.unmeasuredNote) parts.push('', report.cost.unmeasuredNote);
-    if (report.cost.flags.length) {
-      parts.push('', 'Worth a look:');
-      for (const flag of report.cost.flags) parts.push(`  • ${flag.label} — you said “${flag.answer}”`);
-    }
-  }
-
-  parts.push('', 'YOUR INDUSTRY', report.industryNote);
-
-  parts.push('', 'THREE MOVES TEAMS LIKE YOURS MAKE');
-  report.moves.forEach((move, i) => {
-    parts.push('', `${i + 1}. ${move.title}`, `   ${move.body}`);
-  });
-
-  if (report.offering) {
-    parts.push('', 'WHERE WE COME IN', report.offering.name, report.offering.body);
-  }
-
-  parts.push(
+    'Read the full report:',
+    reportUrl,
+    '',
+    covers,
+    '',
+    'The link needs no sign-in, so you can forward it to whoever else should see it.',
     '',
     rule,
     'Want to talk it through? Twenty minutes with one of our partners:',
     bookingUrl,
     '',
-    `Read this online: ${reportUrl}`,
-    '',
     'Interactivism — product design and development, Los Angeles',
-  );
+  ];
 
   return parts.join('\n');
 }

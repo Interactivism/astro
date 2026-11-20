@@ -16,7 +16,7 @@ import {
   type ArchetypeTag,
 } from '../../data/velocity-profile';
 import reportCopy from '../../data/velocity-report.json';
-import { buildReport, renderReportText, type ArchetypeContent } from './report';
+import { buildReport, renderReportEmail, type ArchetypeContent } from './report';
 import { scoreSubmission, type Answers } from './scoring';
 import type { SubmissionRecord } from './storage';
 
@@ -54,9 +54,9 @@ function record(answers: Answers = ANSWERS, lead: SubmissionRecord['lead'] = {})
     email: 'jane@acme.com',
     answers,
     lead,
-    results: scoreSubmission({ answers, ...lead }, 200_000),
+    results: scoreSubmission({ answers, ...lead }, 180_000),
     attribution: null,
-    meta: { loadedCost: 200_000 },
+    meta: { loadedCost: 180_000 },
   };
 }
 
@@ -70,7 +70,7 @@ describe('buildReport', () => {
     expect(report.archetype.secondaryName).toBe('Committee');
     expect(report.archetype.strengthCopy).toBe('F strength copy.');
     expect(report.failureMode.copy).toBe('F failure copy.');
-    expect(report.cost?.display).toBe('$5.2M–$9.1M');
+    expect(report.cost?.display).toBe('$4.7M–$8.2M');
     expect(report.industryNote).toBe(reportCopy.industryNotes.fintech);
     expect(report.moves).toHaveLength(3);
     expect(report.offering?.name).toBe('UX audit + product design');
@@ -119,7 +119,15 @@ describe('buildReport', () => {
 
   it('spells out the cost assumptions with real numbers', () => {
     const report = buildReport(record(), CONTENT);
-    expect(report.cost?.assumptionsLine).toBe('130 people × $200,000 × 20–35% of their time');
+    expect(report.cost?.assumptionsLine).toBe('130 people × $180,000 × 20–35% of their time');
+  });
+
+  it('prints one percentage, not a range, on the "Not sure" path', () => {
+    // That option carries a single figure, and rendering it as a range read
+    // "10–10% of their time" in a report a prospect was reading.
+    const report = buildReport(record({ ...ANSWERS, q8: 'q8-e' }), CONTENT);
+    expect(report.cost?.assumptionsLine).toBe('130 people × $180,000 × 10% of their time');
+    expect(report.cost?.assumptionsLine).not.toMatch(/(\d+)–\1%/);
   });
 
   it('flags a tiebreak so the page can soften the claim', () => {
@@ -143,28 +151,45 @@ describe('buildReport', () => {
 
 // ── Text rendering ─────────────────────────────────────────────
 
-describe('renderReportText', () => {
-  const text = renderReportText(
+describe('renderReportEmail', () => {
+  const text = renderReportEmail(
     buildReport(record(ANSWERS, { industry: 'adtech' }), CONTENT),
     'https://interactivism.com/velocity-profile/report/bbbb',
     'https://interactivism.com/book',
+    'Sam',
   );
 
-  it('carries every section into the email', () => {
-    expect(text).toContain('FEATURE FACTORY, with a Committee streak');
-    expect(text).toContain('F strength copy.');
-    expect(text).toContain('WHERE IT BREAKS DOWN');
-    expect(text).toContain('$5.2M–$9.1M a year');
-    expect(text).toContain('130 people × $200,000 × 20–35%');
-    expect(text).toContain(reportCopy.industryNotes.adtech);
-    expect(text).toContain('1. F move 1');
-    expect(text).toContain('3. F move 3');
-    expect(text).toContain('UX audit + product design');
+  it('opens with the name, the archetype, and the persona line', () => {
+    expect(text.startsWith('Sam,')).toBe(true);
+    expect(text).toContain('Feature Factory, with a Committee streak');
+    expect(text).toContain('the team that never stops shipping');
+  });
+
+  it('leads with the report link and the cost figure, as the reason to click', () => {
+    expect(text).toContain('https://interactivism.com/velocity-profile/report/bbbb');
+    expect(text).toContain('$4.7M–$8.2M a year');
+  });
+
+  it('stays short, and leaves the body of the report on the web', () => {
+    // The point of the rewrite: the email is an invitation, not the report.
+    expect(text.split('\n').length).toBeLessThan(25);
+    expect(text).not.toContain('WHERE IT BREAKS DOWN');
+    expect(text).not.toContain('THREE MOVES');
+    expect(text).not.toContain('F move 1');
+    expect(text).not.toContain(reportCopy.industryNotes.adtech);
+  });
+
+  it('greets without a name when we do not have one', () => {
+    const anonymous = renderReportEmail(
+      buildReport(record(ANSWERS), CONTENT),
+      'https://interactivism.com/velocity-profile/report/cccc',
+      'https://interactivism.com/book',
+    );
+    expect(anonymous.startsWith('Hi,')).toBe(true);
   });
 
   it('ends with both links', () => {
     expect(text).toContain('https://interactivism.com/book');
-    expect(text).toContain('https://interactivism.com/velocity-profile/report/bbbb');
   });
 
   it('leaks no option IDs or archetype tags', () => {

@@ -191,14 +191,14 @@ describe('formatCost', () => {
 
 describe('computeReworkCost', () => {
   it('produces the range in the spec example', () => {
-    // 50 people × $200K × 20–35%
+    // 50 people × $180K × 20–35% = $1.8M–$3.15M, rounded to the nearest $0.1M
     const cost = computeReworkCost({ q7: 'q7-c', q8: 'q8-c' });
 
-    expect(cost?.display).toBe('$2.0M–$3.5M');
+    expect(cost?.display).toBe('$1.8M–$3.2M');
     expect(cost?.single).toBe(false);
     expect(cost?.assumptions).toEqual({
       teamSize: 50,
-      loadedCost: 200_000,
+      loadedCost: 180_000,
       reworkLow: 0.20,
       reworkHigh: 0.35,
     });
@@ -209,7 +209,8 @@ describe('computeReworkCost', () => {
 
     expect(cost?.single).toBe(true);
     expect(cost?.low).toBe(cost?.high);
-    expect(cost?.display).toBe('$1.0M');
+    // 50 × $180K × 10% = $900K, which stays in thousands.
+    expect(cost?.display).toBe('$900K');
     expect(cost?.assumptions.reworkLow).toBe(0.10);
   });
 
@@ -449,7 +450,7 @@ describe('scoreSubmission', () => {
     });
 
     expect(result.archetype.primary).toBe('F');
-    expect(result.cost?.display).toBe('$2.0M–$3.5M');
+    expect(result.cost?.display).toBe('$1.8M–$3.2M');
     expect(result.flags.map((f) => f.code)).toEqual(['slow-time-to-value', 'high-howto-tickets']);
     // 5 walkthrough + 3 intent + 3 VP + 2 team + 2 rework + 1 industry
     expect(result.lead.score).toBe(16);

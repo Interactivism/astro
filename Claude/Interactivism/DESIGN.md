@@ -632,6 +632,18 @@ One question per screen, in `max-w-prose`, with a progress bar above and the sam
 
 **Motion between questions.** Each screen replaces the last in place, at the same size — without motion the only thing that changes is the words, and the eye reads it as the same screen. The incoming question fades in over 240ms with a 12px slide from the direction of travel (down when moving forward, up when going back), and the quiz scrolls into view when its top sits outside the upper 40% of the viewport. Both are skipped under `prefers-reduced-motion`.
 
+**Archetype marks.** One geometric figure per archetype, on the teaser screen (80px) and at the top of the report (96px). Drawn, not illustrated: the site has no illustration language, and five drawn characters would have invented one by accident. Rules for any further marks:
+
+- 120×120 viewBox, 3px strokes, round caps and joins, scaled by the consumer.
+- Paper, ink and the brand yellow only. Strokes are `currentColor` so a mark works on any surface without a second copy.
+- Each one says something about the archetype's failure mode, not its name — identical units marching off the edge, a ring of equals around an empty center. A mark that merely illustrates the noun is the wrong mark.
+- `aria-hidden`; the name beside it carries the meaning.
+- No `id` or `class` attributes: they ship over the wire one at a time and must not name the archetype they belong to.
+
+**Persona descriptor.** One line under the archetype name, in `text-lg text-muted` — said about them rather than to them, like a job title. Sits between the name and the teaser line on both the teaser screen and the report.
+
+**Share.** At the foot of the report: `Copy link` and `Email it`, mono uppercase on `bg-surface-alt` with a `border-subtle` hairline — the same card language as the option rows, deliberately quieter than the booking CTA above it. Copy link uses the system share sheet where there is one and the clipboard elsewhere; when the clipboard is refused it reveals a readonly field with the URL selected, because a silent failure is worse than an extra step. Status messages are mono, in a live region, and clear themselves after 4 seconds.
+
 **The gate.** The teaser result, then the promise of the full report as prose, then one email field. The detail fields unfurl as soon as the address is valid — no round trip — and the single `Send my report` button below them is the only button on the screen. A button that says "send" must send; an earlier version used it to reveal the fields instead.
 
 ---

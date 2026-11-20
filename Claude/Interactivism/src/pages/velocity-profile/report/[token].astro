@@ -14,6 +14,7 @@ import Button from '../../../components/ui/Button.astro';
 import { getSubmission } from '../../../lib/velocity-profile/storage';
 import { getArchetypeContent } from '../../../lib/velocity-profile/content';
 import { buildReport } from '../../../lib/velocity-profile/report';
+import { markFor } from '../../../lib/velocity-profile/marks';
 
 export const prerender = false;
 
@@ -28,7 +29,16 @@ if (!record) {
 }
 
 const report = buildReport(record, await getArchetypeContent());
+const mark = markFor(record.results.archetype.primary);
 const bookingUrl = '/book?src=velocity-profile-report';
+
+/**
+ * The canonical link for sharing. Built from the request so a report shared
+ * from a deploy preview keeps pointing at that preview rather than sending a
+ * colleague to production, where the token does not exist.
+ */
+const shareUrl = new URL(Astro.url.pathname, Astro.url.origin).href;
+const shareSubject = `My team's Velocity Profile: ${report.archetype.name}`;
 
 Astro.response.headers.set('Cache-Control', 'no-store');
 Astro.response.headers.set('X-Robots-Tag', 'noindex, nofollow');
@@ -47,9 +57,12 @@ const inlineLink =
 
     <p class={eyebrow}>Your Velocity Profile</p>
 
-    <h1 class="font-display leading-display text-headline mt-4 mb-2">
+    <div class="w-24 h-24 text-headline mt-6 [&>svg]:w-full [&>svg]:h-full" set:html={mark}></div>
+
+    <h1 class="font-display leading-display text-headline mt-6 mb-2">
       {report.archetype.name}
     </h1>
+    <p class="text-lg text-muted leading-body mb-2">{report.archetype.descriptor}</p>
     {report.archetype.secondaryName && (
       <p class={`${eyebrow} mb-6`}>with a {report.archetype.secondaryName} streak</p>
     )}
@@ -185,6 +198,101 @@ const inlineLink =
         <Button href={bookingUrl}>Pick a time</Button>
       </section>
 
+      <!-- 8 — Share -->
+      <section class="border-t border-subtle pt-8 mt-10">
+        <h2 class="font-display leading-display text-headline text-3xl mb-4">
+          Send it to someone
+        </h2>
+        <p class="text-base text-body leading-body">
+          Anyone with this link can read the report — no sign-in, nothing to
+          install. It is the three moves that tend to get forwarded.
+        </p>
+
+        <div class="flex items-center gap-4 flex-wrap mt-6">
+          <button
+            id="vp-share"
+            type="button"
+            data-url={shareUrl}
+            data-title={shareSubject}
+            class="font-mono text-xs uppercase tracking-widest text-headline bg-surface-alt border border-subtle rounded-sm px-4 py-3 hover:border-ink-900/30 transition duration-fast"
+          >Copy link</button>
+
+          <a
+            href={`mailto:?subject=${encodeURIComponent(shareSubject)}&body=${encodeURIComponent(`${report.archetype.teaser}\n\n${shareUrl}`)}`}
+            class="font-mono text-xs uppercase tracking-widest text-headline bg-surface-alt border border-subtle rounded-sm px-4 py-3 hover:border-ink-900/30 transition duration-fast"
+          >Email it</a>
+
+          <p id="vp-share-status" class="font-mono text-xs text-muted" role="status" aria-live="polite"></p>
+        </div>
+
+        <!-- Shown only if the clipboard is refused. See the script below. -->
+        <input
+          id="vp-share-fallback"
+          type="text"
+          readonly
+          hidden
+          aria-label="Report link"
+          class="w-full bg-surface-alt border border-subtle rounded-sm px-4 py-3 font-mono text-xs text-body mt-3"
+        />
+
+        <p class="text-sm text-muted leading-body mt-4">
+          Rather it stayed private? <a href="mailto:hello@interactivism.com" class={inlineLink}>Tell us</a> and we will delete it.
+        </p>
+      </section>
+
     </div>
   </div>
 </BaseLayout>
+
+<script>
+  /**
+   * Share: the system share sheet where there is one, clipboard everywhere
+   * else. Both paths end at the same place — the link in someone's hands —
+   * and neither needs a third-party widget or a tracking pixel.
+   *
+   * The URL is read from a data attribute rather than location.href so the
+   * button shares the canonical report link even if the page was opened with
+   * a query string appended by a mail client.
+   */
+  const button = document.getElementById('vp-share') as HTMLButtonElement | null;
+  const status = document.getElementById('vp-share-status');
+  const fallback = document.getElementById('vp-share-fallback') as HTMLInputElement | null;
+
+  if (button && status && fallback) {
+    const url = button.dataset.url!;
+    const title = button.dataset.title!;
+
+    const say = (message: string) => {
+      status.textContent = message;
+      window.setTimeout(() => { status.textContent = ''; }, 4000);
+    };
+
+    // navigator.share needs a user gesture and exists mainly on mobile; the
+    // feature test has to run at click time because the sheet can be dismissed,
+    // which rejects with AbortError and is not a failure worth reporting.
+    button.addEventListener('click', async () => {
+      if (navigator.share) {
+        try {
+          await navigator.share({ title, url });
+          return;
+        } catch (error) {
+          if ((error as Error).name === 'AbortError') return;
+        }
+      }
+
+      try {
+        await navigator.clipboard.writeText(url);
+        say('Link copied.');
+      } catch {
+        // Clipboard access can be refused outright — an insecure origin, a
+        // permissions policy, an unfocused window. Put the URL on screen,
+        // selected, so copying is still one keystroke. A hidden field would
+        // have been worse than the failure: nothing to copy and nothing to see.
+        fallback.hidden = false;
+        fallback.value = url;
+        fallback.select();
+        say('Copy it from here:');
+      }
+    });
+  }
+</script>

@@ -12,6 +12,7 @@
 import type { APIRoute } from 'astro';
 import { ARCHETYPES, QUESTIONS } from '../../../data/velocity-profile';
 import { resolveArchetype, type Answers } from '../../../lib/velocity-profile/scoring';
+import { markFor } from '../../../lib/velocity-profile/marks';
 
 export const prerender = false;
 
@@ -63,8 +64,17 @@ export const POST: APIRoute = async ({ request }) => {
 
   const { primary, secondary } = resolveArchetype(answers);
 
+  // The mark travels as rendered SVG, not as a tag or a key. The quiz page
+  // ships no marks of its own: shipping all five would tell anyone reading the
+  // HTML exactly how many archetypes exist and what each looks like, which is
+  // the same leak the tags are kept out of the bundle to prevent.
   return json({
-    primary: { name: ARCHETYPES[primary].name, teaser: ARCHETYPES[primary].teaser },
+    primary: {
+      name: ARCHETYPES[primary].name,
+      descriptor: ARCHETYPES[primary].descriptor,
+      teaser: ARCHETYPES[primary].teaser,
+      mark: markFor(primary),
+    },
     secondary: secondary ? { name: ARCHETYPES[secondary].name } : null,
   });
 };

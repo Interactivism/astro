@@ -198,6 +198,12 @@ const field =
     <section id="vp-teaser" hidden>
       <p class={eyebrow}>Your result</p>
 
+      {/*
+        Filled from the teaser response, which sends the rendered SVG for the
+        one archetype this visitor resolved to. Empty in the HTML on purpose.
+      */}
+      <div id="vp-mark" class="w-20 h-20 text-headline mt-6 [&>svg]:w-full [&>svg]:h-full"></div>
+
       <h1
         id="vp-teaser-heading"
         tabindex="-1"
@@ -205,6 +211,7 @@ const field =
       >
         <span id="vp-archetype">—</span>
       </h1>
+      <p id="vp-descriptor" class="text-lg text-muted leading-body mb-2"></p>
       <p id="vp-streak" class={`${eyebrow} mb-6`} hidden></p>
 
       <div class="max-w-prose">
@@ -224,13 +231,6 @@ const field =
         </p>
 
         <form id="vp-gate" novalidate class="space-y-6 mt-8">
-          <!-- Honeypot — hidden from real users, catches bots -->
-          <p class="hidden" aria-hidden="true">
-            <label>Don’t fill this out:
-              <input name="vp-bot" tabindex="-1" autocomplete="off" />
-            </label>
-          </p>
-
           <div class="flex flex-col gap-2">
             <label for="vp-email" class={eyebrow}>
               Work email <span aria-hidden="true">*</span>
@@ -241,11 +241,30 @@ const field =
               name="email"
               required
               autocomplete="email"
+              inputmode="email"
+              placeholder="you@company.com"
+              spellcheck="false"
+              autocapitalize="none"
+              autocorrect="off"
               class="w-full bg-surface-alt border border-subtle rounded-sm px-4 py-3 font-body text-base text-body placeholder:text-ink-300"
             />
             <p id="vp-email-note" class="hidden text-sm text-muted" role="status"></p>
             <p id="vp-email-error" class="hidden text-error font-mono text-xs" role="alert"></p>
           </div>
+
+          {/*
+            Honeypot, last in the form rather than first.
+            Leading it put an unlabeled, type-less text input ahead of the real
+            one, which is exactly the shape a password manager reads as a name
+            field — and the email input, as the only other field in the form,
+            inherited the guess. It is display:none either way, so a real person
+            never sees it and the bots that fill every input still trip it.
+          */}
+          <p class="hidden" aria-hidden="true">
+            <label>Don’t fill this out:
+              <input type="text" name="vp-bot" tabindex="-1" autocomplete="off" />
+            </label>
+          </p>
         </form>
 
         <!-- Revealed as soon as the address is valid. Submitting sends both. -->
@@ -380,6 +399,14 @@ const field =
 </BaseLayout>
 
 <style>
+  /*
+   * Placeholder fades on focus, per the Forms pattern in DESIGN.md. The
+   * contact form predates that rule and uses no placeholder at all; here one
+   * earns its place by telling a password manager what the field is for.
+   */
+  #vp-email::placeholder { transition: opacity 150ms ease; }
+  #vp-email:focus::placeholder { opacity: 0; }
+
   /*
    * Checked state for a multi-select option: the letter gives way to a check,
    * and the box fills. Written as plain CSS rather than Tailwind's peer-checked
@@ -618,7 +645,11 @@ const field =
       const result = await response.json();
 
       document.getElementById('vp-archetype')!.textContent = result.primary.name;
+      document.getElementById('vp-descriptor')!.textContent = result.primary.descriptor;
       document.getElementById('vp-archetype-teaser')!.textContent = result.primary.teaser;
+      // Our own markup from our own endpoint, not user input. Set as HTML
+      // because it is an SVG; everything else on this screen is textContent.
+      document.getElementById('vp-mark')!.innerHTML = result.primary.mark ?? '';
 
       const streak = document.getElementById('vp-streak')!;
       if (result.secondary) {

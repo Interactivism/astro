@@ -33,7 +33,7 @@ are set.
 
 | Variable | Used by | Default if unset |
 |---|---|---|
-| `VELOCITY_LOADED_COST` | Rework cost calculation | `200000` |
+| `VELOCITY_LOADED_COST` | Rework cost calculation | `180000` |
 | `VELOCITY_NOTIFY_EMAIL` | Where lead notifications go | No notification sent, logged instead |
 | `RESEND_API_KEY` | Sending mail via Resend | Nothing sent, message logged |
 | `VELOCITY_FROM_EMAIL` | `From:` on outbound mail | Nothing sent, message logged |
@@ -58,6 +58,7 @@ src/lib/velocity-profile/
   scoring.ts                        pure scoring — archetype, cost, lead score
   storage.ts                        Netlify Blobs, in-memory in dev
   email.ts                          Resend + the internal notification
+  marks.ts                          the five archetype figures, as SVG
 src/pages/velocity-profile/         the quiz and the report page
 src/pages/api/velocity-profile/     teaser and submit endpoints
 ```
@@ -70,11 +71,18 @@ attributes, and the template iterates `toClientQuestions()`, which strips tags,
 calc values and weights. Tests assert the projection is clean. If you add
 client code, do not import that module into it.
 
+`marks.ts` is keyed by archetype tag and is therefore server-only, like the
+config: the teaser endpoint sends one rendered figure, never the map.
+
 **Results are always recomputed server-side.** Whatever the browser posts about
 its own score is ignored. `/api/velocity-profile/submit` rescores from the
 submitted option IDs.
 
 ### Storage
+
+The report email is short on purpose — archetype, persona line, cost figure,
+link. The report itself lives on the web, where it can be shared and where
+changing the copy does not mean resending anything.
 
 Submissions live in Netlify Blobs under the `velocity-profile` store, keyed by
 the report token. Records hold no IP address; rate limiting keeps a salted hash

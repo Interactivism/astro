@@ -580,12 +580,23 @@ three places, deliberately.
 | What | Where | Why |
 |---|---|---|
 | Questions, options, archetype tags, calc values | `src/data/velocity-profile.ts` | Scoring depends on them. Changing an option's tag changes everyone's result, so this is a code change with a test behind it, not a CMS edit. |
-| Archetype names, teaser lines, strength and failure-mode labels | `src/data/velocity-profile.ts` | Identity, not copy. The scoring returns a tag; these turn it into a name. |
+| Archetype names, persona descriptors, teaser lines, strength and failure-mode labels | `src/data/velocity-profile.ts` | Identity, not copy. The scoring returns a tag; these turn it into a persona. |
+| Archetype marks (the five geometric figures) | `src/lib/velocity-profile/marks.ts` | Drawn in code so they version with the archetypes they belong to. Server only — see below. |
 | Archetype report prose, the three moves, case study slot | `velocityArchetypes` collection | Erik rewrites these. |
 | Industry notes, offering paragraphs, cost assumptions | `velocityReport` singleton | Same, and they are not per-archetype. |
 
 Nothing is duplicated across the two. The teaser line appears only on the
 teaser screen; the report's longer write-up appears only in the report.
+
+**The marks never ship to the quiz page.** All five would tell anyone reading
+the HTML how many archetypes exist and what each looks like, which is the leak
+the tags are kept out of the bundle to prevent. The teaser endpoint sends the
+rendered SVG for the one archetype a visitor resolved to, and the report page
+renders its own server-side.
+
+**The email is an invitation, not the report.** It carries the archetype, the
+persona line, the cost figure and a link; everything else lives on the web,
+where it can be shared and where the copy can change without a resend.
 
 ### Archetypes
 
@@ -603,6 +614,10 @@ prospect receiving a report with a blank section.
 - **Case study** — the proof slot beside the offering. Optional.
 - **Draft** — marks copy as unreviewed. It still renders; the flag is a note
   to ourselves.
+
+The **persona descriptor** sits with the name rather than here: one line, said
+about them rather than to them, like a job title under a photo. It is rendered
+lowercase mid-sentence in the email, so it carries no final period.
 
 ### Report copy singleton
 
