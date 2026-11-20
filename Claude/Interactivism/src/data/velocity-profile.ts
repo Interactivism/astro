@@ -243,9 +243,9 @@ export const QUESTIONS = [
     // Single-select on purpose, despite inviting "all of them". Each of the six
     // archetype questions contributes exactly one tag, and the archetype is the
     // most frequent tag across them. Letting one question contribute four tags
-    // would flatten the signal it is supposed to sharpen. "Mostly" is doing the
-    // work of forcing a choice.
-    prompt: 'Think of your last major release. What mostly happened in the first 30 days after?',
+    // would flatten the signal it is supposed to sharpen. "Select one" above the
+    // options is what forces the choice.
+    prompt: 'What happened in the first 30 days after your last major release?',
     options: [
       { id: 'q4-a', label: 'We were already deep into the next feature',        tag: 'F' },
       { id: 'q4-b', label: 'We debated whether it matched what we’d agreed to', tag: 'C' },
@@ -277,7 +277,7 @@ export const QUESTIONS = [
     part: 1,
     kind: 'archetype',
     multi: false,
-    prompt: 'Which piece of user feedback stings most, because it’s true?',
+    prompt: 'Which piece of user feedback sounds most familiar?',
     options: [
       { id: 'q6-a', label: '“It does a lot, but I can’t find anything.”',   tag: 'F' },
       { id: 'q6-b', label: '“It’s fine. Nothing stands out.”',             tag: 'C' },
@@ -293,7 +293,7 @@ export const QUESTIONS = [
     part: 2,
     kind: 'team',
     multi: false,
-    prompt: 'How many people build your product (engineering, design, and product combined)?',
+    prompt: 'What’s the size of your team (engineering, design, and product combined)?',
     options: [
       { id: 'q7-a', label: 'Under 10', size: 7 },
       { id: 'q7-b', label: '10–25',    size: 18 },
@@ -308,7 +308,7 @@ export const QUESTIONS = [
     kind: 'rework',
     multi: false,
     prompt:
-      'In the past 12 months, roughly what share of that team’s time went to reworking things you’d already shipped?',
+      'In the past 12 months, roughly what share of that team’s time was spent fixing things you’d already shipped?',
     options: [
       { id: 'q8-a', label: 'Under 10%', low: 0.05, high: 0.10 },
       { id: 'q8-b', label: '10–20%',    low: 0.10, high: 0.20 },

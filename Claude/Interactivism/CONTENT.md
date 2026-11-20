@@ -610,7 +610,8 @@ prospect receiving a report with a blank section.
   underneath it. Generic is worse than wrong here.
 - **Three moves** — exactly three, and each must be useful *without hiring us*.
   That is what makes the report worth forwarding to a colleague, which is
-  where most of the reach comes from.
+  where most of the reach comes from. The field and the code call these
+  "moves"; the reader sees "Three things that would move the needle".
 - **Case study** — the proof slot beside the offering. Optional.
 - **Draft** — marks copy as unreviewed. It still renders; the flag is a note
   to ourselves.

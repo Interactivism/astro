@@ -186,8 +186,8 @@ export function renderReportEmail(
   // The cost figure is the line that earns the click, so it goes in when we
   // have one and the sentence reads without it when we do not.
   const covers = report.cost
-    ? `It covers where that breaks down, what rework is likely costing you — around ${report.cost.display} a year on the numbers you gave us — and three moves teams like yours make.`
-    : 'It covers where that breaks down, what it is likely costing you, and three moves teams like yours make.';
+    ? `It covers where that breaks down, what rework is likely costing you — around ${report.cost.display} a year on the numbers you gave us — and three things that would move the needle.`
+    : 'It covers where that breaks down, what it is likely costing you, and three things that would move the needle.';
 
   const parts: string[] = [
     firstName ? `${firstName},` : 'Hi,',
@@ -204,7 +204,7 @@ export function renderReportEmail(
     'The link needs no sign-in, so you can forward it to whoever else should see it.',
     '',
     rule,
-    'Want to talk it through? Twenty minutes with one of our partners:',
+    'Want to talk it through? Thirty minutes with one of our partners:',
     bookingUrl,
     '',
     'Interactivism — product design and development, Los Angeles',
