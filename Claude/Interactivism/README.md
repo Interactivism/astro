@@ -86,8 +86,13 @@ in-memory map that does not survive a server restart. **The Blobs path
 therefore cannot be exercised locally** — verify it with a real submission
 right after the first deploy.
 
-Records that stop at `stage: "email"` are people who passed the gate but
-abandoned the fields below it. Their email and archetype are still stored.
+Records that stop at `stage: "email"` mean the second call failed after the
+first succeeded — the email and archetype are stored, the detail fields are
+not. They are no longer the common case: one click now fires both stages, so
+the gate no longer captures an email from someone who abandons the detail
+fields. That is deliberate. The button says "Send my report", and storing an
+address from a person who never pressed it would not match what the button or
+the privacy page says.
 
 ### Rate limiting
 

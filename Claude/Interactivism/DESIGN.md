@@ -620,6 +620,20 @@ Marquee at top using `src/assets/images/marquee/blog.jpg`. Reverse-chronological
 
 Full-bleed MapMarquee hero (Google Maps at zoom 15, showing the studio location with neighborhood label) — this *is* the Contact page's marquee, just map-based rather than photo-based. Followed by a headline, brief intro, contact form, and alternative contact methods (email, social).
 
+### Velocity Profile (`/velocity-profile/`)
+
+One question per screen, in `max-w-prose`, with a progress bar above and the same navigation row below. Every screen is real markup rendered at build time and revealed one at a time, so the options are native radios and checkboxes inside a `fieldset`.
+
+**Option cards.** A full-width `bg-surface-alt` card with a 24px key box on the left. The card turns `bg-accent` with an `ink-900` border when chosen.
+
+- **Shape carries the affordance.** The key box is `rounded-full` for a single-select question and `rounded-sm` for a multi-select one — the same convention native radios and checkboxes use. "Select all that apply" above the list is the label; the shape is what people actually read.
+- **A chosen multi-select box swaps its letter for a check** and fills `ink-900`. Written as plain CSS in the page, not Tailwind's `peer-checked:` variant, which compiles to a sibling selector and cannot reach a descendant of the sibling.
+- The letter is `aria-hidden`; it is a keyboard hint, not an accessible name.
+
+**Motion between questions.** Each screen replaces the last in place, at the same size — without motion the only thing that changes is the words, and the eye reads it as the same screen. The incoming question fades in over 240ms with a 12px slide from the direction of travel (down when moving forward, up when going back), and the quiz scrolls into view when its top sits outside the upper 40% of the viewport. Both are skipped under `prefers-reduced-motion`.
+
+**The gate.** The teaser result, then the promise of the full report as prose, then one email field. The detail fields unfurl as soon as the address is valid — no round trip — and the single `Send my report` button below them is the only button on the screen. A button that says "send" must send; an earlier version used it to reveal the fields instead.
+
 ---
 
 ## Accessibility baseline
