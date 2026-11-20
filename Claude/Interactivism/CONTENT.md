@@ -612,9 +612,9 @@ makes a new field appear here; removing one makes it disappear. Do not add keys
 to `src/data/velocity-report.json` by hand — they will not have a field, and a
 test will fail.
 
-Three industries get their own note: AdTech, Enterprise SaaS and Fintech — the
+Three industries get their own note: AdTech, Enterprise SaaS, and Fintech — the
 same three the lead score awards a point for, derived from one list so they
-cannot drift. Everything else, including Marcom, Aerospace & Defense, Consumer
+cannot drift. Everything else, including Marcom, Aerospace & Defense, Consumer,
 and anyone who skipped the field, gets the `other` paragraph.
 
 ### The industry list is not the content vocabulary

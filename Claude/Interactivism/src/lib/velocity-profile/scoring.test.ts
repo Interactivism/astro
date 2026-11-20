@@ -245,7 +245,7 @@ describe('collectFlags', () => {
       'slow-time-to-value',
       'high-howto-tickets',
     ]);
-    expect(flags[1].answer).toBe('3+ months');
+    expect(flags[1].answer).toBe('Months');
   });
 
   it('distinguishes untracked tickets from a high ticket share', () => {

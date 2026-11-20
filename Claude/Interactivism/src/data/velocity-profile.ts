@@ -180,7 +180,7 @@ export const QUESTIONS = [
     part: 1,
     kind: 'archetype',
     multi: false,
-    prompt: 'Which sentence do you hear most in planning?',
+    prompt: 'Which sentence do you hear most often in planning?',
     options: [
       { id: 'q1-a', label: '“Let’s ship it and see what happens.”',               tag: 'F' },
       { id: 'q1-b', label: '“Let’s make sure everyone’s aligned first.”',         tag: 'C' },
@@ -194,7 +194,7 @@ export const QUESTIONS = [
     part: 1,
     kind: 'archetype',
     multi: false,
-    prompt: 'What mostly decides what’s on your roadmap?',
+    prompt: 'What makes the cut onto your roadmap?',
     options: [
       { id: 'q2-a', label: 'Our delivery commitments and backlog', tag: 'F' },
       { id: 'q2-b', label: 'Whatever survives stakeholder review',  tag: 'C' },
@@ -208,13 +208,18 @@ export const QUESTIONS = [
     part: 1,
     kind: 'archetype',
     multi: false,
-    prompt: 'When a design decision is contested, how does it usually get settled?',
+    prompt: 'When a design proves hard to implement, how does it usually get settled?',
+    // Options reframed with the prompt. The earlier set answered "when a
+    // decision is contested"; against "hard to implement", a bare "whatever's
+    // simplest to build" reads as the correct answer rather than one pattern
+    // among five, and would have pulled every respondent toward Engineering-Led.
+    // Each option still carries exactly one tag, in the same order.
     options: [
-      { id: 'q3-a', label: 'Ship one version and plan to revisit it',                   tag: 'F' },
-      { id: 'q3-b', label: 'More meetings until someone senior weighs in',              tag: 'C' },
-      { id: 'q3-c', label: 'Whatever’s simplest to build',                              tag: 'E' },
-      { id: 'q3-d', label: 'Whatever the customer asked for',                           tag: 'S' },
-      { id: 'q3-e', label: 'It doesn’t. We go with the first version and move on',      tag: 'X' },
+      { id: 'q3-a', label: 'We ship a simpler version now and plan to revisit it',  tag: 'F' },
+      { id: 'q3-b', label: 'It goes back for review until someone senior weighs in', tag: 'C' },
+      { id: 'q3-c', label: 'Engineering picks the approach and design adapts',      tag: 'E' },
+      { id: 'q3-d', label: 'What we promised a customer stays, whatever it costs',  tag: 'S' },
+      { id: 'q3-e', label: 'Nobody settles it. The first workaround ships',         tag: 'X' },
     ],
   },
   {
@@ -222,7 +227,12 @@ export const QUESTIONS = [
     part: 1,
     kind: 'archetype',
     multi: false,
-    prompt: 'Think of your last major release. What happened in the 30 days after?',
+    // Single-select on purpose, despite inviting "all of them". Each of the six
+    // archetype questions contributes exactly one tag, and the archetype is the
+    // most frequent tag across them. Letting one question contribute four tags
+    // would flatten the signal it is supposed to sharpen. "Mostly" is doing the
+    // work of forcing a choice.
+    prompt: 'Think of your last major release. What mostly happened in the first 30 days after?',
     options: [
       { id: 'q4-a', label: 'We were already deep into the next feature',        tag: 'F' },
       { id: 'q4-b', label: 'We debated whether it matched what we’d agreed to', tag: 'C' },
@@ -236,13 +246,17 @@ export const QUESTIONS = [
     part: 1,
     kind: 'archetype',
     multi: false,
-    prompt: 'Where does design sit in your process?',
+    // "Where does design sit" was not a question these options answered — they
+    // describe how design works, and several could be true at once. Reframed as
+    // a closest-fit question with options that exclude each other. Same tags,
+    // same order.
+    prompt: 'Which of these is closest to how design works on your team?',
     options: [
-      { id: 'q5-a', label: 'Running to keep up with the sprint',        tag: 'F' },
-      { id: 'q5-b', label: 'Reviews and sign-offs at every stage',      tag: 'C' },
-      { id: 'q5-c', label: 'Brought in after it’s built to clean it up', tag: 'E' },
-      { id: 'q5-d', label: 'Mockups for demos and specific customers',  tag: 'S' },
-      { id: 'q5-e', label: 'Whoever has time does it',                  tag: 'X' },
+      { id: 'q5-a', label: 'Design runs a sprint ahead of engineering, barely',   tag: 'F' },
+      { id: 'q5-b', label: 'Every design goes through review and sign-off',       tag: 'C' },
+      { id: 'q5-c', label: 'Design comes in after the build, to clean it up',     tag: 'E' },
+      { id: 'q5-d', label: 'Design output is mostly demos and customer mockups',  tag: 'S' },
+      { id: 'q5-e', label: 'Whoever has time does the design',                    tag: 'X' },
     ],
   },
   {
@@ -266,7 +280,7 @@ export const QUESTIONS = [
     part: 2,
     kind: 'team',
     multi: false,
-    prompt: 'How many people build your product (engineering, design and product combined)?',
+    prompt: 'How many people build your product (engineering, design, and product combined)?',
     options: [
       { id: 'q7-a', label: 'Under 10', size: 7 },
       { id: 'q7-b', label: '10–25',    size: 18 },
@@ -295,13 +309,15 @@ export const QUESTIONS = [
     part: 2,
     kind: 'flag',
     multi: false,
-    prompt: 'How long until a new user is fully productive in your product?',
+    prompt: 'How long does it take for a new user to become fully productive in your product?',
+    // An even order-of-magnitude scale. The previous one mixed "under an hour"
+    // with "3+ months" and asked people to judge the gaps between them.
     options: [
-      { id: 'q9-a', label: 'Under an hour' },
-      { id: 'q9-b', label: 'About a day' },
-      { id: 'q9-c', label: 'About a week' },
-      { id: 'q9-d', label: 'About a month', flagged: true },
-      { id: 'q9-e', label: '3+ months',     flagged: true },
+      { id: 'q9-a', label: 'Minutes' },
+      { id: 'q9-b', label: 'Hours' },
+      { id: 'q9-c', label: 'Days' },
+      { id: 'q9-d', label: 'Weeks',  flagged: true },
+      { id: 'q9-e', label: 'Months', flagged: true },
     ],
   },
   {
@@ -309,7 +325,7 @@ export const QUESTIONS = [
     part: 2,
     kind: 'flag',
     multi: false,
-    prompt: 'What share of your support tickets are “how do I…” or “where is…” questions?',
+    prompt: 'What share of your support tickets begin with “How do I…” or “Where is…”?',
     options: [
       { id: 'q10-a', label: 'Under 10%' },
       { id: 'q10-b', label: '10–25%' },

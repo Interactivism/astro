@@ -82,9 +82,9 @@ const FLAG_LABELS: Record<string, string> = {
 const EVIDENCE_QUESTIONS: { id: 'q3' | 'q4' | 'q5' | 'q6' | 'q2'; prompt: string }[] = [
   { id: 'q4', prompt: 'After your last major release' },
   { id: 'q6', prompt: 'The feedback that stings' },
-  { id: 'q5', prompt: 'Where design sits' },
-  { id: 'q3', prompt: 'How contested decisions get settled' },
-  { id: 'q2', prompt: 'What decides the roadmap' },
+  { id: 'q5', prompt: 'How design works on your team' },
+  { id: 'q3', prompt: 'When a design is hard to build' },
+  { id: 'q2', prompt: 'What makes the roadmap' },
 ];
 
 export function buildReport(
