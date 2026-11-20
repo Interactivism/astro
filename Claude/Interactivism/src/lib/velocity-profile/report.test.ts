@@ -179,6 +179,18 @@ describe('renderReportEmail', () => {
     expect(text).not.toContain(reportCopy.industryNotes.adtech);
   });
 
+  it('drops the cost line rather than hedging it when there is no range', () => {
+    // The "Not sure" path still produces a figure, so the line stays; it is a
+    // missing team size or rework answer that removes the cost block entirely.
+    const noCost = renderReportEmail(
+      buildReport(record({ q1: 'q1-a', q2: 'q2-a', q3: 'q3-a' }), CONTENT),
+      'https://interactivism.com/velocity-profile/report/dddd',
+      'https://interactivism.com/book',
+    );
+    expect(noCost).not.toContain('costing you');
+    expect(noCost).toContain('Read the full report:');
+  });
+
   it('greets without a name when we do not have one', () => {
     const anonymous = renderReportEmail(
       buildReport(record(ANSWERS), CONTENT),

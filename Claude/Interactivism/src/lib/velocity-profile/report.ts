@@ -182,13 +182,6 @@ export function renderReportEmail(
     ? `${report.archetype.name}, with a ${report.archetype.secondaryName} streak`
     : report.archetype.name;
 
-  // What the report covers, named concretely rather than promised vaguely.
-  // The cost figure is the line that earns the click, so it goes in when we
-  // have one and the sentence reads without it when we do not.
-  const covers = report.cost
-    ? `It covers where that breaks down, what rework is likely costing you — around ${report.cost.display} a year on the numbers you gave us — and three things that would move the needle.`
-    : 'It covers where that breaks down, what it is likely costing you, and three things that would move the needle.';
-
   const parts: string[] = [
     firstName ? `${firstName},` : 'Hi,',
     '',
@@ -196,19 +189,31 @@ export function renderReportEmail(
     '',
     report.archetype.teaser,
     '',
+  ];
+
+  // The cost lands as the consequence of the line above it — you ship late,
+  // here is the bill — which is what earns the click. It is dropped rather
+  // than hedged when there is no range to quote, which is the "Not sure"
+  // path: a vaguer version of this sentence promises nothing and costs a line.
+  if (report.cost) {
+    parts.push(
+      `On the numbers you gave us, that’s costing you somewhere around ${report.cost.display} a year in rework.`,
+      '',
+    );
+  }
+
+  parts.push(
     'Read the full report:',
     reportUrl,
     '',
-    covers,
-    '',
-    'The link needs no sign-in, so you can forward it to whoever else should see it.',
+    'No sign-in, so forward it to anyone who should see it.',
     '',
     rule,
     'Want to talk it through? Thirty minutes with one of our partners:',
     bookingUrl,
     '',
     'Interactivism — product design and development, Los Angeles',
-  ];
+  );
 
   return parts.join('\n');
 }
