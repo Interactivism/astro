@@ -722,11 +722,6 @@ export default config({
             validation: { length: { min: 3, max: 3 } },
           },
         ),
-        caseStudy: fields.relationship({
-          label: 'Case study',
-          collection: 'caseStudies',
-          description: 'Proof shown beside the offering. Leave empty until you have picked one.',
-        }),
         draft: fields.checkbox({
           label: 'Draft',
           description: 'Draft copy still shows in the report — this flag only marks it as unreviewed.',

@@ -35,7 +35,6 @@ const CONTENT = Object.fromEntries(
         { title: `${tag} move 2`, body: 'body 2' },
         { title: `${tag} move 3`, body: 'body 3' },
       ],
-      caseStudy: 'some-case-study',
       draft: true,
     } satisfies ArchetypeContent,
   ]),

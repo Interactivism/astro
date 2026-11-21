@@ -62,11 +62,13 @@ describe('archetype content', () => {
     }
   });
 
-  it('is still marked draft, so nobody mistakes this copy for reviewed', () => {
-    // Flip these to false as the copy is approved. When they are all false,
-    // delete this test — it has done its job.
-    const drafts = entries.filter((entry) => /^draft:\s*true\s*$/m.test(entry.frontmatter));
-    expect(drafts.length, 'Some entries have been reviewed — update this test').toBe(entries.length);
+  it('carries a draft flag the report can read', () => {
+    // The copy was reviewed and approved, so these are all false now. The flag
+    // stays in the schema: it is how a half-rewritten entry gets marked while
+    // it is being worked on, and the report renders either way.
+    for (const entry of entries) {
+      expect(entry.frontmatter, entry.name).toMatch(/^draft:\s*(true|false)\s*$/m);
+    }
   });
 
   it('keeps TODO markers out of the rendered fields', () => {

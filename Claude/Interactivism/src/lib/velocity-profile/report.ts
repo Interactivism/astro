@@ -30,7 +30,6 @@ export interface ArchetypeContent {
   strengthCopy: string;
   failureModeCopy: string;
   moves: { title: string; body: string }[];
-  caseStudy?: string;
   draft: boolean;
 }
 
@@ -67,7 +66,7 @@ export interface Report {
   } | null;
   industryNote: string;
   moves: { title: string; body: string }[];
-  offering: { name: string; body: string; caseStudy?: string } | null;
+  offering: { name: string; body: string } | null;
   draft: boolean;
 }
 
@@ -159,7 +158,6 @@ export function buildReport(
       ? {
           name: OFFERINGS[offeringKey],
           body: reportCopy.offerings[offeringKey],
-          caseStudy: copy.caseStudy,
         }
       : null,
     draft: copy.draft,

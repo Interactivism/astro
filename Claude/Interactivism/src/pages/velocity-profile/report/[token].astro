@@ -175,14 +175,6 @@ const inlineLink =
           </h2>
           <p class={`${eyebrow} mb-3`}>{report.offering.name}</p>
           <p class="text-base text-body leading-body">{report.offering.body}</p>
-
-          {report.offering.caseStudy && (
-            <p class="text-base text-body leading-body">
-              <a href={`/work/${report.offering.caseStudy}/`} class={inlineLink}>
-                See how this played out for another team
-              </a>
-            </p>
-          )}
         </section>
       )}
 

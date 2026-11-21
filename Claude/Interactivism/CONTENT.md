@@ -612,9 +612,15 @@ prospect receiving a report with a blank section.
   That is what makes the report worth forwarding to a colleague, which is
   where most of the reach comes from. The field and the code call these
   "moves"; the reader sees "Three things that would move the needle".
-- **Case study** — the proof slot beside the offering. Optional.
 - **Draft** — marks copy as unreviewed. It still renders; the flag is a note
   to ourselves.
+
+There is deliberately **no case study link**. The slot existed, one section
+above the only ask in the document, and a link out to `/work/` is an exit:
+same tab, full site nav, and the booking CTA two back-clicks away. Proof now
+lives as a sentence inside the offering paragraph instead — same evidence, no
+navigation. If an offering has no engagement worth naming, it carries no proof
+sentence rather than a weak one.
 
 The **persona descriptor** sits with the name rather than here: one line, said
 about them rather than to them, like a job title under a photo. It is rendered

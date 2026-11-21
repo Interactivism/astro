@@ -241,8 +241,6 @@ const velocityArchetypes = defineCollection({
     moves: z
       .array(z.object({ title: z.string(), body: z.string() }))
       .length(3),
-    // Report section 6: the proof slot. Case study slug, as in the filename.
-    caseStudy: z.string().optional(),
     draft: z.boolean().default(false),
   }),
 });
