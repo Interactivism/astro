@@ -137,6 +137,31 @@ No answer content is ever sent — only the step number and question ID. The two
 failure events exist so a broken endpoint shows up as a cliff in the funnel
 instead of silence.
 
+### The report page
+
+| Event | Parameters | When |
+|---|---|---|
+| `vp_report_view` | `archetype`, `offering` | The report is opened |
+| `vp_report_section` | + `section` (`cost`, `moves`, `cta`) | That section is half on screen, once per reader |
+| `vp_report_book_click` | `archetype`, `offering` | "Pick a time" pressed |
+| `vp_report_share` | + `method` (`native`, `clipboard`, `manual`, `email`) | The link was shared |
+
+Every report event carries `archetype` and `offering`, which is what answers
+"does this land differently for a Firefighter than a Committee", and "which
+pitch gets booked".
+
+Sections are named rather than measured as scroll percentages. "Reached the
+moves" is a question about the document; "scrolled 50%" is a question about
+pixels, and its answer changes with the length of someone's cost paragraph.
+
+**The report token is never sent to Google.** The page passes `analyticsPath`
+to `BaseLayout`, which overrides `page_location` and `page_path` with
+`/velocity-profile/report/`. Without it the default page_view would hand
+Google a working key to a stranger's report, since the URL is the only thing
+protecting it. Any future page whose URL is itself a secret needs the same
+prop — and both fields, because GA4 reports on `page_location` and would
+otherwise keep the real one.
+
 ### Registering the custom dimensions (needs doing once, in the GA4 UI)
 
 Event parameters do not appear in reports until they are registered. Until
@@ -153,6 +178,10 @@ drop-off-by-step question cannot be answered.
    | Quiz step | Event | `step` |
    | Quiz question | Event | `question_id` |
    | Walkthrough requested | Event | `walkthrough` |
+   | Archetype | Event | `archetype` |
+   | Offering | Event | `offering` |
+   | Report section | Event | `section` |
+   | Share method | Event | `method` |
 
 4. Save each one.
 

@@ -10,6 +10,7 @@
  *   ogType      — 'website' (default) or 'article' (blog posts, case studies)
  *   canonical   — explicit canonical URL (falls back to current page URL)
  *   noindex     — keep this page out of search results (per-token report pages)
+ *   analyticsPath — report this path to GA4 instead of the real URL
  */
 import { getCollection } from 'astro:content';
 import Header from '../components/layout/Header.astro';
@@ -25,6 +26,16 @@ interface Props {
   canonical?: string;
   /** Adds a robots meta tag. For pages that are private by URL, not by auth. */
   noindex?: boolean;
+  /**
+   * The path GA4 records, in place of the real one.
+   *
+   * For pages whose URL is itself a secret. A Velocity Profile report lives at
+   * /velocity-profile/report/<token>, and that token is the only thing standing
+   * between a stranger and someone's results — so the default page_view, which
+   * sends the full URL, would hand Google a working key to every report. Pages
+   * like that pass the path without the secret in it.
+   */
+  analyticsPath?: string;
   fullBleed?: boolean;
   /**
    * Set true when the page begins with a <Marquee> component.
@@ -49,6 +60,7 @@ const {
   ogType = 'website',
   canonical,
   noindex = false,
+  analyticsPath,
   fullBleed = false,
   hasMarquee = false,
   bodyClass = '',
@@ -62,6 +74,28 @@ const logoVariant: LogoVariant = logoVariantProp ?? (hasMarquee ? 'light' : 'til
 const siteUrl = 'https://interactivism.com';
 const pageUrl = canonical ?? `${siteUrl}${Astro.url.pathname}`;
 const pageTitle = `${title} — Interactivism`;
+
+/**
+ * Extra gtag config, as a string spliced into the inline snippet. Empty for
+ * every ordinary page, so their page_view is unchanged. When a page supplies
+ * analyticsPath, both page_location and page_path are overridden — page_path
+ * alone is not enough, because GA4 reports on page_location and would keep the
+ * real URL, token and all.
+ */
+const analyticsConfig = analyticsPath
+  ? `, ${JSON.stringify({ page_location: `${siteUrl}${analyticsPath}`, page_path: analyticsPath })}`
+  : '';
+
+/**
+ * Built here and written with set:html, not templated into the tag below.
+ * Astro does not interpolate expressions inside an `is:inline` script — it
+ * copies the body through verbatim — so a `{expression}` in there ships as
+ * literal text and breaks the snippet for every page on the site.
+ */
+const gaSnippet = `window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-ZWM7LHWLM3'${analyticsConfig});`;
 
 // Services for the Organization schema's serviceType. Derived from the
 // collection rather than hand-listed, so it cannot drift out of sync.
@@ -146,12 +180,7 @@ const serviceNames = serviceEntries
 
     <!-- Google Analytics -->
     <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-ZWM7LHWLM3"></script>
-    <script is:inline>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-ZWM7LHWLM3');
-    </script>
+    <script is:inline set:html={gaSnippet}></script>
   </head>
 
   <body class={bodyClass || undefined}>

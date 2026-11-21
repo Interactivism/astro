@@ -52,8 +52,14 @@ const inlineLink =
   title={`${report.archetype.name} — Velocity Profile`}
   description="Your Product Velocity Profile report."
   noindex
+  analyticsPath="/velocity-profile/report/"
 >
-  <div class="px-6 lg:px-12 py-16 lg:py-24 max-w-content mx-auto">
+  <div
+    class="px-6 lg:px-12 py-16 lg:py-24 max-w-content mx-auto"
+    id="vp-report"
+    data-archetype={report.archetype.name}
+    data-offering={report.offering?.name ?? 'none'}
+  >
 
     <p class={eyebrow}>Your Velocity Profile</p>
 
@@ -110,7 +116,7 @@ const inlineLink =
 
       <!-- 3 — What it is costing you -->
       {report.cost && (
-        <section class="border-t border-subtle pt-8 mt-10">
+        <section class="border-t border-subtle pt-8 mt-10" data-vp-section="cost">
           <h2 class="font-display leading-display text-headline text-3xl mb-4">
             What it is costing you
           </h2>
@@ -152,7 +158,7 @@ const inlineLink =
       </section>
 
       <!-- 5 — Three moves -->
-      <section class="border-t border-subtle pt-8 mt-10">
+      <section class="border-t border-subtle pt-8 mt-10" data-vp-section="moves">
         <h2 class="font-display leading-display text-headline text-3xl mb-6">
           Three things that would move the needle
         </h2>
@@ -179,7 +185,7 @@ const inlineLink =
       )}
 
       <!-- 7 — CTA -->
-      <section class="border-t border-subtle pt-8 mt-10">
+      <section class="border-t border-subtle pt-8 mt-10" data-vp-section="cta">
         <h2 class="font-display leading-display text-headline text-3xl mb-4">
           Talk it through
         </h2>
@@ -187,7 +193,7 @@ const inlineLink =
           Thirty minutes with one of our partners, walking through your results,
           and what we would do first. No deck.
         </p>
-        <Button href={bookingUrl}>Pick a time</Button>
+        <Button href={bookingUrl} id="vp-report-book">Pick a time</Button>
       </section>
 
       <!-- 8 — Share -->
@@ -210,6 +216,7 @@ const inlineLink =
           >Copy link</button>
 
           <a
+            id="vp-share-email"
             href={`mailto:?subject=${encodeURIComponent(shareSubject)}&body=${encodeURIComponent(`${report.archetype.teaser}\n\n${shareUrl}`)}`}
             class="font-mono text-xs uppercase tracking-widest text-headline bg-surface-alt border border-subtle rounded-sm px-4 py-3 hover:border-ink-900/30 transition duration-fast"
           >Email it</a>
@@ -237,6 +244,67 @@ const inlineLink =
 </BaseLayout>
 
 <script>
+  /**
+   * Analytics for the report.
+   *
+   * The funnel used to end the moment someone handed over an email, so nothing
+   * said whether the report was read or whether it led anywhere. These events
+   * answer three questions: did they open it, how far did they get, and did
+   * they act.
+   *
+   * Sections are named rather than measured as scroll percentages. "Reached
+   * the moves" is a question about this document; "scrolled 50%" is a question
+   * about pixels, and the answer changes with the length of someone's cost
+   * paragraph.
+   *
+   * The token is never sent. The page overrides page_location through
+   * BaseLayout's analyticsPath, because the default page_view would hand
+   * Google a working key to a stranger's report.
+   */
+  const root = document.getElementById('vp-report');
+
+  function track(event: string, params: Record<string, unknown> = {}) {
+    const archetype = root?.dataset.archetype;
+    const offering = root?.dataset.offering;
+    (window as unknown as { gtag?: (...a: unknown[]) => void }).gtag?.('event', event, {
+      archetype,
+      offering,
+      ...params,
+    });
+  }
+
+  track('vp_report_view');
+
+  // One event per section, the first time it comes into view. A reader who
+  // scrolls back up does not fire it twice, so these count people, not passes.
+  const sections = document.querySelectorAll<HTMLElement>('[data-vp-section]');
+  if (sections.length && 'IntersectionObserver' in window) {
+    const seen = new Set<string>();
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          const name = (entry.target as HTMLElement).dataset.vpSection!;
+          if (!entry.isIntersecting || seen.has(name)) continue;
+          seen.add(name);
+          track('vp_report_section', { section: name });
+          observer.unobserve(entry.target);
+        }
+      },
+      // Half the section visible, so a heading clipped at the fold does not
+      // count as read.
+      { threshold: 0.5 },
+    );
+    for (const section of sections) observer.observe(section);
+  }
+
+  document.getElementById('vp-report-book')?.addEventListener('click', () => {
+    track('vp_report_book_click');
+  });
+
+  document.getElementById('vp-share-email')?.addEventListener('click', () => {
+    track('vp_report_share', { method: 'email' });
+  });
+
   /**
    * Share: the system share sheet where there is one, clipboard everywhere
    * else. Both paths end at the same place — the link in someone's hands —
@@ -266,6 +334,7 @@ const inlineLink =
       if (navigator.share) {
         try {
           await navigator.share({ title, url });
+          track('vp_report_share', { method: 'native' });
           return;
         } catch (error) {
           if ((error as Error).name === 'AbortError') return;
@@ -274,6 +343,7 @@ const inlineLink =
 
       try {
         await navigator.clipboard.writeText(url);
+        track('vp_report_share', { method: 'clipboard' });
         say('Link copied.');
       } catch {
         // Clipboard access can be refused outright — an insecure origin, a
@@ -283,6 +353,7 @@ const inlineLink =
         fallback.hidden = false;
         fallback.value = url;
         fallback.select();
+        track('vp_report_share', { method: 'manual' });
         say('Copy it from here:');
       }
     });
