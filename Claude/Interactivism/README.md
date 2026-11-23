@@ -119,8 +119,17 @@ Netlify's own rate limiting is the real answer and is a paid-plan feature.
 
 ## Analytics
 
-The quiz fires these through the GA4 tag already in `BaseLayout.astro`
-(`G-ZWM7LHWLM3`). All of them were verified firing in order against a real run.
+The quiz fires these through the GA4 tag in `BaseLayout.astro`
+(`G-ZWM7LHWLM3`), **which loads on the production site only**. `npm run dev`
+and Netlify deploy previews ship no tag at all, so local clicks and preview
+testing never reach the property — the gate is `import.meta.env.PROD` plus
+Netlify's `CONTEXT`. GA's own internal-traffic filter still covers browsing the
+live site from the office or home, but that one is tied to an IP and a phone or
+a VPN walks past it.
+
+Everything that reports an event does so through `window.gtag?.()`, so a
+missing tag is a no-op rather than an error. If you need to watch events
+locally, spy on `window.gtag` in the console — there is nothing to unset. All of them were verified firing in order against a real run.
 
 | Event | Parameters | When |
 |---|---|---|

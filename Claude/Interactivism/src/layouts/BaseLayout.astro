@@ -97,6 +97,24 @@ function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 gtag('config', 'G-ZWM7LHWLM3'${analyticsConfig});`;
 
+/**
+ * Where analytics actually loads: the production site, and nowhere else.
+ *
+ * `npm run dev` used to report to the live property, so every local click and
+ * every test submission landed in the same numbers as real prospects. The
+ * internal-traffic filter in GA covers the office and home networks, but it is
+ * tied to an IP — testing from a phone, a hotel or a VPN walks straight past
+ * it. This does not care where you are sitting.
+ *
+ * Deploy previews are production builds, so PROD alone would not exclude them.
+ * Netlify sets CONTEXT per build; anything that is not the production context
+ * is someone testing. A local `npm run build` has no CONTEXT, and is covered
+ * by PROD being true only when you then preview it — which is rare enough that
+ * defaulting it to production keeps the check honest rather than clever.
+ */
+const analyticsEnabled =
+  import.meta.env.PROD && (process.env.CONTEXT ?? 'production') === 'production';
+
 // Services for the Organization schema's serviceType. Derived from the
 // collection rather than hand-listed, so it cannot drift out of sync.
 const serviceEntries = await getCollection('services');
@@ -178,9 +196,13 @@ const serviceNames = serviceEntries
       ]
     })} />
 
-    <!-- Google Analytics -->
-    <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-ZWM7LHWLM3"></script>
-    <script is:inline set:html={gaSnippet}></script>
+    <!-- Google Analytics — production only. See analyticsEnabled above. -->
+    {analyticsEnabled && (
+      <>
+        <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-ZWM7LHWLM3"></script>
+        <script is:inline set:html={gaSnippet}></script>
+      </>
+    )}
   </head>
 
   <body class={bodyClass || undefined}>
