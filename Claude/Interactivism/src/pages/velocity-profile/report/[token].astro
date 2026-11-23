@@ -49,7 +49,7 @@ const reply = buildReplyLink(
   record,
   report,
   shareUrl,
-  process.env.VELOCITY_REPLY_EMAIL || process.env.VELOCITY_NOTIFY_EMAIL || 'hello@interactivism.com',
+  process.env.VELOCITY_REPLY_EMAIL || 'hello@interactivism.com',
 );
 
 Astro.response.headers.set('Cache-Control', 'no-store');
