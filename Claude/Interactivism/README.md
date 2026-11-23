@@ -50,7 +50,10 @@ public repo.
 ## Velocity Profile
 
 A 12-question lead-gen self-assessment at `/velocity-profile`. See the
-"Velocity Profile" section of [CONTENT.md](CONTENT.md) for the content model.
+"Velocity Profile" section of [CONTENT.md](CONTENT.md) for the content model,
+and [VELOCITY-PROFILE.md](VELOCITY-PROFILE.md) for the non-engineering brief —
+what it offers, what a campaign can and cannot claim about it, and how leads
+are scored.
 
 ```
 src/data/velocity-profile.ts        questions, options, tags, calc values
