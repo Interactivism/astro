@@ -37,6 +37,8 @@ are set.
 | `VELOCITY_NOTIFY_EMAIL` | Where lead notifications go | No notification sent, logged instead |
 | `RESEND_API_KEY` | Sending mail via Resend | Nothing sent, message logged |
 | `VELOCITY_FROM_EMAIL` | `From:` on outbound mail | Nothing sent, message logged |
+| `VELOCITY_REPLY_EMAIL` | Where "Send my result" on an open report is addressed | `VELOCITY_NOTIFY_EMAIL`, then `hello@interactivism.com` |
+| `VELOCITY_CAMPAIGNS_OFF` | Campaign keys to switch off, comma separated | None switched off |
 | `VELOCITY_RATE_SALT` | Hashing IPs for rate limiting | `velocity-profile` — set a real secret |
 
 `VELOCITY_FROM_EMAIL` must be on a domain verified in Resend. Until the DNS
@@ -61,6 +63,7 @@ src/lib/velocity-profile/
   scoring.ts                        pure scoring — archetype, cost, lead score
   storage.ts                        Netlify Blobs, in-memory in dev
   email.ts                          Resend + the internal notification
+  campaigns.ts                      campaign keys for invited links (server-only)
   marks.ts                          the five archetype figures, as SVG
 src/pages/velocity-profile/         the quiz and the report page
 src/pages/api/velocity-profile/     teaser and submit endpoints
@@ -80,6 +83,44 @@ config: the teaser endpoint sends one rendered figure, never the map.
 **Results are always recomputed server-side.** Whatever the browser posts about
 its own score is ignored. `/api/velocity-profile/submit` rescores from the
 submitted option IDs.
+
+### Invited links (the open flow)
+
+A link carrying a valid campaign key — `/velocity-profile/?c=<key>` — skips the
+email gate. The visitor answers the same 12 questions and sees the same
+teaser, then one button, "See the full report", which stores the record and
+goes straight to the report. No email is asked for, stored, or sent.
+
+Keys live in `src/lib/velocity-profile/campaigns.ts`. Each one sets the
+industry (standing in for the post-gate field, so the report keeps its
+tailored note) and is recorded on the submission as `campaign`, with
+`utm_source=outbound`, `utm_medium=email`, and `utm_campaign=<key>` in
+`attribution`. Rules:
+
+- **The table is server-only**, like the question config. The page learns
+  whether the gate is open from the teaser endpoint's `open` flag, for the one
+  key the visitor arrived with. Do not import `campaigns.ts` into client code.
+- **The browser is not trusted.** Stage `open` on the submit endpoint checks
+  the key again before storing anything. An unknown, malformed, or retired key
+  gets the ordinary gated flow, never an error.
+- **One key per audience, never per person.** A per-person key identifies the
+  reader, which the privacy page does not cover.
+- **Retiring a key:** set `active: false`, or add it to
+  `VELOCITY_CAMPAIGNS_OFF` (comma separated) in Netlify and redeploy.
+- Anyone holding a link can forward it, and the recipient skips the gate too.
+  That is accepted.
+
+Open records have `stage: "open"`, no `email`, and only `industry` in `lead`.
+Every reader of `record.email` has to allow for it being absent.
+
+The report for an open record adds a "Send my result" link in two places — a
+`mailto:` to `VELOCITY_REPLY_EMAIL`, carrying the archetype and the report
+link. It is the only way an open result reaches us with a name on it, and only
+if the reader presses send. The internal notification for an open record has
+the subject `[Velocity Profile][Open] <key>: <archetype>` and no identity.
+**It is not permission to mention the result to anyone**: at a handful of
+sends per key the timing can make the reader obvious, and they have not told
+us anything.
 
 ### Storage
 
@@ -108,7 +149,7 @@ the privacy page says.
 ### Rate limiting
 
 20 new submissions per hour per IP, as a sliding window in Blobs. Only the
-first stage is counted: stage "complete" needs a token that only stage one can
+stages that create a record are counted — "email" and "open": stage "complete" needs a token that only stage one can
 issue, so it is already gated, and charging both stages meant an honest
 respondent spent two of their allowance and could be cut off halfway through,
 having already handed over their email.
@@ -144,6 +185,13 @@ locally, spy on `window.gtag` in the console — there is nothing to unset. All 
 | `vp_postgate_complete` | `walkthrough` (bool) | Post-gate fields saved |
 | `vp_walkthrough_optin` | — | They asked for a call |
 | `vp_postgate_failed` | — | The post-gate save failed |
+| `vp_open_submitted` | — | Open flow: the record was saved, on the way to the report |
+| `vp_open_failed` | — | Open flow: the save failed |
+
+On an invited link every quiz event also carries `campaign`, the key from
+`?c=`. It is sent whenever the key is well formed, before the server has said
+whether it is valid, so a mistyped key shows up as its own value rather than
+vanishing.
 
 No answer content is ever sent — only the step number and question ID. The two
 failure events exist so a broken endpoint shows up as a cliff in the funnel
@@ -157,6 +205,10 @@ instead of silence.
 | `vp_report_section` | + `section` (`cost`, `moves`, `cta`) | That section is half on screen, once per reader |
 | `vp_report_book_click` | `archetype`, `offering` | "Pick a time" pressed |
 | `vp_report_share` | + `method` (`native`, `clipboard`, `manual`, `email`) | The link was shared |
+| `vp_report_reply_click` | + `placement` (`top`, `cta`) | "Send my result" pressed, on an open report. A click, not a sent email |
+
+Report events from an open record also carry `campaign`, taken from the stored
+record, so it is always a valid key.
 
 Every report event carries `archetype` and `offering`, which is what answers
 "does this land differently for a Firefighter than a Committee", and "which
@@ -183,7 +235,7 @@ drop-off-by-step question cannot be answered.
 1. Open [Google Analytics](https://analytics.google.com), pick the
    Interactivism property.
 2. **Admin** (the gear, bottom left) → under *Data display* → **Custom definitions**.
-3. **Create custom dimension**, three times:
+3. **Create custom dimension**, once for each row:
 
    | Dimension name | Scope | Event parameter |
    |---|---|---|
@@ -194,6 +246,8 @@ drop-off-by-step question cannot be answered.
    | Offering | Event | `offering` |
    | Report section | Event | `section` |
    | Share method | Event | `method` |
+   | Quiz campaign | Event | `campaign` |
+   | Reply placement | Event | `placement` |
 
 4. Save each one.
 
