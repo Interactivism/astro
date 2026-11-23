@@ -91,7 +91,7 @@ function who(record: SubmissionRecord): string {
   ]
     .filter(Boolean)
     .join(' ');
-  return [name, role || null, company].filter(Boolean).join(', ') || record.email;
+  return [name, role || null, company].filter(Boolean).join(', ') || record.email || 'No contact details';
 }
 
 export function buildInternalNotification(record: SubmissionRecord, siteUrl: string): EmailMessage {
@@ -102,11 +102,24 @@ export function buildInternalNotification(record: SubmissionRecord, siteUrl: str
     : null;
 
   const tier = results.lead.tier;
-  const subject = `[Velocity Profile][${tier[0].toUpperCase()}${tier.slice(1)}] ${who(record)}`;
+  // An open record has nobody to name, and its lead score is low by
+  // construction (no level, no walkthrough), so a tier would mislead. The
+  // subject carries what there is: which campaign, and what they got.
+  const open = record.stage === 'open';
+  const subject = open
+    ? `[Velocity Profile][Open] ${record.campaign ?? 'unknown campaign'}: ${primary.name}`
+    : `[Velocity Profile][${tier[0].toUpperCase()}${tier.slice(1)}] ${who(record)}`;
 
   const intent = (answers.q11 ?? []).map(labelFor);
 
   const lines = [
+    ...(open
+      ? [
+          `Open link, campaign "${record.campaign ?? 'unknown'}". No email was asked for or stored.`,
+          'We do not know who this is. Do not mention this result to anyone who has not sent it to us.',
+          '',
+        ]
+      : []),
     `${primary.name}${secondary ? ` with a ${secondary} streak` : ''}`,
     results.archetype.settledBy
       ? `  (tie broken by ${results.archetype.settledBy.toUpperCase()} — a weaker read than a clear winner)`
@@ -115,7 +128,7 @@ export function buildInternalNotification(record: SubmissionRecord, siteUrl: str
     `Lead score   ${results.lead.score} — ${tier}`,
     ...results.lead.breakdown.map((item) => `  +${item.points}  ${item.label}`),
     '',
-    `Email        ${record.email}`,
+    `Email        ${record.email ?? '—'}`,
     `Name         ${lead.name || '—'}`,
     `Level        ${label(LEVELS, lead.level)}`,
     `Function     ${label(FUNCTIONS, lead.fn)}`,
@@ -184,7 +197,9 @@ export function buildReportEmail(
 ): EmailMessage {
   const firstName = record.lead.name?.trim().split(/\s+/)[0];
   return {
-    to: record.email,
+    // Callers only reach this for a gated record. An open one has no address,
+    // and sendReportEmail refuses it before anything is built.
+    to: record.email ?? '',
     subject: `${firstName ? `${firstName}, your` : 'Your'} Velocity Profile: ${archetypeName}`,
     text: reportText,
     // Replies go to a person, not into a void.
@@ -197,5 +212,6 @@ export async function sendReportEmail(
   reportText: string,
   archetypeName: string,
 ): Promise<SendResult> {
+  if (!record.email) return { ok: true, skipped: true };
   return sendEmail(buildReportEmail(record, reportText, archetypeName));
 }

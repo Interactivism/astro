@@ -165,6 +165,51 @@ export function buildReport(
 }
 
 // ============================================================
+// "Send my result", for open records
+// ============================================================
+
+export interface ReplyLink {
+  /** A mailto: URL. Opens the reader's own mail client; nothing is sent for them. */
+  href: string;
+  to: string;
+  subject: string;
+  body: string;
+}
+
+/**
+ * The reply a reader on an invited link can send us, or null.
+ *
+ * Only an open record gets one. A gated respondent has already given an
+ * address and been emailed; an open one has given nothing, so this is the
+ * only way their result reaches us with a name attached — and only if they
+ * choose to press send.
+ *
+ * The body carries the report link on purpose: it is what lets us read the
+ * report. The page says so next to the button.
+ */
+export function buildReplyLink(
+  record: SubmissionRecord,
+  report: Report,
+  reportUrl: string,
+  to: string,
+): ReplyLink | null {
+  if (record.stage !== 'open' || !to) return null;
+
+  const headline = report.archetype.secondaryName
+    ? `${report.archetype.name}, with a ${report.archetype.secondaryName} streak`
+    : report.archetype.name;
+  const subject = `My Velocity Profile: ${report.archetype.name}`;
+  const body = `We came out as ${headline}.\n\nThe report: ${reportUrl}\n\n`;
+
+  return {
+    href: `mailto:${to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`,
+    to,
+    subject,
+    body,
+  };
+}
+
+// ============================================================
 // Plain-text rendering, for the email
 // ============================================================
 

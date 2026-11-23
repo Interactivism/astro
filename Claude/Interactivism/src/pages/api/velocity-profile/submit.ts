@@ -5,6 +5,12 @@
  *   stage "email"    — the gate. Stores answers + email, returns the token.
  *   stage "complete" — post-gate fields. Rescores and notifies.
  *
+ * And one stage that stands alone:
+ *   stage "open"     — an invited link with a valid campaign key. Stores the
+ *                      answers with no email and returns the token. The key
+ *                      is checked here; the browser saying it is on the open
+ *                      flow counts for nothing.
+ *
  * Splitting it this way means an email captured at the gate survives even if
  * the respondent abandons the fields below it. Those records stay at
  * stage "email" and are recoverable from Blobs.
@@ -39,6 +45,7 @@ import {
   sendInternalNotification,
   sendReportEmail,
 } from '../../../lib/velocity-profile/email';
+import { buildOpenRecord, resolveCampaign } from '../../../lib/velocity-profile/campaigns';
 import { getArchetypeContent } from '../../../lib/velocity-profile/content';
 import { buildReport, renderReportEmail } from '../../../lib/velocity-profile/report';
 import { ARCHETYPES } from '../../../data/velocity-profile';
@@ -144,15 +151,45 @@ export const POST: APIRoute = async ({ request, url }) => {
   if (text(payload['vp-bot'])) return json({ ok: true, token: createToken() });
 
   const siteUrl = url.origin;
-  const stage = payload.stage === 'complete' ? 'complete' : 'email';
+  const stage =
+    payload.stage === 'complete' ? 'complete' : payload.stage === 'open' ? 'open' : 'email';
 
-  // Only stage "email" is rate limited. It is the one that creates records;
-  // stage "complete" needs a token that only stage 1 can issue, so it is
-  // already gated. Charging both stages to the same budget meant every honest
-  // respondent spent two of their allowance and could be cut off halfway
-  // through, having already handed over their email.
-  if (stage === 'email' && !(await checkRateLimit(await hashIp(clientIp(request))))) {
+  // The stages that create records are rate limited: "email" and "open".
+  // Stage "complete" needs a token that only stage 1 can issue, so it is
+  // already gated. Charging both gated stages to the same budget meant every
+  // honest respondent spent two of their allowance and could be cut off
+  // halfway through, having already handed over their email.
+  if (stage !== 'complete' && !(await checkRateLimit(await hashIp(clientIp(request))))) {
     return json({ error: 'Too many submissions from this network. Try again later.' }, 429);
+  }
+
+  // ── Open: an invited link, no gate ───────────────────────────
+  if (stage === 'open') {
+    // 403, not 400: the request is well formed, the key just does not open
+    // anything. The page reads this as "show the gate instead".
+    const campaign = resolveCampaign(payload.c);
+    if (!campaign || !campaign.open) return json({ error: 'This link needs an email.' }, 403);
+
+    const { answers, missing } = parseAnswers(payload.answers);
+    if (missing.length) {
+      return json({ error: 'Some questions are unanswered.', missing }, 400);
+    }
+
+    const record = buildOpenRecord({
+      answers,
+      campaign,
+      attribution: parseAttribution(payload.attribution),
+      loadedCost: loadedCost(),
+    });
+    await putSubmission(record);
+
+    // Best-effort, as below. There is no report email: there is no address.
+    const notified = await sendInternalNotification(record, siteUrl);
+    if (!notified.ok) {
+      console.error('[velocity-profile] Internal notification failed:', notified.error);
+    }
+
+    return json({ ok: true, token: record.id });
   }
 
   // ── Stage 2: post-gate fields on an existing record ──────────
@@ -160,6 +197,12 @@ export const POST: APIRoute = async ({ request, url }) => {
     const token = text(payload.token);
     const existing = token ? await getSubmission(token) : null;
     if (!existing) return json({ error: 'Unknown submission.' }, 404);
+
+    // An open record has no address to send a report to, and its industry
+    // came from the campaign. Nothing legitimate calls "complete" on one.
+    if (existing.stage === 'open' || !existing.email) {
+      return json({ error: 'Unknown submission.' }, 404);
+    }
 
     existing.lead = parseLeadFields(payload.lead);
     existing.stage = 'complete';

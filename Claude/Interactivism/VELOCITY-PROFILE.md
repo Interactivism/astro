@@ -33,6 +33,21 @@ Everyone else gets a general version, not a worse one.
    the cost estimate, an industry note, three moves, one offering, a booking
    CTA, and a share block.
 
+### Invited links
+
+A link with a campaign key on the end — `/velocity-profile/?c=<key>` — skips
+step 3. Same questions, same teaser, then one button straight to the report.
+No email is asked for or stored, so we do not know who took it unless they
+press "Send my result" on the report, which opens an email to us in their own
+mail app with their profile and the report link.
+
+Keys are one per audience, never one per person. Copy that says "no sign-up"
+is true **only** with a valid key on the link; on the public page it is false.
+
+We get a notification when someone finishes on an invited link — campaign and
+archetype, no name. **Never mention a result to someone who has not sent it to
+us**, even when the timing makes it obvious who it was.
+
 ## The five archetypes
 
 Feature Factory, Committee, Engineering-Led, Sales-Driven, Firefighter. Each
@@ -108,6 +123,8 @@ Two caveats:
 | The cost basis | `VELOCITY_LOADED_COST` in Netlify, then redeploy |
 | Where lead notifications land | `VELOCITY_NOTIFY_EMAIL` in Netlify |
 | Which calendar "Book a call" opens | `src/data/booking.json` |
+| Campaign keys for invited links | `src/lib/velocity-profile/campaigns.ts` — code change, with tests |
+| Where "Send my result" is addressed | `VELOCITY_REPLY_EMAIL` in Netlify |
 
 Changing an option's archetype tag changes everyone's result, which is why
 those live in code behind tests rather than in the CMS.

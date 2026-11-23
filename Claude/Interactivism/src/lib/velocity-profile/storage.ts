@@ -46,9 +46,16 @@ export interface SubmissionRecord {
   id: string;
   createdAt: string;
   updatedAt: string;
-  /** 'email' = gated but post-gate fields not yet supplied. */
-  stage: 'email' | 'complete';
-  email: string;
+  /**
+   * 'email' = gated but post-gate fields not yet supplied.
+   * 'open'  = arrived on an invited link (see ./campaigns.ts) and skipped the
+   *           gate. No email, no detail fields; `campaign` is set.
+   */
+  stage: 'email' | 'complete' | 'open';
+  /** Absent on an open record. Every reader has to allow for that. */
+  email?: string;
+  /** The campaign key, on open records only. Names an audience, never a person. */
+  campaign?: string;
   answers: Answers;
   lead: LeadFields;
   results: ScoredSubmission;

@@ -16,7 +16,7 @@
  */
 import BaseLayout from '../../layouts/BaseLayout.astro';
 
-const updated = 'November 18, 2026';
+const updated = 'November 23, 2026';
 
 const eyebrow = 'font-mono text-xs text-muted uppercase tracking-widest';
 const h2 = 'font-display leading-display text-headline text-3xl mt-12 mb-4';
@@ -105,6 +105,17 @@ const link =
         and the link to your report online contains a random token rather than
         anything about you, so the address itself gives nothing away. Anyone you
         forward that link to can read the report, which is deliberate.
+      </p>
+      <p class={p}>
+        Some people are invited to the assessment by a link that skips the
+        email step. If that is you, we store your answers, the result, and a
+        tag naming the invitation the link belonged to — one tag shared by
+        everyone who got that invitation, not one per person — and
+        <strong class="text-headline font-medium">no email address, name, or company</strong>.
+        We cannot tell who you are from it. Your report then offers a “Send my
+        result” link, which opens a message in your own mail app containing
+        your profile and the link to your report. Nothing goes to us unless you
+        press send; if you do, we can read the report and we know it is yours.
       </p>
       <p class={p}>
         To keep the form from being abused we briefly keep a one-way scrambled

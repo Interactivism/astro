@@ -3,7 +3,10 @@
  * /velocity-profile — Product Velocity Profile self-assessment.
  *
  * One question per screen, 12 screens, then a teaser result gated behind a
- * work email. All 12 screens are rendered into the HTML at build time and
+ * work email. A visitor on an invited link (`?c=<campaign key>`) gets one
+ * button in place of the gate and goes straight to the report; whether a key
+ * opens the gate is decided by the server, and the key table never ships
+ * here. All 12 screens are rendered into the HTML at build time and
  * revealed one at a time, so the questions are real markup — native radio
  * groups inside fieldsets — rather than client-side templates.
  *
@@ -225,6 +228,33 @@ const field =
           sentence sets up the email field, the fields appear as soon as the
           address is valid, and the only button on the screen does what it says.
         */}
+        {/*
+          The open flow: shown instead of the gate when the teaser endpoint says
+          this visitor’s campaign key skips it. Same promise as the gate’s
+          paragraph, minus the ask.
+        */}
+        <div id="vp-open" hidden class="border-t border-subtle pt-8 mt-10">
+          <p class="text-base text-body leading-body">
+            The full report covers what this archetype is good at, where it
+            breaks down, an estimated annual cost of rework for a team your
+            size, and three things that would move the needle.
+          </p>
+          <div class="flex items-center gap-6 flex-wrap">
+            <Button id="vp-open-submit" class="disabled:opacity-40 disabled:cursor-not-allowed">
+              See the full report
+            </Button>
+            <p id="vp-open-error" class="hidden text-error font-mono text-xs" role="alert"></p>
+          </div>
+          <p class="text-sm text-muted mt-6">
+            No email needed. Your answers are saved against a private link so
+            the report can be read and forwarded. See our <a
+              href="/privacy/"
+              class="font-light underline decoration-accent decoration-2 underline-offset-4 hover:text-headline transition duration-fast"
+            >privacy policy</a>.
+          </p>
+        </div>
+
+        <div id="vp-gated">
         <p class="text-base text-body leading-body border-t border-subtle pt-8 mt-10">
           The full report covers what this archetype is good at, where it breaks
           down, an estimated annual cost of rework for a team your size, and
@@ -347,6 +377,7 @@ const field =
               >privacy policy</a>.
             </p>
           </form>
+        </div>
       </div>
     </section>
 
@@ -480,8 +511,21 @@ const field =
   // ── Analytics ──────────────────────────────────────────────────
   // GA4 is loaded in BaseLayout. Verified and documented in Phase 5.
   function track(event: string, params: Record<string, unknown> = {}) {
-    (window as unknown as { gtag?: (...a: unknown[]) => void }).gtag?.('event', event, params);
+    (window as unknown as { gtag?: (...a: unknown[]) => void }).gtag?.('event', event, {
+      ...(campaign ? { campaign } : {}),
+      ...params,
+    });
   }
+
+  // ── Campaign key ───────────────────────────────────────────────
+  // `?c=` on an invited link. Only its shape is checked here; whether it
+  // means anything is the server's call, answered with the teaser. It names
+  // an audience, never a person, which is why it can ride on analytics events.
+  const campaign = (() => {
+    const raw = new URLSearchParams(location.search).get('c')?.trim().toLowerCase() ?? '';
+    return /^[a-z0-9][a-z0-9-]{0,39}$/.test(raw) ? raw : null;
+  })();
+  let openFlow = false; // set from the teaser response
 
   // ── Attribution, captured on landing and kept for the submission ──
   function captureAttribution() {
@@ -640,10 +684,12 @@ const field =
       const response = await fetch('/api/velocity-profile/teaser', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ answers }),
+        body: JSON.stringify({ answers, ...(campaign ? { c: campaign } : {}) }),
       });
       if (!response.ok) throw new Error(String(response.status));
       const result = await response.json();
+
+      showOpenFlow(result.open === true);
 
       document.getElementById('vp-archetype')!.textContent = result.primary.name;
       document.getElementById('vp-descriptor')!.textContent = result.primary.descriptor;
@@ -674,6 +720,75 @@ const field =
       errorEl.classList.remove('hidden');
     }
   }
+
+  // ── Open flow: an invited link, no gate ────────────────────────
+  const openBlock  = document.getElementById('vp-open')!;
+  const gatedBlock = document.getElementById('vp-gated')!;
+  const openBtn    = document.getElementById('vp-open-submit') as HTMLButtonElement;
+  const openError  = document.getElementById('vp-open-error')!;
+
+  function showOpenFlow(open: boolean) {
+    openFlow = open;
+    openBlock.hidden = !open;
+    gatedBlock.hidden = open;
+  }
+
+  openBtn?.addEventListener('click', async () => {
+    if (submitting) return;
+    submitting = true;
+    openBtn.disabled = true;
+    openBtn.textContent = 'Working…';
+    openError.classList.add('hidden');
+
+    let attribution: unknown = null;
+    try {
+      attribution = JSON.parse(sessionStorage.getItem('vp-attribution') || 'null');
+    } catch {
+      attribution = null;
+    }
+
+    try {
+      const response = await fetch('/api/velocity-profile/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ stage: 'open', answers, c: campaign, attribution }),
+      });
+
+      // The key stopped opening the gate between the teaser and this click —
+      // switched off, most likely. Not an error to show: the gate is the
+      // answer, and it is what everyone without a key sees anyway.
+      if (response.status === 403) {
+        showOpenFlow(false);
+        emailInput.focus();
+        return;
+      }
+      if (!response.ok) throw new Error(String(response.status));
+
+      const result = await response.json();
+      track('vp_open_submitted');
+      // assign, not replace: Back returns to the result rather than skipping it.
+      location.assign(`/velocity-profile/report/${result.token}`);
+    } catch {
+      track('vp_open_failed');
+      openError.textContent = 'That didn’t go through. Try again in a moment.';
+      openError.classList.remove('hidden');
+    } finally {
+      // Left disabled on success: the page is navigating away.
+      if (!openError.classList.contains('hidden') || !openFlow) {
+        openBtn.disabled = false;
+        openBtn.textContent = 'See the full report';
+      }
+      submitting = false;
+    }
+  });
+
+  // Back from the report can restore this page from the back/forward cache
+  // exactly as it was left: button disabled, reading "Working…".
+  window.addEventListener('pageshow', (event) => {
+    if (!(event as PageTransitionEvent).persisted) return;
+    openBtn.disabled = false;
+    openBtn.textContent = 'See the full report';
+  });
 
   // ── Email gate ─────────────────────────────────────────────────
   let freeMail: string[] = [];

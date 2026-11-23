@@ -13,7 +13,7 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Button from '../../../components/ui/Button.astro';
 import { getSubmission } from '../../../lib/velocity-profile/storage';
 import { getArchetypeContent } from '../../../lib/velocity-profile/content';
-import { buildReport } from '../../../lib/velocity-profile/report';
+import { buildReplyLink, buildReport } from '../../../lib/velocity-profile/report';
 import { markFor } from '../../../lib/velocity-profile/marks';
 
 export const prerender = false;
@@ -40,6 +40,18 @@ const bookingUrl = '/book?src=velocity-profile-report';
 const shareUrl = new URL(Astro.url.pathname, Astro.url.origin).href;
 const shareSubject = `My team's Velocity Profile: ${report.archetype.name}`;
 
+/**
+ * "Send my result" — only for a reader who came in on an invited link and so
+ * was never asked for an email. Null for everyone else. The address comes
+ * from the environment so the repo does not carry a person's inbox.
+ */
+const reply = buildReplyLink(
+  record,
+  report,
+  shareUrl,
+  process.env.VELOCITY_REPLY_EMAIL || process.env.VELOCITY_NOTIFY_EMAIL || 'hello@interactivism.com',
+);
+
 Astro.response.headers.set('Cache-Control', 'no-store');
 Astro.response.headers.set('X-Robots-Tag', 'noindex, nofollow');
 
@@ -59,6 +71,7 @@ const inlineLink =
     id="vp-report"
     data-archetype={report.archetype.name}
     data-offering={report.offering?.name ?? 'none'}
+    data-campaign={record.campaign}
   >
 
     <p class={eyebrow}>Your Velocity Profile</p>
@@ -81,6 +94,20 @@ const inlineLink =
           Your answers were close between archetypes, so read the one below as
           the strongest signal rather than the only one.
         </p>
+      )}
+
+      {reply && (
+        <div class="bg-surface-alt rounded-sm px-6 py-5 mt-8">
+          <p class="text-base text-body leading-body">
+            Does it ring true? Send us your result and we’ll tell you which of
+            the three moves below we’d start with at your company.
+          </p>
+          <a href={reply.href} data-vp-reply="top" class={inlineLink}>Send my result</a>
+          <p class="text-sm text-muted leading-body mt-3">
+            Opens an email in your own mail app with your profile and a link to
+            this report, so we can read it. Nothing is sent until you press send.
+          </p>
+        </div>
       )}
 
       <!-- 1 — What you are good at -->
@@ -194,6 +221,15 @@ const inlineLink =
           and what we would do first. No deck.
         </p>
         <Button href={bookingUrl} id="vp-report-book">Pick a time</Button>
+
+        {reply && (
+          <p class="text-base text-body leading-body mt-6">
+            Not ready for a call?
+            <a href={reply.href} data-vp-reply="cta" class={inlineLink}>Send my result</a>
+            and we’ll reply with where we’d start. The email includes a link to
+            this report.
+          </p>
+        )}
       </section>
 
       <!-- 8 — Share -->
@@ -266,9 +302,13 @@ const inlineLink =
   function track(event: string, params: Record<string, unknown> = {}) {
     const archetype = root?.dataset.archetype;
     const offering = root?.dataset.offering;
+    // Present only on a report that came from an invited link. The key names
+    // an audience, not a person.
+    const campaign = root?.dataset.campaign;
     (window as unknown as { gtag?: (...a: unknown[]) => void }).gtag?.('event', event, {
       archetype,
       offering,
+      ...(campaign ? { campaign } : {}),
       ...params,
     });
   }
@@ -300,6 +340,14 @@ const inlineLink =
   document.getElementById('vp-report-book')?.addEventListener('click', () => {
     track('vp_report_book_click');
   });
+
+  // A click, not a sent email: mailto hands off to the reader's mail app and
+  // we never learn what happened next. The reply itself is the real signal.
+  for (const link of document.querySelectorAll<HTMLElement>('[data-vp-reply]')) {
+    link.addEventListener('click', () => {
+      track('vp_report_reply_click', { placement: link.dataset.vpReply });
+    });
+  }
 
   document.getElementById('vp-share-email')?.addEventListener('click', () => {
     track('vp_report_share', { method: 'email' });
