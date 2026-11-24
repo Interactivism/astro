@@ -205,7 +205,7 @@ instead of silence.
 | `vp_report_section` | + `section` (`cost`, `moves`, `cta`) | That section is half on screen, once per reader |
 | `vp_report_book_click` | `archetype`, `offering` | "Pick a time" pressed |
 | `vp_report_share` | + `method` (`native`, `clipboard`, `manual`, `email`) | The link was shared |
-| `vp_report_reply_click` | + `placement` (`top`, `cta`) | "Send my result" pressed, on an open report. A click, not a sent email |
+| `vp_report_reply_click` | + `placement` (`top`, `cta`), `method` (`mailto`, `gmail`, `outlook`, `copy`) | "Send my result" pressed, or one of its webmail fallbacks, on an open report. A click, not a sent email |
 
 Report events from an open record also carry `campaign`, taken from the stored
 record, so it is always a valid key.

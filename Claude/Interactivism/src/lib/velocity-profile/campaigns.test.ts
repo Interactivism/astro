@@ -211,6 +211,24 @@ describe('buildReplyLink', () => {
     expect(query.get('body')).toBe(reply.body);
   });
 
+  it('offers the same draft in Gmail and Outlook, for readers with no mail app', () => {
+    const record = openRecord();
+    const reply = buildReplyLink(record, buildReport(record, CONTENT), url, 'partner@example.com', 'One question?')!;
+
+    const gmail = new URL(reply.gmail);
+    expect(gmail.origin + gmail.pathname).toBe('https://mail.google.com/mail/');
+    expect(gmail.searchParams.get('view')).toBe('cm');
+    expect(gmail.searchParams.get('to')).toBe('partner@example.com');
+    expect(gmail.searchParams.get('su')).toBe(reply.subject);
+    expect(gmail.searchParams.get('body')).toBe(reply.body);
+
+    const outlook = new URL(reply.outlook);
+    expect(outlook.origin + outlook.pathname).toBe('https://outlook.office.com/mail/deeplink/compose');
+    expect(outlook.searchParams.get('to')).toBe('partner@example.com');
+    expect(outlook.searchParams.get('subject')).toBe(reply.subject);
+    expect(outlook.searchParams.get('body')).toBe(reply.body);
+  });
+
   it('carries a campaign prompt after the report link, and nothing extra without one', () => {
     const record = openRecord();
     const report = buildReport(record, CONTENT);

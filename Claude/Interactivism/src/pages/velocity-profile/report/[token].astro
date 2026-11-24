@@ -105,11 +105,21 @@ const inlineLink =
             Does it ring true? Send us your result and we’ll tell you which of
             the three moves below we’d start with at your company.
           </p>
-          <a href={reply.href} data-vp-reply="top" class={inlineLink}>Send my result</a>
+          <a href={reply.href} data-vp-reply="top" data-vp-reply-method="mailto" class={inlineLink}>Send my result</a>
           <p class="text-sm text-muted leading-body mt-3">
             Opens an email in your own mail app with your profile and a link to
             this report, so we can read it. Nothing is sent until you press send.
           </p>
+          <p class="text-sm text-muted leading-body mt-2">
+            Nothing happened? Open it in
+            <a href={reply.gmail} target="_blank" rel="noopener noreferrer" data-vp-reply="top" data-vp-reply-method="gmail" class={inlineLink}>Gmail</a>
+            or
+            <a href={reply.outlook} target="_blank" rel="noopener noreferrer" data-vp-reply="top" data-vp-reply-method="outlook" class={inlineLink}>Outlook</a>,
+            or
+            <button type="button" data-vp-reply-copy="top" data-body={reply.body} data-to={reply.to} class={`${inlineLink} cursor-pointer`}>copy the message</button>
+            and paste it into an email to {reply.to}.
+          </p>
+          <p data-vp-reply-status="top" class="font-mono text-xs text-muted mt-2" role="status" aria-live="polite"></p>
         </div>
       )}
 
@@ -228,9 +238,12 @@ const inlineLink =
         {reply && (
           <p class="text-base text-body leading-body mt-6">
             Not ready for a call?
-            <a href={reply.href} data-vp-reply="cta" class={inlineLink}>Send my result</a>
+            <a href={reply.href} data-vp-reply="cta" data-vp-reply-method="mailto" class={inlineLink}>Send my result</a>
             and we’ll reply with where we’d start. The email includes a link to
-            this report.
+            this report. Or open it in
+            <a href={reply.gmail} target="_blank" rel="noopener noreferrer" data-vp-reply="cta" data-vp-reply-method="gmail" class={inlineLink}>Gmail</a>
+            or
+            <a href={reply.outlook} target="_blank" rel="noopener noreferrer" data-vp-reply="cta" data-vp-reply-method="outlook" class={inlineLink}>Outlook</a>.
           </p>
         )}
       </section>
@@ -344,11 +357,34 @@ const inlineLink =
     track('vp_report_book_click');
   });
 
-  // A click, not a sent email: mailto hands off to the reader's mail app and
-  // we never learn what happened next. The reply itself is the real signal.
+  // A click, not a sent email: each of these hands off to the reader's mail
+  // (their app, Gmail, Outlook) and we never learn what happened next. The
+  // reply itself is the real signal. `method` says which way they went.
   for (const link of document.querySelectorAll<HTMLElement>('[data-vp-reply]')) {
     link.addEventListener('click', () => {
-      track('vp_report_reply_click', { placement: link.dataset.vpReply });
+      track('vp_report_reply_click', {
+        placement: link.dataset.vpReply,
+        method: link.dataset.vpReplyMethod,
+      });
+    });
+  }
+
+  // The last resort, for a reader on some other webmail: the draft on the
+  // clipboard, and the address to send it to on the page beside the button.
+  for (const copy of document.querySelectorAll<HTMLButtonElement>('[data-vp-reply-copy]')) {
+    const placement = copy.dataset.vpReplyCopy!;
+    const note = document.querySelector<HTMLElement>(`[data-vp-reply-status="${placement}"]`);
+
+    copy.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(copy.dataset.body!);
+        track('vp_report_reply_click', { placement, method: 'copy' });
+        if (note) note.textContent = `Copied. Paste it into an email to ${copy.dataset.to}.`;
+      } catch {
+        // Clipboard access can be refused outright. The address is on the
+        // page either way, so say what to do with it.
+        if (note) note.textContent = `Could not copy. Email ${copy.dataset.to} with your profile name.`;
+      }
     });
   }
 

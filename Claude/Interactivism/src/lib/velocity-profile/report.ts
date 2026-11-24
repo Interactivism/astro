@@ -172,6 +172,13 @@ export function buildReport(
 export interface ReplyLink {
   /** A mailto: URL. Opens the reader's own mail client; nothing is sent for them. */
   href: string;
+  /**
+   * The same draft in Gmail's and Outlook's web composers. A mailto: link
+   * does nothing for a reader who only uses webmail in a browser. These open
+   * a tab; still nothing is sent for the reader.
+   */
+  gmail: string;
+  outlook: string;
   to: string;
   subject: string;
   body: string;
@@ -204,8 +211,12 @@ export function buildReplyLink(
   const subject = `My Velocity Profile: ${report.archetype.name}`;
   const body = `Our Velocity Profile: ${headline}.\n\nThe report: ${reportUrl}\n\n${prompt ? `${prompt}\n\n` : ''}`;
 
+  const [toQ, subjectQ, bodyQ] = [to, subject, body].map(encodeURIComponent);
+
   return {
-    href: `mailto:${to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`,
+    href: `mailto:${to}?subject=${subjectQ}&body=${bodyQ}`,
+    gmail: `https://mail.google.com/mail/?view=cm&fs=1&to=${toQ}&su=${subjectQ}&body=${bodyQ}`,
+    outlook: `https://outlook.office.com/mail/deeplink/compose?to=${toQ}&subject=${subjectQ}&body=${bodyQ}`,
     to,
     subject,
     body,
