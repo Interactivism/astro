@@ -15,6 +15,7 @@ import { getSubmission } from '../../../lib/velocity-profile/storage';
 import { getArchetypeContent } from '../../../lib/velocity-profile/content';
 import { buildReplyLink, buildReport } from '../../../lib/velocity-profile/report';
 import { resolveCampaign } from '../../../lib/velocity-profile/campaigns';
+import { streakPhrase } from '../../../lib/velocity-profile/streak';
 import { markFor } from '../../../lib/velocity-profile/marks';
 
 export const prerender = false;
@@ -85,7 +86,7 @@ const inlineLink =
     </h1>
     <p class="text-lg text-muted leading-body mb-2">{report.archetype.descriptor}</p>
     {report.archetype.secondaryName && (
-      <p class={`${eyebrow} mb-6`}>with a {report.archetype.secondaryName} streak</p>
+      <p class={`${eyebrow} mb-6`}>{streakPhrase(report.archetype.secondaryName)}</p>
     )}
 
     <div class="max-w-prose">

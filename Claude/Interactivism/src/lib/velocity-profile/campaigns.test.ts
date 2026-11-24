@@ -21,6 +21,7 @@ import { buildInternalNotification, buildReportEmail, sendReportEmail } from './
 import { buildReplyLink, buildReport, type ArchetypeContent } from './report';
 import { scoreSubmission, type Answers } from './scoring';
 import type { SubmissionRecord } from './storage';
+import { streakPhrase } from './streak';
 
 const ANSWERS: Answers = {
   q1: 'q1-a', q2: 'q2-a', q3: 'q3-a', q4: 'q4-b', q5: 'q5-b', q6: 'q6-c',
@@ -201,7 +202,7 @@ describe('buildReplyLink', () => {
     expect(reply.body).toContain(report.archetype.name);
     expect(reply.body).toContain(url);
     if (report.archetype.secondaryName) {
-      expect(reply.body).toContain(`${report.archetype.secondaryName} streak`);
+      expect(reply.body).toContain(streakPhrase(report.archetype.secondaryName));
     }
 
     expect(reply.href.startsWith('mailto:partner@example.com?subject=')).toBe(true);

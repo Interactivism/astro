@@ -22,6 +22,7 @@ import {
 } from '../../data/velocity-profile';
 import reportCopy from '../../data/velocity-report.json';
 import type { SubmissionRecord } from './storage';
+import { streakPhrase } from './streak';
 import type { CostAssumptions } from './scoring';
 
 export interface ArchetypeContent {
@@ -198,10 +199,10 @@ export function buildReplyLink(
   if (record.stage !== 'open' || !to) return null;
 
   const headline = report.archetype.secondaryName
-    ? `${report.archetype.name}, with a ${report.archetype.secondaryName} streak`
+    ? `${report.archetype.name}, ${streakPhrase(report.archetype.secondaryName)}`
     : report.archetype.name;
   const subject = `My Velocity Profile: ${report.archetype.name}`;
-  const body = `We came out as ${headline}.\n\nThe report: ${reportUrl}\n\n${prompt ? `${prompt}\n\n` : ''}`;
+  const body = `Our Velocity Profile: ${headline}.\n\nThe report: ${reportUrl}\n\n${prompt ? `${prompt}\n\n` : ''}`;
 
   return {
     href: `mailto:${to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`,
@@ -224,7 +225,7 @@ export function renderReportEmail(
   firstName?: string,
 ): string {
   const headline = report.archetype.secondaryName
-    ? `${report.archetype.name}, with a ${report.archetype.secondaryName} streak`
+    ? `${report.archetype.name}, ${streakPhrase(report.archetype.secondaryName)}`
     : report.archetype.name;
 
   const parts: string[] = [

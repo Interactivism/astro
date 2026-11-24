@@ -470,6 +470,8 @@ const field =
 </style>
 
 <script>
+  import { streakPhrase } from '../../lib/velocity-profile/streak';
+
   // ── Elements ───────────────────────────────────────────────────
   const intro  = document.getElementById('vp-intro')!;
   const quiz   = document.getElementById('vp-quiz')!;
@@ -700,7 +702,7 @@ const field =
 
       const streak = document.getElementById('vp-streak')!;
       if (result.secondary) {
-        streak.textContent = `with a ${result.secondary.name} streak`;
+        streak.textContent = streakPhrase(result.secondary.name);
         streak.hidden = false;
       } else {
         streak.hidden = true;

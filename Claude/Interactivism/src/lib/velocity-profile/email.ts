@@ -18,6 +18,7 @@ import {
   labelFor,
 } from '../../data/velocity-profile';
 import type { SubmissionRecord } from './storage';
+import { streakPhrase } from './streak';
 
 const RESEND_ENDPOINT = 'https://api.resend.com/emails';
 
@@ -120,7 +121,7 @@ export function buildInternalNotification(record: SubmissionRecord, siteUrl: str
           '',
         ]
       : []),
-    `${primary.name}${secondary ? ` with a ${secondary} streak` : ''}`,
+    `${primary.name}${secondary ? ` ${streakPhrase(secondary)}` : ''}`,
     results.archetype.settledBy
       ? `  (tie broken by ${results.archetype.settledBy.toUpperCase()} — a weaker read than a clear winner)`
       : null,

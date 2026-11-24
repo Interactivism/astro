@@ -44,7 +44,7 @@ export interface Campaign {
 
 /** What we ask warm testers. They answer inline in the draft and press send. */
 const WARM_TEST_QUESTIONS = [
-  'Below are a few questions about how you experienced the report. Please be brutally honest.',
+  'Below are a few questions about your experience with the report.',
   '1. Did the profile ring true, or could it describe anyone?',
   '2. Did the rework cost estimate read as credible, or as a gimmick?',
   '3. Were the 3 suggestions useful, or things you already knew?',
