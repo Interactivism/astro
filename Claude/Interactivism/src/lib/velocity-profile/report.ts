@@ -192,6 +192,8 @@ export function buildReplyLink(
   report: Report,
   reportUrl: string,
   to: string,
+  /** Extra lines from the campaign, e.g. questions for warm testers. */
+  prompt?: string,
 ): ReplyLink | null {
   if (record.stage !== 'open' || !to) return null;
 
@@ -199,7 +201,7 @@ export function buildReplyLink(
     ? `${report.archetype.name}, with a ${report.archetype.secondaryName} streak`
     : report.archetype.name;
   const subject = `My Velocity Profile: ${report.archetype.name}`;
-  const body = `We came out as ${headline}.\n\nThe report: ${reportUrl}\n\n`;
+  const body = `We came out as ${headline}.\n\nThe report: ${reportUrl}\n\n${prompt ? `${prompt}\n\n` : ''}`;
 
   return {
     href: `mailto:${to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`,

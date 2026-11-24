@@ -34,14 +34,28 @@ export interface Campaign {
   industry: LeadIndustry;
   /** Set false to retire a key in code. */
   active: boolean;
+  /**
+   * Extra lines for the "Send my result" draft, after the result and the
+   * report link. Belongs to the key, so it cannot leak into another audience:
+   * a prospect's draft never carries questions meant for a tester.
+   */
+  replyPrompt?: string;
 }
+
+/** What we ask warm testers. They answer inline in the draft and press send. */
+const WARM_TEST_QUESTIONS = [
+  'Below are a few questions about how you experienced the report. Please be brutally honest.',
+  '1. Did the profile ring true, or could it describe anyone?',
+  '2. Did the rework cost estimate read as credible, or as a gimmick?',
+  '3. Were the 3 suggestions useful, or things you already knew?',
+].join('\n\n\n');
 
 const CAMPAIGNS: readonly Campaign[] = [
   { key: 'adtech-t3',  open: true, industry: 'adtech',          active: true },
   { key: 'saas-t3',    open: true, industry: 'enterprise-saas', active: true },
   { key: 'fintech-t3', open: true, industry: 'fintech',         active: true },
   // Warm testers: people we asked to try it. General report, no industry note.
-  { key: 'warm-test',  open: true, industry: 'other',           active: true },
+  { key: 'warm-test',  open: true, industry: 'other',           active: true, replyPrompt: WARM_TEST_QUESTIONS },
 ];
 
 /** The shape a key must have before it is looked up, stored or reported. */

@@ -14,6 +14,7 @@ import Button from '../../../components/ui/Button.astro';
 import { getSubmission } from '../../../lib/velocity-profile/storage';
 import { getArchetypeContent } from '../../../lib/velocity-profile/content';
 import { buildReplyLink, buildReport } from '../../../lib/velocity-profile/report';
+import { resolveCampaign } from '../../../lib/velocity-profile/campaigns';
 import { markFor } from '../../../lib/velocity-profile/marks';
 
 export const prerender = false;
@@ -50,6 +51,7 @@ const reply = buildReplyLink(
   report,
   shareUrl,
   process.env.VELOCITY_REPLY_EMAIL || process.env.VELOCITY_NOTIFY_EMAIL || 'hello@interactivism.com',
+  resolveCampaign(record.campaign)?.replyPrompt,
 );
 
 Astro.response.headers.set('Cache-Control', 'no-store');

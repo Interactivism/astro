@@ -210,6 +210,23 @@ describe('buildReplyLink', () => {
     expect(query.get('body')).toBe(reply.body);
   });
 
+  it('carries a campaign prompt after the report link, and nothing extra without one', () => {
+    const record = openRecord();
+    const report = buildReport(record, CONTENT);
+    const plain = buildReplyLink(record, report, url, 'partner@example.com')!;
+    const prompted = buildReplyLink(record, report, url, 'partner@example.com', 'One question?')!;
+
+    expect(plain.body.endsWith(`${url}\n\n`)).toBe(true);
+    expect(prompted.body).toBe(`${plain.body}One question?\n\n`);
+    expect(new URLSearchParams(prompted.href.split('?')[1]).get('body')).toBe(prompted.body);
+  });
+
+  it('gives a prompt to no industry key, so a prospect is never asked tester questions', () => {
+    const prompted = allCampaigns().filter((item) => item.replyPrompt);
+    expect(prompted.length).toBeGreaterThan(0);
+    for (const campaign of prompted) expect(campaign.industry).toBe('other');
+  });
+
   it('does not exist for a gated record', () => {
     const record = gatedRecord();
     expect(buildReplyLink(record, buildReport(record, CONTENT), url, 'partner@example.com')).toBeNull();
