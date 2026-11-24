@@ -37,7 +37,7 @@ are set.
 | `VELOCITY_NOTIFY_EMAIL` | Where lead notifications go | No notification sent, logged instead |
 | `RESEND_API_KEY` | Sending mail via Resend | Nothing sent, message logged |
 | `VELOCITY_FROM_EMAIL` | `From:` on outbound mail | Nothing sent, message logged |
-| `VELOCITY_REPLY_EMAIL` | Where "Send my result" on an open report is addressed | `hello@interactivism.com` |
+| `VELOCITY_REPLY_EMAIL` | Where "Send my result" on an open report is addressed | `VELOCITY_NOTIFY_EMAIL`, then `hello@interactivism.com` |
 | `VELOCITY_CAMPAIGNS_OFF` | Campaign keys to switch off, comma separated | None switched off |
 | `VELOCITY_RATE_SALT` | Hashing IPs for rate limiting | `velocity-profile` — set a real secret |
 
