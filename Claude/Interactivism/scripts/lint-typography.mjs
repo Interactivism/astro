@@ -1,18 +1,25 @@
 /**
  * Typography lint — straight apostrophes in user-facing text.
  *
- * Scans all .astro files in src/ and reports any straight apostrophe (U+0027)
- * found within a word ([a-zA-Z]'[a-zA-Z]), excluding:
- *   - Astro frontmatter blocks  (--- … ---)
- *   - Single-line code/JSDoc comments  (// … and * …)
- *   - HTML comments  <!-- … -->  (single- or multi-line)
- *   - <script> blocks
- *   - <style> blocks
+ * Reports any straight apostrophe (U+0027) found within a word
+ * ([a-zA-Z]'[a-zA-Z]). What counts as user-facing depends on the file type,
+ * and the two rules are exact inverses of each other:
  *
- * Frontmatter JS is excluded because esbuild rejects non-ASCII characters in
- * certain token positions in dev mode; use the ’ escape there instead.
+ * .astro — scans the template, skips the frontmatter.
+ *   Excluded: the frontmatter block (--- … ---), single-line code/JSDoc
+ *   comments (// … and * …), HTML comments (<!-- … -->, single- or
+ *   multi-line), <script> blocks, <style> blocks.
+ *   Frontmatter JS is excluded because esbuild rejects non-ASCII characters in
+ *   certain token positions in dev mode; use the ’ escape there instead.
  *
- * Markdown/MDX files are exempt — remark-smartypants handles them at build time.
+ * .md / .mdx — scans the frontmatter, skips the body.
+ *   The body is handled by remark-smartypants (see astro.config.mjs), which
+ *   converts straight quotes at build time. Linting it would flag correct
+ *   source. Frontmatter is not markdown: `summary` and `title` are Zod strings
+ *   rendered straight into meta descriptions, blog cards, and OG tags, so a
+ *   straight apostrophe there reaches the reader verbatim. Every summary in
+ *   the repo carried one until this rule existed — the gap was invisible
+ *   precisely because the body beside it was being fixed automatically.
  *
  * Usage:
  *   node scripts/lint-typography.mjs    exits 1 on violations
@@ -29,13 +36,29 @@ const srcDir      = resolve(projectRoot, 'src');
 
 // ── helpers ──────────────────────────────────────────────────────────────────
 
+const LINTED = ['.astro', '.md', '.mdx'];
+
 function walk(dir, files = []) {
   for (const entry of readdirSync(dir)) {
     const full = resolve(dir, entry);
     if (statSync(full).isDirectory()) walk(full, files);
-    else if (entry.endsWith('.astro')) files.push(full);
+    else if (LINTED.some((ext) => entry.endsWith(ext))) files.push(full);
   }
   return files;
+}
+
+/**
+ * Lines of a markdown/MDX frontmatter block, as [lineNumber, text] pairs.
+ * Empty when the file has no frontmatter — nothing to check, not an error.
+ */
+function frontmatterLines(lines) {
+  if (lines[0]?.trim() !== '---') return [];
+  const out = [];
+  for (let i = 1; i < lines.length; i++) {
+    if (lines[i].trim() === '---') break;
+    out.push([i + 1, lines[i]]);
+  }
+  return out;
 }
 
 const STRAIGHT_IN_WORD = /[a-zA-Z]'[a-zA-Z]/;
@@ -48,6 +71,18 @@ for (const file of walk(srcDir)) {
   const rel   = file.replace(projectRoot + '/', '');
   const lines = readFileSync(file, 'utf8').split('\n');
 
+  // ── markdown / MDX: frontmatter only ───────────────────────────────────────
+  if (!file.endsWith('.astro')) {
+    for (const [lineNo, raw] of frontmatterLines(lines)) {
+      if (STRAIGHT_IN_WORD.test(raw)) {
+        console.error(`  ${rel}:${lineNo}  ${raw.trim()}`);
+        violations++;
+      }
+    }
+    continue;
+  }
+
+  // ── .astro: template only ──────────────────────────────────────────────────
   let inFrontmatter = lines[0]?.trim() === '---'; // true until closing ---
   let frontmatterClosed = false;
   let inHtmlComment = false;

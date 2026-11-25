@@ -18,7 +18,7 @@ The working docs are the source of truth for everything else:
 npm run dev               # dev server at :4321, Keystatic at /keystatic
 npm run build             # production build
 npm test                  # unit tests (vitest)
-npm run lint:typography   # straight apostrophes in .astro user-facing text
+npm run lint:typography   # straight apostrophes in user-facing text
 ```
 
 If Keystatic shows a blank screen or a 504 "Outdated Optimize Dep", clear the

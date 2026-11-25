@@ -269,6 +269,23 @@ Case-study-specific components (`<Stat>`, `<StatRow>`) are *not* available in bl
 
 **`<ArchetypeList>` takes no fields and is not editable.** It reads `ARCHETYPES` from `src/data/velocity-profile.ts` at build time and renders each archetype's name, descriptor, and teaser line. It deliberately withholds the strength, the failure mode, and the three moves — those are the report's payoff and the reason to take the assessment. To change what it says, edit the data file, not the post.
 
+### Apostrophes
+
+Use `’` (U+2019), not `'`. `npm run lint:typography` enforces it, but what it
+checks depends on where the text lives, and the two rules are inverses:
+
+| File | Checked | Why |
+|---|---|---|
+| `.astro` | template, **not** frontmatter | Frontmatter is JS; esbuild rejects non-ASCII in some token positions in dev. Use the `’` escape there. |
+| `.md` / `.mdx` | frontmatter, **not** body | `remark-smartypants` converts body quotes at build time, so a straight `'` in prose is already correct at the source. |
+| `.json` | nothing yet | Not covered. `authors/*.json` bios reach the page verbatim — type the curly form by hand. |
+
+The frontmatter half is the one that bites. `summary` is a Zod string, not
+markdown: it goes straight into the meta description, the blog card, and the OG
+tag without passing through smartypants. Every summary in the repo carried a
+straight apostrophe until the rule existed, and the gap stayed invisible
+precisely because the body two lines below was being fixed automatically.
+
 ### Reading time
 
 Auto-calculated from word count at build time via `reading-time`. No frontmatter field needed. Displayed in the post metadata row as "5 min read."
