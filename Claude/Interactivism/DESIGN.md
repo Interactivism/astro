@@ -386,6 +386,29 @@ Only `colors` entries can be used as `decoration-*` values. `subtle` lives under
 
 The same trap applies to backgrounds. `subtle` exists **only** under `borderColor`, so `bg-subtle` generates nothing at all — a gap-plus-background hairline grid (`grid gap-px bg-subtle`) renders as a gap with no line in it, and looks merely loose rather than broken. Use real borders: `divide-y divide-subtle`, which resolves because Tailwind's `divide-*` colors fall back to the `borderColor` scale. Check a computed `background-color` rather than trusting the class name.
 
+### The `hidden` attribute loses to any display class
+
+The HTML `hidden` attribute gets its `display: none` from the UA stylesheet, at
+the lowest specificity there is. A Tailwind display utility on the same element
+— `flex`, `grid`, `block`, `inline-flex` — beats it, and the element stays
+visible with the attribute set. The script toggling it looks correct, the
+attribute is there in the inspector, and nothing errors. The blog index's "Load
+more posts" button shipped this way: 8 posts, pagination threshold 10, the
+attribute never removed, and the button on screen and dead to the touch.
+
+Guard any element that carries both with `[&[hidden]]:hidden`, which re-asserts
+`display: none` from a class the display utility cannot outrank:
+
+```html
+<div hidden class="[&[hidden]]:hidden flex justify-center">
+```
+
+Elements hidden by the attribute alone, with no display class, are fine and need
+no guard — of the 11 in this repo, exactly one had the conflict. Verify by
+reading the computed `display` with the attribute set, not by reloading and
+looking: the failure is a button that is visible when it should be gone, which
+reads as a design choice rather than a bug.
+
 ### Archetype list
 
 The five Product Velocity Profile archetypes, rendered as a bordered list with each archetype's mark, name, descriptor, and teaser line. Lives at `src/components/ui/ArchetypeList.astro` and is available inside blog post MDX as `<ArchetypeList />`.

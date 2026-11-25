@@ -40,8 +40,8 @@ export type ArchetypeTag = (typeof ARCHETYPE_TAGS)[number];
 export const ARCHETYPES = {
   F: {
     name: 'Feature Factory',
-    // TODO(erik): persona descriptor, first pass. One line, said about them
-    // rather than to them — it sits under the name like a job title.
+    // One line, said about them rather than to them — it sits under the name
+    // like a job title. Published publicly by <ArchetypeList>, so it is final copy.
     descriptor: 'The team that never stops shipping',
     teaser: 'You ship more than almost anyone, but more isn’t always better.',
     strength: 'Ships constantly',
@@ -50,7 +50,6 @@ export const ARCHETYPES = {
   },
   C: {
     name: 'Committee',
-    // TODO(erik): persona descriptor, first pass.
     descriptor: 'The team that needs everyone to agree',
     teaser: 'You rarely ship the wrong thing. You often ship the right thing late.',
     strength: 'Alignment, low risk',
@@ -59,7 +58,6 @@ export const ARCHETYPES = {
   },
   E: {
     name: 'Engineering-Led',
-    // TODO(erik): persona descriptor, first pass.
     descriptor: 'The team that builds it right before it builds it usable',
     teaser: 'Your product is built to last, and built like the database underneath it.',
     strength: 'Solid, scalable tech',
@@ -68,7 +66,6 @@ export const ARCHETYPES = {
   },
   S: {
     name: 'Sales-Driven',
-    // TODO(erik): persona descriptor, first pass.
     descriptor: 'The team that never says no to a customer',
     teaser: 'You’re closer to revenue than most teams, and your roadmap shows it.',
     strength: 'Close to revenue',
@@ -77,7 +74,6 @@ export const ARCHETYPES = {
   },
   X: {
     name: 'Firefighter',
-    // TODO(erik): persona descriptor, first pass.
     descriptor: 'The team that is always one escalation behind',
     teaser: 'You’re great in a crisis. Trouble is, it’s always a crisis.',
     strength: 'Responds fast',

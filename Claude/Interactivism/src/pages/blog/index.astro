@@ -45,8 +45,18 @@ const logoVariant = await getLogoVariant(marqueeImagePath);
           ))}
         </div>
 
-        <!-- Load more — hidden until JS determines there are posts beyond PAGE_SIZE -->
-        <div id="load-more-wrap" hidden class="border-t border-subtle py-12 lg:py-16 flex justify-center">
+        <!--
+          Load more — hidden until JS determines there are posts beyond PAGE_SIZE.
+
+          `[&[hidden]]:hidden` is doing real work and is not redundant with the
+          `hidden` attribute next to it. The attribute's `display: none` comes
+          from the UA stylesheet at the lowest specificity, so the `flex` class
+          below beats it and the button stays visible with the attribute set —
+          which is exactly how it shipped. The arbitrary variant re-asserts
+          `display: none` from a class, at a specificity the `flex` cannot win.
+          Any display class added to this element needs the same guard.
+        -->
+        <div id="load-more-wrap" hidden class="[&[hidden]]:hidden border-t border-subtle py-12 lg:py-16 flex justify-center">
           <Button id="load-more-btn" variant="dark">Load more posts</Button>
         </div>
       </>
