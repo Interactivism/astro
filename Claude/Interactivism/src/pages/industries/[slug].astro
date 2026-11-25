@@ -126,10 +126,25 @@ const hasVelocityNote = Object.prototype.hasOwnProperty.call(
 
   <PhotoCredit credit={photoCredit} />
 
+  <!-- ── CTA — books a call directly rather than routing to the form ── -->
+  <section class="py-20 lg:py-28 border-t border-subtle">
+    <div class="px-6 max-w-content mx-auto flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
+      <h2 class="font-display text-3xl lg:text-4xl leading-display text-headline lg:max-w-[60%]">
+        {ctaText}
+      </h2>
+      <Button href={BOOKING_URL} class="shrink-0">
+        Book a call
+      </Button>
+    </div>
+  </section>
+
   <!--
-    Secondary offer for the reader who is not ready to book. Shown only where
-    the report writes a tailored note for this industry, so the CTA never
-    promises specificity the report cannot deliver.
+    Secondary offer, deliberately below the Book a call band: booking is the
+    page's primary action and goes first, and this catches the reader who
+    scrolled past it without converting.
+
+    Shown only where the report writes a tailored note for this industry, so
+    the CTA never promises specificity the report cannot deliver.
   -->
   {hasVelocityNote && (
     <section class="border-t border-subtle py-16 lg:py-20">
@@ -149,16 +164,4 @@ const hasVelocityNote = Object.prototype.hasOwnProperty.call(
       </div>
     </section>
   )}
-
-  <!-- ── CTA — books a call directly rather than routing to the form ── -->
-  <section class="py-20 lg:py-28 border-t border-subtle">
-    <div class="px-6 max-w-content mx-auto flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
-      <h2 class="font-display text-3xl lg:text-4xl leading-display text-headline lg:max-w-[60%]">
-        {ctaText}
-      </h2>
-      <Button href={BOOKING_URL} class="shrink-0">
-        Book a call
-      </Button>
-    </div>
-  </section>
 </BaseLayout>
