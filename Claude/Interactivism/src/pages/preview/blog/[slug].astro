@@ -26,6 +26,7 @@ import PullQuote from '../../../components/case-study/PullQuote.astro';
 import Aside from '../../../components/case-study/Aside.astro';
 import ArchetypeList from '../../../components/ui/ArchetypeList.astro';
 import { formatPublishedDate } from '../../../lib/publishedDate';
+import { getLogoVariantForEntry, type LogoVariant } from '../../../lib/imageBrightness';
 
 // Prevent any CDN or edge cache from serving a stale response.
 Astro.response.headers.set('Cache-Control', 'no-store');
@@ -49,6 +50,13 @@ const { Content } = await render(entry);
 const authorEntry = await getEntry('authors', authorId);
 
 const formattedDate = formatPublishedDate(publishedDate);
+
+// Same derivation as the production route, so a draft previews with the logo
+// it will ship with.
+const logoVariant: LogoVariant = await getLogoVariantForEntry(
+  entry.filePath,
+  'heroImageWide',
+);
 
 // Read time
 const wordCount = (entry.body ?? '')
@@ -84,7 +92,7 @@ const credit = buildCredit(photoCredit);
   ogType="article"
   ogImage={ogImage ? ogImage.src : undefined}
   hasMarquee={!!heroImage}
-  logoVariant={heroImage ? "dark" : "tile"}
+  logoVariant={logoVariant}
 >
 
   <PreviewBanner />

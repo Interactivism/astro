@@ -9,6 +9,8 @@
  * Used in Astro page frontmatter at build time. Never runs in the browser.
  */
 import sharp from 'sharp';
+import { existsSync, readFileSync } from 'node:fs';
+import { dirname, resolve as resolvePath } from 'node:path';
 
 /** Luminance threshold: above → background is bright → use dark logo. */
 const THRESHOLD = 197;
@@ -89,4 +91,66 @@ export async function getLuminance(imagePath: string): Promise<number> {
   } catch {
     return -1;
   }
+}
+
+/**
+ * Resolves a content entry's image frontmatter field to an absolute path on
+ * disk.
+ *
+ * Why this exists rather than reading the path off the resolved image: by the
+ * time `image()` has run, the filesystem path is gone. In dev the metadata's
+ * `src` is a `/@fs/…` URL that still contains it, but a production build
+ * replaces that with `/_astro/<name>.<hash>.jpg` — directory discarded, name
+ * hashed. Anything written against the dev shape works locally and silently
+ * reads the wrong file after deploy, which is the failure this replaces: the
+ * blog template passed a hardcoded `marquee/blog.jpg` to the brightness check
+ * no matter which hero a post declared.
+ *
+ * `entry.filePath` survives into the build, so the raw frontmatter is the one
+ * place the authored path is still intact. Astro resolves these relative to
+ * the content file, so this does the same.
+ *
+ * Deliberately a line match, not a YAML parse: the field holds a path, the
+ * frontmatter has already been validated by Zod before anything calls this,
+ * and a parser here would be a second schema to keep in sync.
+ *
+ * @param entryFilePath  `entry.filePath` — relative to the project root.
+ * @param field          Frontmatter key, e.g. 'heroImageWide'.
+ * @returns              Absolute path, or undefined if absent or missing on disk.
+ */
+export function resolveEntryImagePath(
+  entryFilePath: string,
+  field: string,
+): string | undefined {
+  const abs = resolvePath(process.cwd(), entryFilePath);
+  if (!existsSync(abs)) return undefined;
+
+  const source = readFileSync(abs, 'utf8');
+  const lines = source.split('\n');
+  if (lines[0]?.trim() !== '---') return undefined;
+
+  for (let i = 1; i < lines.length; i++) {
+    if (lines[i].trim() === '---') break;
+    const match = lines[i].match(new RegExp(`^${field}:\\s*(.+?)\\s*$`));
+    if (!match) continue;
+    const value = match[1].replace(/^["']|["']$/g, '');
+    if (!value) return undefined;
+    const imagePath = resolvePath(dirname(abs), value);
+    return existsSync(imagePath) ? imagePath : undefined;
+  }
+  return undefined;
+}
+
+/**
+ * Logo variant for a content entry, read from the image that entry actually
+ * declares. Returns 'tile' when the field is absent or unreadable — the black
+ * lockup marquee-less pages use, which is the right answer when there is no
+ * image to sit on.
+ */
+export async function getLogoVariantForEntry(
+  entryFilePath: string,
+  field: string,
+): Promise<LogoVariant> {
+  const imagePath = resolveEntryImagePath(entryFilePath, field);
+  return imagePath ? getLogoVariant(imagePath) : 'tile';
 }

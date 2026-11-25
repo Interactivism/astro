@@ -1,11 +1,10 @@
 ---
-import path from 'node:path';
 import { getCollection, getEntry, render } from 'astro:content';
 import { Image } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Marquee from '../../components/layout/Marquee.astro';
 import CtaBand from '../../components/home/CtaBand.astro';
-import { getLogoVariant, type LogoVariant } from '../../lib/imageBrightness';
+import { getLogoVariantForEntry, type LogoVariant } from '../../lib/imageBrightness';
 import Slideshow from '../../components/case-study/Slideshow.astro';
 import YouTube from '../../components/case-study/YouTube.astro';
 import ImageWithCaption from '../../components/case-study/ImageWithCaption.astro';
@@ -71,17 +70,19 @@ const wordCount = (entry.body ?? '')
 const readMinutes = Math.max(1, Math.round(wordCount / 200));
 const readTime = `${readMinutes} minute read`;
 
-// Logo variant. With a hero, derive it from the image's brightness. Without
-// one, 'tile' — the black lockup the rest of the marquee-less site uses, and
-// what BaseLayout falls back to on its own. This used to default to 'dark',
-// which is the black wordmark on a white field: correct contrast, wrong mark.
-// It read as a white box in the sidenav while /privacy, /team/* and
-// /velocity-profile all showed the black tile beside it.
-let logoVariant: LogoVariant = 'tile';
-if (heroImageWide) {
-  const heroWideFs = path.join(process.cwd(), 'src/assets/images/marquee/blog.jpg');
-  logoVariant = await getLogoVariant(heroWideFs);
-}
+// Logo variant, derived from this post's own hero. Returns 'tile' — the black
+// lockup the rest of the marquee-less site uses — when there is no hero to sit
+// on, which is also what BaseLayout falls back to unaided.
+//
+// Two bugs lived here. It defaulted to 'dark', the ink wordmark on a white
+// field: right contrast, wrong mark, reading as a white box beside the black
+// tile on /privacy and /team/*. And it measured a hardcoded marquee/blog.jpg
+// regardless of which hero the post declared, so every post would have
+// inherited one image's brightness.
+const logoVariant: LogoVariant = await getLogoVariantForEntry(
+  entry.filePath,
+  'heroImageWide',
+);
 
 // JSON-LD: Article
 const siteUrl = 'https://interactivism.com';
