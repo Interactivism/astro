@@ -278,7 +278,7 @@ checks depends on where the text lives, and the two rules are inverses:
 |---|---|---|
 | `.astro` | template, **not** frontmatter | Frontmatter is JS; esbuild rejects non-ASCII in some token positions in dev. Use the `’` escape there. |
 | `.md` / `.mdx` | frontmatter, **not** body | `remark-smartypants` converts body quotes at build time, so a straight `'` in prose is already correct at the source. |
-| `.json` | nothing yet | Not covered. `authors/*.json` bios reach the page verbatim — type the curly form by hand. |
+| `.json` under `src/content/` | string values | Content JSON has no markdown processor between it and the page — an `authors/*.json` bio renders verbatim. Keys are skipped, as are `url`/`src`/`slug`/`id`-ish keys, where an apostrophe belongs to an address. |
 
 The frontmatter half is the one that bites. `summary` is a Zod string, not
 markdown: it goes straight into the meta description, the blog card, and the OG

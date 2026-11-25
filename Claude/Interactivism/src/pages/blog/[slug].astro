@@ -5,7 +5,7 @@ import { Image } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Marquee from '../../components/layout/Marquee.astro';
 import CtaBand from '../../components/home/CtaBand.astro';
-import { getLogoVariant } from '../../lib/imageBrightness';
+import { getLogoVariant, type LogoVariant } from '../../lib/imageBrightness';
 import Slideshow from '../../components/case-study/Slideshow.astro';
 import YouTube from '../../components/case-study/YouTube.astro';
 import ImageWithCaption from '../../components/case-study/ImageWithCaption.astro';
@@ -71,8 +71,13 @@ const wordCount = (entry.body ?? '')
 const readMinutes = Math.max(1, Math.round(wordCount / 200));
 const readTime = `${readMinutes} minute read`;
 
-// Logo variant — compute from hero-wide if present, else default dark
-let logoVariant: 'light' | 'dark' = 'dark';
+// Logo variant. With a hero, derive it from the image's brightness. Without
+// one, 'tile' — the black lockup the rest of the marquee-less site uses, and
+// what BaseLayout falls back to on its own. This used to default to 'dark',
+// which is the black wordmark on a white field: correct contrast, wrong mark.
+// It read as a white box in the sidenav while /privacy, /team/* and
+// /velocity-profile all showed the black tile beside it.
+let logoVariant: LogoVariant = 'tile';
 if (heroImageWide) {
   const heroWideFs = path.join(process.cwd(), 'src/assets/images/marquee/blog.jpg');
   logoVariant = await getLogoVariant(heroWideFs);

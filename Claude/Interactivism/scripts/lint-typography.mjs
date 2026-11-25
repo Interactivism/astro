@@ -12,6 +12,13 @@
  *   Frontmatter JS is excluded because esbuild rejects non-ASCII characters in
  *   certain token positions in dev mode; use the ’ escape there instead.
  *
+ * .json (under src/content/ only) — scans string values.
+ *   Content JSON is data all the way down, with no body/frontmatter split and
+ *   no markdown processor between it and the page. An authors/*.json bio is
+ *   rendered verbatim into the team page and its meta description. Keys and
+ *   non-string values are skipped, as are url/src/slug/id/path-ish keys, where
+ *   an apostrophe would belong to an address rather than to prose.
+ *
  * .md / .mdx — scans the frontmatter, skips the body.
  *   The body is handled by remark-smartypants (see astro.config.mjs), which
  *   converts straight quotes at build time. Linting it would flag correct
@@ -33,10 +40,36 @@ import { fileURLToPath } from 'node:url';
 const __dirname   = dirname(fileURLToPath(import.meta.url));
 const projectRoot = resolve(__dirname, '..');
 const srcDir      = resolve(projectRoot, 'src');
+const contentDir  = resolve(srcDir, 'content');
 
 // ── helpers ──────────────────────────────────────────────────────────────────
 
-const LINTED = ['.astro', '.md', '.mdx'];
+const LINTED = ['.astro', '.md', '.mdx', '.json'];
+
+/** Keys whose values are addresses, not prose — an apostrophe there is literal. */
+const NON_PROSE_KEY = /^(url|href|src|slug|id|path|image|link|email|handle)$/i;
+
+/**
+ * Walks parsed JSON and yields [keyPath, stringValue] for every prose-ish
+ * string. Parsed rather than line-matched, so a key is never linted and an
+ * escaped sequence is read as the character it denotes.
+ */
+function* jsonStrings(node, keyPath = '') {
+  if (typeof node === 'string') {
+    const leaf = keyPath.split('.').pop() ?? '';
+    if (!NON_PROSE_KEY.test(leaf)) yield [keyPath, node];
+    return;
+  }
+  if (Array.isArray(node)) {
+    for (const [i, v] of node.entries()) yield* jsonStrings(v, `${keyPath}[${i}]`);
+    return;
+  }
+  if (node && typeof node === 'object') {
+    for (const [k, v] of Object.entries(node)) {
+      yield* jsonStrings(v, keyPath ? `${keyPath}.${k}` : k);
+    }
+  }
+}
 
 function walk(dir, files = []) {
   for (const entry of readdirSync(dir)) {
@@ -72,6 +105,31 @@ for (const file of walk(srcDir)) {
   const lines = readFileSync(file, 'utf8').split('\n');
 
   // ── markdown / MDX: frontmatter only ───────────────────────────────────────
+  if (file.endsWith('.json')) {
+    if (!file.startsWith(contentDir)) continue; // config/data JSON is not copy
+    let parsed;
+    try {
+      parsed = JSON.parse(lines.join('\n'));
+    } catch {
+      continue; // malformed JSON is the build's problem to report, not ours
+    }
+    for (const [keyPath, value] of jsonStrings(parsed)) {
+      // Report a window around the offending apostrophe. A bio runs to several
+      // hundred characters, and the head of it says nothing about where the
+      // problem is.
+      const at = value.search(STRAIGHT_IN_WORD);
+      if (at !== -1) {
+        const from = Math.max(0, at - 35);
+        const to   = Math.min(value.length, at + 35);
+        const snip = (from > 0 ? '\u2026' : '') + value.slice(from, to).replace(/\n/g, ' ') +
+                     (to < value.length ? '\u2026' : '');
+        console.error(`  ${rel}  ${keyPath}: ${snip}`);
+        violations++;
+      }
+    }
+    continue;
+  }
+
   if (!file.endsWith('.astro')) {
     for (const [lineNo, raw] of frontmatterLines(lines)) {
       if (STRAIGHT_IN_WORD.test(raw)) {

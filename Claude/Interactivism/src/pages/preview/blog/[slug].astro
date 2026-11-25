@@ -84,7 +84,7 @@ const credit = buildCredit(photoCredit);
   ogType="article"
   ogImage={ogImage ? ogImage.src : undefined}
   hasMarquee={!!heroImage}
-  logoVariant="dark"
+  logoVariant={heroImage ? "dark" : "tile"}
 >
 
   <PreviewBanner />
