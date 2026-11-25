@@ -384,6 +384,19 @@ Two rules this encodes:
 
 Only `colors` entries can be used as `decoration-*` values. `subtle` lives under `borderColor` and `headline` under `textColor`, so `decoration-subtle` and `decoration-headline` silently generate nothing and the decoration falls back to `currentColor`.
 
+The same trap applies to backgrounds. `subtle` exists **only** under `borderColor`, so `bg-subtle` generates nothing at all — a gap-plus-background hairline grid (`grid gap-px bg-subtle`) renders as a gap with no line in it, and looks merely loose rather than broken. Use real borders: `divide-y divide-subtle`, which resolves because Tailwind's `divide-*` colors fall back to the `borderColor` scale. Check a computed `background-color` rather than trusting the class name.
+
+### Archetype list
+
+The five Product Velocity Profile archetypes, rendered as a bordered list with each archetype's mark, name, descriptor, and teaser line. Lives at `src/components/ui/ArchetypeList.astro` and is available inside blog post MDX as `<ArchetypeList />`.
+
+- One bordered block, `divide-y divide-subtle` between entries, `p-6 lg:p-8` per entry.
+- The mark sits at `w-12 h-12` in a flex row, `gap-6`, aligned to the top of the text.
+- Name in `font-display text-2xl`, descriptor in the mono eyebrow treatment, teaser in body.
+- `not-prose`, because it is always placed inside a prose column.
+
+Content is derived from `src/data/velocity-profile.ts` at build time — never hand-copied. Two containment rules it has to keep: archetype **tags** (the single letters carried by answer options) never appear in the markup as an id, class, or data attribute, and nothing it imports may reach a client bundle. Rendering all five marks here is fine; doing it on the quiz page would not be, since the quiz page is kept clean of anything that reveals the answer set.
+
 ### Icons
 
 Single icon library: **Lucide** (`lucide-astro` or `lucide-react` for interactive contexts).

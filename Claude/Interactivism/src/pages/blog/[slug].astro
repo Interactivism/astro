@@ -11,6 +11,7 @@ import YouTube from '../../components/case-study/YouTube.astro';
 import ImageWithCaption from '../../components/case-study/ImageWithCaption.astro';
 import PullQuote from '../../components/case-study/PullQuote.astro';
 import Aside from '../../components/case-study/Aside.astro';
+import ArchetypeList from '../../components/ui/ArchetypeList.astro';
 import PhotoCredit from '../../components/layout/PhotoCredit.astro';
 
 export async function getStaticPaths() {
@@ -210,7 +211,7 @@ const articleJsonLd = {
 
         <!-- Body prose -->
         <div class="py-12 lg:py-16 prose prose-lg lg:prose-xl">
-          <Content components={{ Slideshow, YouTube, ImageWithCaption, PullQuote, Aside }} />
+          <Content components={{ Slideshow, YouTube, ImageWithCaption, PullQuote, Aside, ArchetypeList }} />
         </div>
 
 

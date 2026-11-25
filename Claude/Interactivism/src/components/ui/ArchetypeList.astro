@@ -1,0 +1,69 @@
+---
+/**
+ * The five Product Velocity Profile archetypes, as public-facing content.
+ *
+ * Derived from `src/data/velocity-profile.ts` at build time — never a hand-kept
+ * copy. Adding or renaming an archetype updates every surface that renders this
+ * block, which is the point: the names appear on the quiz teaser, in the report,
+ * in the report email, and here, and they have to agree.
+ *
+ * What it deliberately publishes: name, descriptor, and the teaser line. What it
+ * withholds: the strength, the failure mode, and the three moves, which are the
+ * report's payoff and the reason to take the quiz.
+ *
+ * Two containment rules this respects:
+ *
+ * 1. **No tags in the markup.** The archetype keys (the single letters that
+ *    answer options carry) never appear as an id, a class, or a data attribute.
+ *    Publishing the names is a decision; publishing the tags would hand over the
+ *    scoring key, and the quiz bundle is kept clean of them for that reason.
+ * 2. **Server-only imports.** Both `velocity-profile.ts` and `marks.ts` are
+ *    build-time only. This component has no client script, so nothing ships.
+ *
+ * Rendering all five marks here is fine, which it would not be on the quiz page:
+ * a post that says "there are five kinds of team" is not leaking the count.
+ */
+import { ARCHETYPES, ARCHETYPE_TAGS } from '../../data/velocity-profile';
+import { ARCHETYPE_MARKS } from '../../lib/velocity-profile/marks';
+
+interface Props {
+  /** Heading level, so the block nests correctly under its page's outline. */
+  headingLevel?: 'h2' | 'h3';
+  class?: string;
+}
+
+const { headingLevel = 'h3', class: className = '' } = Astro.props;
+const Heading = headingLevel;
+
+const entries = ARCHETYPE_TAGS.map((tag) => ({
+  name: ARCHETYPES[tag].name,
+  descriptor: ARCHETYPES[tag].descriptor,
+  teaser: ARCHETYPES[tag].teaser,
+  mark: ARCHETYPE_MARKS[tag],
+}));
+---
+
+<!--
+  `subtle` is defined only as a borderColor in tailwind.config.mjs, so there is
+  no `bg-subtle` to build hairlines out of with a gap. Real borders instead —
+  `divide-*` reads the borderColor scale, so `divide-subtle` resolves.
+-->
+<ul
+  class={`not-prose list-none pl-0 my-12 border border-subtle divide-y divide-subtle ${className}`}
+  role="list"
+>
+  {entries.map((a) => (
+    <li class="p-6 lg:p-8 flex gap-6 items-start">
+      <div class="w-12 h-12 shrink-0 text-headline [&>svg]:w-full [&>svg]:h-full" set:html={a.mark} />
+      <div class="min-w-0">
+        <Heading class="font-display text-2xl leading-display text-headline m-0">
+          {a.name}
+        </Heading>
+        <p class="font-mono text-xs text-muted uppercase tracking-widest mt-2 mb-3">
+          {a.descriptor}
+        </p>
+        <p class="text-body leading-body m-0">{a.teaser}</p>
+      </div>
+    </li>
+  ))}
+</ul>

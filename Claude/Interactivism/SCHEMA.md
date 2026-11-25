@@ -99,8 +99,9 @@ Zod validates at build time; Keystatic validates at edit time. They are not equi
 - **`fields.url` writes `null`, not `undefined`**, for an empty value. Optional URL fields in Zod therefore need `.nullable()` as well as `.optional()`.
 - **Zod silently strips keys the schema does not declare.** A field present in the content and in Keystatic but missing from the Zod object is simply absent at runtime, with no error anywhere. When adding a field, add it to both configs in the same commit.
 - **Length caps are enforced in both**, but only for edits made through the CMS. A direct file edit can exceed a cap and the build is what catches it.
+- **MDX body components are a third place to sync.** A component used in an MDX body has to be in the page template's `<Content components={{ … }} />` map *and* in the matching `fields.mdx({ components })` in `keystatic.config.ts`. Missing from the template, it renders as nothing; missing from Keystatic, the editor mangles or rejects the body when someone opens the entry. Neither failure shows up in a build. The per-collection lists are not interchangeable — blog and case studies each have their own.
 
-After changing either config, open one entry of **every** affected collection in Keystatic and round-trip a save. A change that fixes one collection routinely breaks another.
+After changing either config, open one entry of **every** affected collection in Keystatic and round-trip a save. A change that fixes one collection routinely breaks another. For an MDX component change, check that the block renders as a labeled block in the editor and that saving leaves the file byte-identical.
 
 ---
 

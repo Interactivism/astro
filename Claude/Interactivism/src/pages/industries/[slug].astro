@@ -20,6 +20,7 @@ import CaseStudyCard from '../../components/work/CaseStudyCard.astro';
 import Button from '../../components/ui/Button.astro';
 import { getLogoVariant } from '../../lib/imageBrightness';
 import { selectIndustryCaseStudies } from '../../lib/industryCaseStudies';
+import reportCopy from '../../data/velocity-report.json';
 
 // Resolved per request by src/pages/book.ts — see src/lib/booking.ts.
 const BOOKING_URL = '/book';
@@ -55,6 +56,16 @@ if (heroImageWide) {
 // /work/[slug] uses the same helper to scope its prev/next navigation.
 const allCaseStudies = await getCollection('caseStudies');
 const related = selectIndustryCaseStudies(entry, allCaseStudies);
+
+// Offer the Velocity Profile only where its report has a note written for this
+// industry. Derived from the report copy rather than a list of slugs here: add
+// a note to src/data/velocity-report.json and that industry's page picks the
+// CTA up on the next build, with no second place to remember. 'other' is the
+// fallback bucket inside the report, not an industry, so it never matches.
+const hasVelocityNote = Object.prototype.hasOwnProperty.call(
+  reportCopy.industryNotes,
+  id,
+);
 ---
 
 <BaseLayout
@@ -114,6 +125,30 @@ const related = selectIndustryCaseStudies(entry, allCaseStudies);
   </div>
 
   <PhotoCredit credit={photoCredit} />
+
+  <!--
+    Secondary offer for the reader who is not ready to book. Shown only where
+    the report writes a tailored note for this industry, so the CTA never
+    promises specificity the report cannot deliver.
+  -->
+  {hasVelocityNote && (
+    <section class="border-t border-subtle py-16 lg:py-20">
+      <div class="px-6 max-w-content mx-auto">
+        <div class="max-w-prose">
+        <p class="font-mono text-xs text-muted mb-4 uppercase tracking-widest">Not ready to talk?</p>
+        <h2 class="font-display text-3xl leading-display text-headline mb-4">
+          Find out how your team ships.
+        </h2>
+        <p class="text-body leading-body mb-6">
+          Our Product Velocity Profile is 12 questions and about 3 minutes. You’ll get your
+          team’s archetype, an estimate of what rework is costing you, and three things you can
+          do about it — with a section written for {title} teams.
+        </p>
+        <Button href="/velocity-profile/" variant="dark">Take the assessment</Button>
+        </div>
+      </div>
+    </section>
+  )}
 
   <!-- ── CTA — books a call directly rather than routing to the form ── -->
   <section class="py-20 lg:py-28 border-t border-subtle">

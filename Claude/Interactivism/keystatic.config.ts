@@ -497,6 +497,16 @@ export default config({
               label: 'Aside',
               schema: {},
             }),
+            // Renders the five Velocity Profile archetypes, read from
+            // src/data/velocity-profile.ts at build time. No fields: the copy
+            // lives in code next to the tags that produce it, so editing it
+            // here would create a second copy that drifts.
+            ArchetypeList: block({
+              label: 'Archetype list',
+              description:
+                'The five Product Velocity Profile archetypes \u2014 name, descriptor and teaser line. Generated at build time; nothing to fill in.',
+              schema: {},
+            }),
           },
         }),
       },

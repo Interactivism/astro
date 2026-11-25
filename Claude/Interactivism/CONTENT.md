@@ -259,11 +259,15 @@ Blog post bodies can be `.md` (no components, pure markdown) or `.mdx` (with com
 | `<PullQuote>` | Same as case study — large blockquote |
 | `<Aside>` | Sidebar / callout |
 | `<ImageWithCaption>` | Image with optional caption |
-| `<ImageGrid>` | 2-up or 3-up image grid |
-| `<BeforeAfter>` | Paired images for before/after comparisons |
-| `<Code>` | Multi-line code with syntax highlighting (markdown fences also work) |
+| `<Slideshow>` | Multi-image carousel |
+| `<YouTube>` | Embedded video |
+| `<ArchetypeList>` | The five Velocity Profile archetypes, generated at build time |
+
+This table is the enumerated set, not a wish list: it matches the `components={{ … }}` map in `src/pages/blog/[slug].astro` and the `components` object on the blog `fields.mdx()` in `keystatic.config.ts`. **All three have to agree.** A component in the MDX that the template does not pass renders as nothing; one the template passes but Keystatic does not know about is mangled when an editor opens the post. Adding one is a three-file change.
 
 Case-study-specific components (`<Stat>`, `<StatRow>`) are *not* available in blog posts. They belong to a different content type and shouldn't drift across.
+
+**`<ArchetypeList>` takes no fields and is not editable.** It reads `ARCHETYPES` from `src/data/velocity-profile.ts` at build time and renders each archetype's name, descriptor, and teaser line. It deliberately withholds the strength, the failure mode, and the three moves — those are the report's payoff and the reason to take the assessment. To change what it says, edit the data file, not the post.
 
 ### Reading time
 

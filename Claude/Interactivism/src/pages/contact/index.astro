@@ -114,6 +114,23 @@ import Button from '../../components/ui/Button.astro';
         ></a>
       </div>
 
+      <!--
+        Not-sure-what-to-ask-for fallback. Deliberately below the form, never
+        above it: someone who has reached this page has already decided to talk
+        to us, and a 3-minute detour at that point costs more conversions than
+        it wins. This is for the ones who stall on the message field.
+      -->
+      <div class="mt-10 pt-8 border-t border-subtle">
+        <p class="text-sm text-muted mb-2">Not sure where to start?</p>
+        <p class="text-base text-body leading-body">
+          Take our <a
+            href="/velocity-profile/"
+            class="font-medium text-headline hover:text-muted transition duration-fast underline decoration-accent decoration-2 underline-offset-2"
+          >3-minute self-assessment</a> on how your product team ships. You’ll get your team’s
+          archetype, an estimate of what rework is costing you, and three things to do about it.
+        </p>
+      </div>
+
     </div>
 
     <!-- Scroll-test content — padding out the page height to verify the frozen-slice stays locked -->
