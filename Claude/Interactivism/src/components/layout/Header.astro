@@ -4,7 +4,7 @@
  *
  * Desktop (lg+): fixed sidenav, 360px wide.
  *   - Top 360px: knockout block — four surface-alt panels around a transparent
- *     200×200 center (80px margin all sides) where logo-light renders.
+ *     200×200 center (80px margin all sides) where logo-white renders.
  *     The page background (slider, marquee) shows through the transparent area.
  *   - Below: nav + footer, both with surface-alt bg, left-aligned to logo edge (pl-20).
  *
@@ -21,7 +21,7 @@ interface Props {
    *  Client-side JS (Slider) may update #sidenav-logo at runtime. */
   logoVariant?: LogoVariant;
 }
-const { logoVariant = 'light' } = Astro.props;
+const { logoVariant = 'white' } = Astro.props;
 
 const pathname = Astro.url.pathname;
 
@@ -49,7 +49,7 @@ function isActive(href: string): boolean {
 >
   <!-- Knockout block: 360×360 container.
        Four surface-alt panels leave a transparent 200×200 center (inset 80px = 5rem).
-       logo-light renders at absolute inset-20 so the page behind shows through. -->
+       logo-white renders at absolute inset-20 so the page behind shows through. -->
   <div class="relative shrink-0" style="height:360px">
     <div class="absolute top-0 left-0 right-0 h-20 bg-surface-alt" />
     <div class="absolute bottom-0 left-0 right-0 h-20 bg-surface-alt" />

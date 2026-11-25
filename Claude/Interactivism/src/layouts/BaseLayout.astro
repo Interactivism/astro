@@ -48,7 +48,7 @@ interface Props {
   /**
    * Which logo variant renders in the desktop sidenav knockout.
    * Computed at build time from the page's background image brightness.
-   * Defaults to 'light' (white wordmark). Slider overrides at runtime.
+   * Defaults to 'white' (white wordmark). Slider overrides at runtime.
    */
   logoVariant?: LogoVariant;
 }
@@ -69,7 +69,7 @@ const {
 
 // Pages without a marquee use the tile logo in the sidenav.
 // Pages with a marquee derive the variant from image brightness analysis.
-const logoVariant: LogoVariant = logoVariantProp ?? (hasMarquee ? 'light' : 'tile');
+const logoVariant: LogoVariant = logoVariantProp ?? (hasMarquee ? 'white' : 'tile');
 
 const siteUrl = 'https://interactivism.com';
 const pageUrl = canonical ?? `${siteUrl}${Astro.url.pathname}`;

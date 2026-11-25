@@ -21,7 +21,7 @@ const { title, summary, id, heroImage, heroImageWide, photoCredit } = entry.data
 const { Content } = await render(entry);
 
 // Logo variant — derive from heroImageWide on disk if it exists
-let logoVariant: 'light' | 'dark' = 'dark';
+let logoVariant: 'white' | 'black' = 'black';
 if (heroImageWide) {
   const heroWideFs = path.join(process.cwd(), 'src/content/services', entry.id, 'hero.jpg');
   logoVariant = await getLogoVariant(heroWideFs);

@@ -55,9 +55,9 @@ const yearDisplay = yearEnd === undefined
 
 const { Content } = await render(entry);
 
-// Logo variant: filesystem not available in SSR production; default to 'light'.
-// (The placeholder marquee image has a dark background so 'light' logo is correct.)
-const logoVariant: 'light' | 'dark' = 'light';
+// Logo variant: filesystem not available in SSR production; default to 'white'.
+// (The placeholder marquee image has a dark background, so the white wordmark is correct.)
+const logoVariant: 'white' | 'black' = 'white';
 
 // Photo credit HTML
 function buildCredit(pc: typeof photoCredit): string | undefined {

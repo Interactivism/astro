@@ -84,8 +84,8 @@ const yearDisplay = yearEnd === undefined
 
 const { Content } = await render(entry);
 
-// Build-time logo variant from the wide hero image. Defaults to 'light' when no image is set.
-let logoVariant: 'light' | 'dark' = 'light';
+// Build-time logo variant from the wide hero image. Defaults to 'white' when no image is set.
+let logoVariant: 'white' | 'black' = 'white';
 if (heroImageWide) {
   const heroWideBase = path.join(process.cwd(), 'src/content/caseStudies', entry.id, 'heroImageWide');
   const heroWideFs = existsSync(heroWideBase + '.jpg') ? heroWideBase + '.jpg' : heroWideBase + '.png';

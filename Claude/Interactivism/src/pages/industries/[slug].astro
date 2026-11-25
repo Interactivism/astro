@@ -41,9 +41,9 @@ const { title, summary, id, clients, ctaHeadline, heroImage, heroImageWide, phot
 const ctaText = ctaHeadline ?? `Let’s talk about your ${title} product.`;
 const { Content } = await render(entry);
 
-// Logo variant from the wide hero's brightness. Defaults to 'dark' for the
-// no-marquee case, where the logo sits on the light page background.
-let logoVariant: 'light' | 'dark' = 'dark';
+// Logo variant from the wide hero's brightness. Defaults to 'black' for the
+// no-marquee case, where the wordmark sits on the bare page background.
+let logoVariant: 'white' | 'black' = 'black';
 if (heroImageWide) {
   const heroWideBase = path.join(process.cwd(), 'src/content/industries', entry.id, 'heroImageWide');
   const heroWideFs = existsSync(heroWideBase + '.jpg') ? heroWideBase + '.jpg' : heroWideBase + '.png';

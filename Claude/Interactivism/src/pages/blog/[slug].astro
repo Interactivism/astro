@@ -74,9 +74,9 @@ const readTime = `${readMinutes} minute read`;
 // lockup the rest of the marquee-less site uses — when there is no hero to sit
 // on, which is also what BaseLayout falls back to unaided.
 //
-// Two bugs lived here. It defaulted to 'dark', the ink wordmark on a white
-// field: right contrast, wrong mark, reading as a white box beside the black
-// tile on /privacy and /team/*. And it measured a hardcoded marquee/blog.jpg
+// Two bugs lived here. It defaulted to the bare black wordmark: right
+// contrast, wrong mark, reading as a white box beside the black tile on
+// /privacy and /team/*. And it measured a hardcoded marquee/blog.jpg
 // regardless of which hero the post declared, so every post would have
 // inherited one image's brightness.
 const logoVariant: LogoVariant = await getLogoVariantForEntry(

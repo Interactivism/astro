@@ -3,8 +3,9 @@
  *
  * Samples the desktop sidenav logo region — 200×200px with an 80px inset
  * from the top-left of the image — and returns whether the logo should be
- * 'light' (logo-light.svg, white wordmark) or 'dark' (logo-dark.svg, dark
- * wordmark) to maintain contrast against that background region.
+ * 'white' (logo-white.svg) or 'black' (logo-black.svg) to maintain contrast
+ * against that background region. Both are the wordmark alone on a
+ * transparent ground; the name is the ink, not the backdrop.
  *
  * Used in Astro page frontmatter at build time. Never runs in the browser.
  */
@@ -20,15 +21,28 @@ const LOGO_LEFT   = 80;
 const LOGO_TOP    = 80;
 const LOGO_SIZE   = 200;
 
-export type LogoVariant = 'light' | 'dark' | 'tile';
+/**
+ * Which logo asset to render, named for its ink.
+ *
+ * 'white' and 'black' are the wordmark alone, transparent behind, and take
+ * their contrast from whatever sits under them. 'tile' is a different object:
+ * a self-contained black block with the wordmark knocked out of it, which
+ * brings its own background and so is not a variant of the other two.
+ *
+ * These were 'light' | 'dark' | 'tile', which read as the background the mark
+ * was *for* rather than the mark itself — ambiguous in exactly the way that
+ * let 'dark' get used as a no-image default, where it rendered as a black
+ * wordmark on bare page next to the black tile every other such page showed.
+ */
+export type LogoVariant = 'white' | 'black' | 'tile';
 
 /**
  * Reads `imagePath` from the filesystem, crops the logo region, and returns
  * the logo variant that ensures contrast.
  *
  * @param imagePath  Absolute filesystem path to the image.
- * @returns          'dark' when background is bright; 'light' when dark.
- *                   Falls back to 'light' on any read/decode error.
+ * @returns          'black' when the background is bright; 'white' when it is
+ *                   dark. Falls back to 'white' on any read/decode error.
  */
 export async function getLogoVariant(imagePath: string): Promise<LogoVariant> {
   try {
@@ -54,9 +68,9 @@ export async function getLogoVariant(imagePath: string): Promise<LogoVariant> {
       luminanceSum += 0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2];
     }
 
-    return luminanceSum / pixelCount >= THRESHOLD ? 'dark' : 'light';
+    return luminanceSum / pixelCount >= THRESHOLD ? 'black' : 'white';
   } catch {
-    return 'light';
+    return 'white';
   }
 }
 
