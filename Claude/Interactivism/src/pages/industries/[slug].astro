@@ -143,8 +143,12 @@ const hasVelocityNote = Object.prototype.hasOwnProperty.call(
     page's primary action and goes first, and this catches the reader who
     scrolled past it without converting.
 
-    Shown only where the report writes a tailored note for this industry, so
-    the CTA never promises specificity the report cannot deliver.
+    Still gated on hasVelocityNote, but that gate no longer pays for itself:
+    the copy stopped naming the industry, so there is nothing left for the
+    report's tailored note to back up. What the gate now decides is reach:
+    only industries with a note in src/data/velocity-report.json carry the
+    CTA, and the rest carry none. Drop the condition to put it on all of
+    them.
   -->
   {hasVelocityNote && (
     <section class="border-t border-subtle py-16 lg:py-20">
@@ -156,8 +160,8 @@ const hasVelocityNote = Object.prototype.hasOwnProperty.call(
         </h2>
         <p class="text-body leading-body mb-6">
           Our Product Velocity Profile is 12 questions and about 3 minutes. You’ll get your
-          team’s archetype, an estimate of what rework is costing you, and three things you can
-          do about it — with a section written for {title} teams.
+          team’s archetype, an estimate of what rework is costing you, and three changes you
+          can implement today.
         </p>
         <Button href="/velocity-profile/" variant="dark">Take the assessment</Button>
         </div>
