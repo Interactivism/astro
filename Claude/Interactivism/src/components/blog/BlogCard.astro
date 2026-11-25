@@ -13,6 +13,7 @@
 import { Image } from 'astro:assets';
 import { getEntry } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
+import { formatPublishedDate } from '../../lib/publishedDate';
 
 interface Props {
   entry: CollectionEntry<'blog'>;
@@ -23,11 +24,7 @@ const { title, summary, author: authorId, publishedDate, tags } = entry.data;
 const href = `/blog/${entry.id}/`;
 
 const authorEntry = await getEntry('authors', authorId);
-const formattedDate = publishedDate.toLocaleDateString('en-US', {
-  year: 'numeric',
-  month: 'long',
-  day: 'numeric',
-});
+const formattedDate = formatPublishedDate(publishedDate);
 ---
 
 <article class="border-b border-subtle last:border-b-0">

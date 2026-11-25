@@ -263,7 +263,7 @@ Blog post bodies can be `.md` (no components, pure markdown) or `.mdx` (with com
 | `<YouTube>` | Embedded video |
 | `<ArchetypeList>` | The five Velocity Profile archetypes, generated at build time |
 
-This table is the enumerated set, not a wish list: it matches the `components={{ … }}` map in `src/pages/blog/[slug].astro` and the `components` object on the blog `fields.mdx()` in `keystatic.config.ts`. **All three have to agree.** A component in the MDX that the template does not pass renders as nothing; one the template passes but Keystatic does not know about is mangled when an editor opens the post. Adding one is a three-file change.
+This table is the enumerated set, not a wish list: it matches the `components={{ … }}` map in `src/pages/blog/[slug].astro`, the identical map in `src/pages/preview/blog/[slug].astro`, and the `components` object on the blog `fields.mdx()` in `keystatic.config.ts`. **All four have to agree.** A component in the MDX that the template does not pass renders as nothing; one the template passes but Keystatic does not know about is mangled when an editor opens the post; and one the *preview* route passes but production does not is worse than either, because the draft looks right in review and publishes as nothing. Adding one is a four-file change.
 
 Case-study-specific components (`<Stat>`, `<StatRow>`) are *not* available in blog posts. They belong to a different content type and shouldn't drift across.
 
@@ -674,6 +674,25 @@ export async function getPublishedEntries(collection: 'blog' | 'caseStudies') {
 ```
 
 This helper is the single chokepoint — every page that lists content goes through it. Don't bypass it. The function is used on the blog index, work index, homepage, and RSS feed.
+
+### `publishedDate` is a calendar date, not an instant
+
+Frontmatter carries a day — `2026-11-24` — with no time and no place. Zod's
+`z.coerce.date()` hands that to `new Date()`, which reads a bare `YYYY-MM-DD` as
+midnight UTC. Two consequences, and only one of them is handled:
+
+- **Display is pinned to UTC.** Formatting that instant in the build machine's
+  local zone walks it backwards anywhere west of Greenwich: midnight UTC on the
+  24th is 4pm Pacific on the 23rd, so the post renders a day early. Every surface
+  that prints a published date calls `formatPublishedDate()` from
+  `src/lib/publishedDate.ts`, which pins `timeZone: 'UTC'` and so returns the day
+  the author typed. Never inline a `toLocaleDateString` for a published date —
+  three copies of the options object drifted in before that helper existed, and
+  all three carried the bug.
+- **Scheduling still resolves at UTC midnight.** The `publishedDate <= now`
+  comparison above means a post dated tomorrow goes live 8 hours early Pacific
+  (7 under DST). Known, not fixed — fixing it is a decision about when "that
+  day" starts, not a bug fix.
 
 ---
 

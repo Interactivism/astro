@@ -22,10 +22,10 @@ import CtaBand from '../../../components/home/CtaBand.astro';
 import Slideshow from '../../../components/case-study/Slideshow.astro';
 import YouTube from '../../../components/case-study/YouTube.astro';
 import ImageWithCaption from '../../../components/case-study/ImageWithCaption.astro';
-import ImageGrid from '../../../components/case-study/ImageGrid.astro';
-import BeforeAfter from '../../../components/case-study/BeforeAfter.astro';
 import PullQuote from '../../../components/case-study/PullQuote.astro';
 import Aside from '../../../components/case-study/Aside.astro';
+import ArchetypeList from '../../../components/ui/ArchetypeList.astro';
+import { formatPublishedDate } from '../../../lib/publishedDate';
 
 // Prevent any CDN or edge cache from serving a stale response.
 Astro.response.headers.set('Cache-Control', 'no-store');
@@ -48,11 +48,7 @@ const {
 const { Content } = await render(entry);
 const authorEntry = await getEntry('authors', authorId);
 
-const formattedDate = publishedDate.toLocaleDateString('en-US', {
-  year: 'numeric',
-  month: 'long',
-  day: 'numeric',
-});
+const formattedDate = formatPublishedDate(publishedDate);
 
 // Read time
 const wordCount = (entry.body ?? '')
@@ -182,7 +178,13 @@ const credit = buildCredit(photoCredit);
         </div>
 
         <div class="py-12 lg:py-16 prose prose-lg lg:prose-xl">
-          <Content components={{ Slideshow, YouTube, ImageWithCaption, ImageGrid, BeforeAfter, PullQuote, Aside }} />
+          <!--
+            This map must match the one in src/pages/blog/[slug].astro exactly.
+            If the preview offers a component that production does not, the
+            draft renders here and publishes as nothing — the one failure a
+            preview route exists to catch.
+          -->
+          <Content components={{ Slideshow, YouTube, ImageWithCaption, PullQuote, Aside, ArchetypeList }} />
         </div>
 
       </div>
