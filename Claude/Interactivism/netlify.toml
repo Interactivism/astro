@@ -1,7 +1,19 @@
 [build]
   # Clear the Astro 5 Content Layer database and any cached Netlify function
   # bundle before each build so that content changes always appear in SSR previews.
-  command = "rm -rf .astro .netlify && npm run build"
+  #
+  # Tests run AFTER the build, not before: tests/canonical.test.ts asserts every
+  # built page's canonical against its own served URL, so it reads dist/ and
+  # skips with a message when there isn't one. Run it first and it proves
+  # nothing — which is the exact hole this is here to close. A failing test
+  # exits non-zero and Netlify publishes nothing, which is the point: a wrong
+  # canonical has no other signal until Search Console notices weeks later.
+  #
+  # The cost, so it isn't a surprise: Keystatic in production commits to main
+  # and triggers a build. If a test is failing, that save lands in the repo and
+  # never publishes, and whoever hit Save sees nothing change. Keep Netlify's
+  # failed-build notifications pointed somewhere you actually read.
+  command = "rm -rf .astro .netlify && npm run build && npm test"
   publish = "dist"
   ignore = "git diff --quiet HEAD^ HEAD -- . ':!*.md'"
 
