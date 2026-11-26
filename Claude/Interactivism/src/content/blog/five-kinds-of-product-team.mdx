@@ -1,50 +1,61 @@
 ---
-title: "The five kinds of product teams"
+title: "The five types of product teams"
 author: "erik-wingren"
-publishedDate: 2026-11-24
-status: "draft"
-summary: "Most product teams ship the way they do because of how they decide, not how hard they work. Here are the five patterns we keep running into, and what each one costs."
+publishedDate: 2026-11-25
+status: "published"
+summary: "Most product teams ship the way they do because of how they make decisions, not how hard they work. Here are the five types of teams we keep running into. [Which one is yours?](#which-one-is-yours)"
 tags:
   - "product-strategy"
   - "process"
 ---
 
-We have sat in a lot of product teams' standups. After enough of them, the thing you stop noticing is the product, and the thing you start noticing is the decision.
+We have sat in a lot of product teams' planning sessions. What stands out in the long run is the decision-making culture.
 
-Not the quality of the decision — the shape of it. Who gets asked. How long it takes. What has to be true before anyone writes code. Teams building completely different products, in completely different markets, turn out to make decisions in a small number of recognizable ways. And the way a team decides predicts what it will be good at and where it will quietly bleed time.
+<Aside>
+Watch how a team makes decisions, and you can predict what they'll be good at, and where they'll quietly pay for it.
+</Aside>
 
-Five patterns come up again and again.
+It's not about the quality of their decisions, but how they make them. Who gets asked. How long it takes to get an answer. How disagreements are resolved. What has to be true before anyone writes code. Teams building different products in different markets end up making decisions in a small number of recognizable ways. 
+
+## The five team archetypes
 
 <ArchetypeList />
 
-## None of these is the bad one
+## Each archetype exists for a reason
 
-That is the part worth saying out loud, because every list like this reads as a ranking and this one is not.
+Culture is born from lived experience.
 
-Each of these exists for a reason, and the reason is usually that it worked. A team becomes Sales-Driven because saying yes to customers closed the round. A team becomes Engineering-Led because the thing they built had to survive real load and it did. A team becomes a Committee because something shipped badly once and the review got added. These are scar tissue, and scar tissue is evidence that the wound healed.
+A team becomes Sales-Driven because saying yes to customers closed a round. A team becomes Engineering-Led because the software they build simply can't fail under real load, and so far it hasn't. A team becomes a Committee because something shipped that shouldn't, and they added more reviews. This is scar tissue: proof the wound healed, and the reason the team moves stiffer now.
 
-The cost shows up later, when the thing that made the team successful at 20 people is the thing making it slow at 120. The Feature Factory that shipped its way to product-market fit now has a product nobody can explain in one sentence. The Committee that stopped the bad launch now cannot start the good one.
+## What it costs
 
-## What it costs, in actual money
+The cost shows up later, when the thing that made the team successful at 10 people is what makes it slow at 100. The Feature Factory that shipped its way to product-market fit now has a product nobody can explain in one sentence. The Committee that stopped a bad launch now takes too long to get a good one out the door.
 
-The expensive part is rarely the feature you got wrong. It is the work that got built, then unbuilt.
+When a team ships the wrong thing, or ships too slowly, the bill comes in several forms:
 
-Rework is the honest measure here: the share of a team’s time that goes into redoing something already done. Teams we talk to put it somewhere between 10% and 40%, and the ones at the high end are usually surprised to hear themselves say it. Multiply that share by a loaded cost per person and the number stops being a process complaint and starts being a line item. A team of 25 at 25% rework is burning well over a million dollars a year rebuilding things.
+* **Rework cost:** Time spent redoing what's already been done.
+* **Opportunity cost:** The right thing ships late, and the value it would have created in the meantime is gone.
+* **Poor user experience:** People live with the version that missed or shipped late, and they learn to expect less from your next release.
+* **Market share loss:** Over time, the first 3 add up to customers who leave or never arrive.
 
-That arithmetic is also why the pattern matters more than the individual decision. A single bad call costs you a sprint. A decision-making habit costs you a share of every sprint, forever, until something changes it.
+The last 3 are real, but they're harder to put a number on. Rework isn't, so start there.
 
-## Which one is yours
+Rework is the share of a team's time spent redoing something that was supposed to be done already. Teams we talk to put it somewhere between 10% and 40%, and the ones at the high end are usually surprised to hear themselves say it. Multiply that share by a loaded cost per team member and it stops being a process complaint and becomes a real line item: 25 people × 25% rework × $180k loaded cost comes to about $1.1M a year spent rebuilding things.
 
-Most people reading this already have a guess. The guess is worth testing, for two reasons.
+Rework is the cost you can act on first. It comes straight out of how a team decides, so changing a decision-making culture shows up in weeks, not the next fiscal year.
 
-The first is that teams are rarely one pattern cleanly. The common result is a primary with a streak of something else — a Committee that turns into a Firefighter the week before a release, an Engineering-Led team with a Sales-Driven streak that nobody has named yet. The streak is usually where the friction is, because the two halves want different things.
+It's also why the pattern matters more than any single decision. A bad call costs you a sprint. A bad habit costs you a share of every sprint, forever, until something changes it.
 
-The second is that the pattern you are in is hard to see from inside it. Every one of these feels like common sense when you are living it. "We check with everyone because that is how you avoid mistakes" is a true sentence and also a description of a bottleneck.
+## Which one is yours?
 
-We built a short self-assessment that works this out from how your team actually operates — 12 questions, about 3 minutes, no sign-up to see your result. It gives you your archetype, an estimate of what rework is costing you at your team’s size, and three things you could change without reorganizing anything.
+Most people reading this already have an idea of where they will land. That assumption is worth testing, for 2 reasons.
 
-<Aside>
-**[Take the Product Velocity Profile](/velocity-profile/)** — 12 questions, about 3 minutes. You’ll get your team’s archetype and an estimate of what rework costs you, with three changes you can implement today.
-</Aside>
+1. **Teams are rarely one clean type.** The common result is a primary type with a streak of something else — a Committee that turns into a Firefighter the week before a release, an Engineering-Led team with a Sales-Driven streak that nobody has named yet. And the streak is usually where the friction is, because the two parts want different things.
 
-The three changes are deliberately useful on their own. If you take the assessment, read the result, fix one of them, and never speak to us, that is a fine outcome. The teams we end up working with are the ones who read it, recognize themselves, and realize the problem is older and bigger than one release.
+2. **The pattern you are in is hard to see from the inside.** Every one of these feels like common sense when you are living it. "We check with everyone because that is how we avoid mistakes" is a true sentence and also a description of a bottleneck.
+
+We built a short self-assessment: 12 questions about how your team actually operates, about 3 minutes to complete. You'll get your team archetype, an estimate of what rework is costing you, and three things you can change today that will move the needle tomorrow.
+
+<CtaButton href="/velocity-profile/" label="Take the Product Velocity Quiz" />
+
+If you take the assessment, read the result, and implement one of the recommended changes, that's a perfectly fine outcome. Everyone benefits from better products. The teams we end up working with are the ones who recognize themselves, and realize the problem is older and bigger than one release.
