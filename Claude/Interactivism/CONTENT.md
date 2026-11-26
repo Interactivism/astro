@@ -759,6 +759,30 @@ midnight UTC. Two consequences, and only one of them is handled:
 
 ---
 
+## Keystatic and the file on disk do not mix
+
+Keystatic loads an entry into the browser when you open it and writes that whole
+in-memory document back on Save. It does not merge, and it does not notice that
+the file changed underneath it. So whichever side loaded the file first wins,
+silently:
+
+- Open a post in Keystatic, edit the `.mdx` on disk, then hit Save — the save
+  reverts your file edit. No warning, no conflict, no diff. This has happened.
+- Edit on disk, then Save in a tab that has been open since before the edit, and
+  you lose the edit the same way even though you never touched that text in the
+  editor.
+
+The rule: **one editor at a time, per entry.** If you have edited a file on disk,
+reload the Keystatic tab before touching it. If you have Keystatic open, finish
+and save there before editing the file.
+
+Production makes this worse rather than better. Keystatic in production commits
+straight to `main`, so a save made in the browser can land while your local clone
+is behind. `git pull` before editing content locally, and check before assuming
+your working tree is current.
+
+---
+
 ## Validation rules
 
 Build-time validation is enforced via Zod schemas in `src/content.config.ts`. The full rule set is documented in SCHEMA.md. Key rules to know:
