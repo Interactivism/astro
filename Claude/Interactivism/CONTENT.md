@@ -277,6 +277,34 @@ Reach for this only for the one action the post is asking the reader to take.
 
 **`<ArchetypeList>` takes no fields and is not editable.** It reads `ARCHETYPES` from `src/data/velocity-profile.ts` at build time and renders each archetype's name, descriptor, and third-person summary line. It deliberately withholds the strength, the failure mode, and the three moves — those are the report's payoff and the reason to take the assessment. To change what it says, edit the data file, not the post.
 
+### A summary can link to a section of its own post
+
+The summary reaches five surfaces, and only one of them can hold a link: the
+meta description and the OG tag are text slots, the Article JSON-LD is data, and
+the card on `/blog` is itself wrapped in an `<a>`, so a link inside it would be a
+link nested in a link. So the summary stays one plain string with markdown link
+syntax in it, and each surface asks for the form it needs — `summaryToHtml` on
+the post page, `summaryToText` everywhere else, both in `src/lib/summary.ts`.
+
+```
+summary: "… Here are the five. [Which one is yours?](#which-one-is-yours)"
+```
+
+**Fragment targets only.** `#some-id`, a heading in the same post. That is the
+whole use — jump the reader down the page — and it is also what makes the one
+`set:html` on the post page safe: the helper cannot emit an off-site or
+`javascript:` href however the summary is edited. Any other target stays
+literal text in both forms, visible rather than silently dropped.
+
+Heading ids come from `rehype-slug`: lowercased, punctuation stripped, spaces
+hyphenated, so "Which one is yours?" is `which-one-is-yours`. **Read the id off
+the rendered page rather than deriving it by hand** — a link to an id that does
+not exist scrolls nowhere and reports nothing.
+
+One wrinkle worth knowing: the 100–200 character limit counts the raw string,
+link syntax included, while the reader only ever sees the label. A summary with
+a link spends about 23 characters the reader never gets.
+
 ### Apostrophes
 
 Use `’` (U+2019), not `'`. `npm run lint:typography` enforces it, but what it

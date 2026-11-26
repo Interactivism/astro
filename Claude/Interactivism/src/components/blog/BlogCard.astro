@@ -14,6 +14,7 @@ import { Image } from 'astro:assets';
 import { getEntry } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 import { formatPublishedDate } from '../../lib/publishedDate';
+import { summaryToText } from '../../lib/summary';
 
 interface Props {
   entry: CollectionEntry<'blog'>;
@@ -21,6 +22,10 @@ interface Props {
 
 const { entry } = Astro.props;
 const { title, summary, author: authorId, publishedDate, tags } = entry.data;
+
+// Plain text: this card is wrapped in an <a>, and a link inside a link is
+// invalid HTML. See src/lib/summary.ts.
+const summaryText = summaryToText(summary);
 const href = `/blog/${entry.id}/`;
 
 const authorEntry = await getEntry('authors', authorId);
@@ -53,7 +58,7 @@ const formattedDate = formatPublishedDate(publishedDate);
     </h2>
 
     <!-- Summary -->
-    <p class="text-lg text-body font-light mb-5 max-w-readable">{summary}</p>
+    <p class="text-lg text-body font-light mb-5 max-w-readable">{summaryText}</p>
 
     <!-- Tags -->
     {tags && tags.length > 0 && (

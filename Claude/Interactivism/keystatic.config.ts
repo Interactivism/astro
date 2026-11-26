@@ -356,7 +356,11 @@ export default config({
         }),
         summary: fields.text({
           label: 'Summary',
-          description: '100–200 characters.',
+          description:
+            '100–200 characters. May contain one link to a section of this post, '
+            + 'written as [label](#heading-id) — it renders as a link under the title '
+            + 'and as plain text in search results, on the blog card and in the OG tag. '
+            + 'The character count here includes the link syntax, which the reader never sees.',
           multiline: true,
           validation: { isRequired: true, length: { min: 100, max: 200 } },
         }),

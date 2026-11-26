@@ -27,6 +27,7 @@ import Aside from '../../../components/case-study/Aside.astro';
 import ArchetypeList from '../../../components/ui/ArchetypeList.astro';
 import CtaButton from '../../../components/ui/CtaButton.astro';
 import { formatPublishedDate } from '../../../lib/publishedDate';
+import { summaryToHtml, summaryToText } from '../../../lib/summary';
 import { getLogoVariantForEntry, type LogoVariant } from '../../../lib/imageBrightness';
 
 // Prevent any CDN or edge cache from serving a stale response.
@@ -89,7 +90,7 @@ const credit = buildCredit(photoCredit);
 
 <BaseLayout
   title={`[Preview] ${title}`}
-  description={summary}
+  description={summaryToText(summary)}
   ogType="article"
   ogImage={ogImage ? ogImage.src : undefined}
   hasMarquee={!!heroImage}
@@ -183,7 +184,7 @@ const credit = buildCredit(photoCredit);
       <div class="order-last xl:order-first">
 
         <div class="pb-12 lg:pb-16 border-b border-subtle">
-          <p class="text-xl text-body leading-body">{summary}</p>
+          <p class="text-xl text-body leading-body" set:html={summaryToHtml(summary)} />
         </div>
 
         <div class="py-12 lg:py-16 prose prose-lg lg:prose-xl">

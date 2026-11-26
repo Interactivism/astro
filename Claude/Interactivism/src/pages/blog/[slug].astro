@@ -14,6 +14,7 @@ import ArchetypeList from '../../components/ui/ArchetypeList.astro';
 import CtaButton from '../../components/ui/CtaButton.astro';
 import PhotoCredit from '../../components/layout/PhotoCredit.astro';
 import { formatPublishedDate } from '../../lib/publishedDate';
+import { summaryToHtml, summaryToText } from '../../lib/summary';
 
 export async function getStaticPaths() {
   const allPosts = await getCollection('blog');
@@ -91,7 +92,7 @@ const articleJsonLd = {
   "@context": "https://schema.org",
   "@type": "Article",
   "headline": title,
-  "description": summary,
+  "description": summaryToText(summary),
   "url": `${siteUrl}/blog/${entry.id}/`,
   "datePublished": publishedDate.toISOString(),
   "image": heroImage ? `${siteUrl}${heroImage.src}` : `${siteUrl}/og-default.png`,
@@ -111,7 +112,7 @@ const articleJsonLd = {
 
 <BaseLayout
   title={title}
-  description={summary}
+  description={summaryToText(summary)}
   ogType="article"
   ogImage={ogImage ? ogImage.src : undefined}
   hasMarquee={!!heroImage}
@@ -210,7 +211,7 @@ const articleJsonLd = {
 
         <!-- Summary -->
         <div class="pb-12 lg:pb-16 border-b border-subtle">
-          <p class="text-xl text-body leading-body">{summary}</p>
+          <p class="text-xl text-body leading-body" set:html={summaryToHtml(summary)} />
         </div>
 
         <!-- Body prose -->
