@@ -59,7 +59,7 @@ export const ARCHETYPES = {
   C: {
     name: 'Committee',
     descriptor: 'The team that needs everyone to agree',
-    teaser: 'You rarely ship the wrong thing. You often ship the right thing late.',
+    teaser: 'You rarely ship the wrong thing, but often ship the right thing late.',
     thirdPerson: 'Rarely ships the wrong thing, but often ships the right thing late.',
     strength: 'Alignment, low risk',
     failureMode: 'Decisions stall, and designs get averaged into mush',
@@ -67,8 +67,8 @@ export const ARCHETYPES = {
   },
   E: {
     name: 'Engineering-Led',
-    descriptor: 'The team that builds it right before it builds it usable',
-    teaser: 'Your product is built to last, and built like the database underneath it.',
+    descriptor: 'The team that builds it right, then wonders who it’s for',
+    teaser: 'Your product is built to hold up under pressure — just like the database underneath it.',
     thirdPerson: 'The product is built to hold up under pressure — just like the database underneath it.',
     strength: 'Solid, scalable tech',
     failureMode: 'The UI mirrors the data model, and UX is an afterthought',
@@ -77,7 +77,7 @@ export const ARCHETYPES = {
   S: {
     name: 'Sales-Driven',
     descriptor: 'The team that never says no to a customer',
-    teaser: 'You’re closer to revenue than most teams, and your roadmap shows it.',
+    teaser: 'You’re closer to revenue than most teams, and your roadmap shows it — all over the place.',
     thirdPerson: 'Closer to revenue than most teams, and your roadmap shows it — all over the place.',
     strength: 'Close to revenue',
     failureMode: 'The roadmap is the last big deal, so there are one-off features everywhere',
@@ -86,7 +86,7 @@ export const ARCHETYPES = {
   X: {
     name: 'Firefighter',
     descriptor: 'The team that is always one escalation behind',
-    teaser: 'You’re great in a crisis. Trouble is, it’s always a crisis.',
+    teaser: 'You’re great in a crisis. But the problem is, there’s always another crisis.',
     thirdPerson: 'Great in a crisis. But the problem is, there’s always another crisis.',
     strength: 'Responds fast',
     failureMode: 'No room for planned work, so debt compounds',
