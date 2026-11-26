@@ -45,7 +45,7 @@ if (!entry) {
 
 const {
   title, summary, author: authorId, publishedDate, tags,
-  heroImage, heroImageWide, photoCredit, ogImage,
+  heroImage, heroImageWide, photoCredit, ogImage, canonical,
 } = entry.data;
 
 const { Content } = await render(entry);
@@ -95,6 +95,7 @@ const credit = buildCredit(photoCredit);
   ogImage={ogImage ? ogImage.src : undefined}
   hasMarquee={!!heroImage}
   logoVariant={logoVariant}
+  canonical={canonical ?? undefined}
 >
 
   <PreviewBanner />

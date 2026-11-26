@@ -109,7 +109,11 @@ const blog = defineCollection({
         ogImage: image().optional(),
         tags: z.array(z.string()).optional(),
         // Only set when republishing from another platform (e.g. Medium).
-        canonical: z.string().url().optional(),
+        // Nullable for the same reason as the photoCredit URLs above: this is a
+        // Keystatic fields.url. The save that was tested omitted the key rather
+        // than writing null, but the two sides disagree silently in both
+        // directions, and accepting null costs nothing.
+        canonical: z.string().url().nullable().optional(),
       })
       .superRefine((data, ctx) => {
         // Either both hero images or neither — never just one.
