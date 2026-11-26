@@ -267,7 +267,7 @@ This table is the enumerated set, not a wish list: it matches the `components={{
 
 Case-study-specific components (`<Stat>`, `<StatRow>`) are *not* available in blog posts. They belong to a different content type and shouldn't drift across.
 
-**`<ArchetypeList>` takes no fields and is not editable.** It reads `ARCHETYPES` from `src/data/velocity-profile.ts` at build time and renders each archetype's name, descriptor, and teaser line. It deliberately withholds the strength, the failure mode, and the three moves — those are the report's payoff and the reason to take the assessment. To change what it says, edit the data file, not the post.
+**`<ArchetypeList>` takes no fields and is not editable.** It reads `ARCHETYPES` from `src/data/velocity-profile.ts` at build time and renders each archetype's name, descriptor, and third-person summary line. It deliberately withholds the strength, the failure mode, and the three moves — those are the report's payoff and the reason to take the assessment. To change what it says, edit the data file, not the post.
 
 ### Apostrophes
 
@@ -601,13 +601,23 @@ three places, deliberately.
 | What | Where | Why |
 |---|---|---|
 | Questions, options, archetype tags, calc values | `src/data/velocity-profile.ts` | Scoring depends on them. Changing an option's tag changes everyone's result, so this is a code change with a test behind it, not a CMS edit. |
-| Archetype names, persona descriptors, teaser lines, strength and failure-mode labels | `src/data/velocity-profile.ts` | Identity, not copy. The scoring returns a tag; these turn it into a persona. |
+| Archetype names, persona descriptors, the two summary lines, strength and failure-mode labels | `src/data/velocity-profile.ts` | Identity, not copy. The scoring returns a tag; these turn it into a persona. |
 | Archetype marks (the five geometric figures) | `src/lib/velocity-profile/marks.ts` | Drawn in code so they version with the archetypes they belong to. Server only — see below. |
 | Archetype report prose, the three moves, case study slot | `velocityArchetypes` collection | Erik rewrites these. |
 | Industry notes, offering paragraphs, cost assumptions | `velocityReport` singleton | Same, and they are not per-archetype. |
 
-Nothing is duplicated across the two. The teaser line appears only on the
-teaser screen; the report's longer write-up appears only in the report.
+Nothing is duplicated across the two: the report's longer write-up appears
+only in the report.
+
+**The one-line summary exists in two voices, and the surface picks one.** Each
+archetype carries both `teaser` (second person) and `thirdPerson`. Which one a
+surface wants follows from whether the reader has been told this is their own
+team — second person on the quiz result screen, in the report email and in the
+share text, where the archetype is a verdict about the reader; third person in
+`<ArchetypeList>`, which publishes all five at once, where "you ship more than
+almost anyone" would be false of four of them on the same page. This is the one
+place in the archetype data where the same thought is written twice, so an edit
+to one line usually wants the other.
 
 **The marks never ship to the quiz page.** All five would tell anyone reading
 the HTML how many archetypes exist and what each looks like, which is the leak

@@ -413,11 +413,12 @@ reads as a design choice rather than a bug.
 
 ### Archetype list
 
-The five Product Velocity Profile archetypes, rendered as a bordered list with each archetype's mark, name, descriptor, and teaser line. Lives at `src/components/ui/ArchetypeList.astro` and is available inside blog post MDX as `<ArchetypeList />`.
+The five Product Velocity Profile archetypes, rendered as a bordered list with each archetype's mark, name, descriptor, and third-person summary line. Lives at `src/components/ui/ArchetypeList.astro` and is available inside blog post MDX as `<ArchetypeList />`.
 
 - One bordered block, `divide-y divide-subtle` between entries, `p-6 lg:p-8` per entry.
 - The mark sits at `w-12 h-12` in a flex row, `gap-6`, aligned to the top of the text.
-- Name in `font-display text-2xl`, descriptor in the mono eyebrow treatment, teaser in body.
+- Name in `font-display text-2xl`, descriptor in the mono eyebrow treatment, summary in body.
+- The summary reads `thirdPerson`, not `teaser`. All five archetypes appear here at once, so the second-person line the quiz result screen uses would be false of four of them on the same page. See CONTENT.md, "The one-line summary exists in two voices".
 - `not-prose`, because it is always placed inside a prose column.
 
 Content is derived from `src/data/velocity-profile.ts` at build time — never hand-copied. Two containment rules it has to keep: archetype **tags** (the single letters carried by answer options) never appear in the markup as an id, class, or data attribute, and nothing it imports may reach a client bundle. Rendering all five marks here is fine; doing it on the quiz page would not be, since the quiz page is kept clean of anything that reveals the answer set.
@@ -678,7 +679,7 @@ One question per screen, in `max-w-prose`, with a progress bar above and the sam
 - `aria-hidden`; the name beside it carries the meaning.
 - No `id` or `class` attributes: they ship over the wire one at a time and must not name the archetype they belong to.
 
-**Persona descriptor.** One line under the archetype name, in `text-lg text-muted` — said about them rather than to them, like a job title. Sits between the name and the teaser line on both the teaser screen and the report.
+**Persona descriptor.** One line under the archetype name, in `text-lg text-muted` — said about them rather than to them, like a job title. Sits between the name and the summary line on the teaser screen, the report, and the archetype list.
 
 **Share.** At the foot of the report: `Copy link` and `Email it`, mono uppercase on `bg-surface-alt` with a `border-subtle` hairline — the same card language as the option rows, deliberately quieter than the booking CTA above it. Copy link uses the system share sheet where there is one and the clipboard elsewhere; when the clipboard is refused it reveals a readonly field with the URL selected, because a silent failure is worse than an extra step. Status messages are mono, in a live region, and clear themselves after 4 seconds.
 

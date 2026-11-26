@@ -7,9 +7,13 @@
  * block, which is the point: the names appear on the quiz teaser, in the report,
  * in the report email, and here, and they have to agree.
  *
- * What it deliberately publishes: name, descriptor, and the teaser line. What it
- * withholds: the strength, the failure mode, and the three moves, which are the
- * report's payoff and the reason to take the quiz.
+ * What it deliberately publishes: name, descriptor, and the one-line summary.
+ * What it withholds: the strength, the failure mode, and the three moves, which
+ * are the report's payoff and the reason to take the quiz.
+ *
+ * It reads `thirdPerson`, not `teaser`. All five appear here at once, so the
+ * second-person line the quiz result screen uses would be false of four of them
+ * on the same page.
  *
  * Two containment rules this respects:
  *
@@ -38,7 +42,7 @@ const Heading = headingLevel;
 const entries = ARCHETYPE_TAGS.map((tag) => ({
   name: ARCHETYPES[tag].name,
   descriptor: ARCHETYPES[tag].descriptor,
-  teaser: ARCHETYPES[tag].teaser,
+  summary: ARCHETYPES[tag].thirdPerson,
   mark: ARCHETYPE_MARKS[tag],
 }));
 ---
@@ -62,7 +66,7 @@ const entries = ARCHETYPE_TAGS.map((tag) => ({
         <p class="font-mono text-xs text-muted uppercase tracking-widest mt-2 mb-3">
           {a.descriptor}
         </p>
-        <p class="text-body leading-body m-0">{a.teaser}</p>
+        <p class="text-body leading-body m-0">{a.summary}</p>
       </div>
     </li>
   ))}

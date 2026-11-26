@@ -27,15 +27,22 @@ export const ARCHETYPE_TAGS = ['F', 'C', 'E', 'S', 'X'] as const;
 export type ArchetypeTag = (typeof ARCHETYPE_TAGS)[number];
 
 /**
- * The archetypes themselves: name, the one line shown on the teaser screen,
- * and the short strength / failure-mode labels.
+ * The archetypes themselves: name, the one-line summary in both voices, and
+ * the short strength / failure-mode labels.
  *
  * This is identity, not report copy. The report's longer write-ups — two
  * sentences on what they're good at, the failure mode quoted back against
  * their own answers, the three moves — are Keystatic content, because Erik
  * will rewrite those. These five short strings define what an archetype *is*,
- * so they sit next to the tags that produce them. Nothing duplicates: the
- * teaser line appears only on the teaser screen.
+ * so they sit next to the tags that produce them.
+ *
+ * `teaser` and `thirdPerson` say the same thing in different voices, and which
+ * one a surface wants follows from whether the reader has been told this is
+ * their own team. Second person on the quiz result screen, in the report email
+ * and in the share text, where the archetype is a verdict about the reader.
+ * Third person in <ArchetypeList>, which publishes all five at once — "you
+ * ship more than almost anyone" is false of four of them on the same page.
+ * Keep them in step: an edit to one usually wants the other.
  */
 export const ARCHETYPES = {
   F: {
@@ -44,6 +51,7 @@ export const ARCHETYPES = {
     // like a job title. Published publicly by <ArchetypeList>, so it is final copy.
     descriptor: 'The team that never stops shipping',
     teaser: 'You ship more than almost anyone, but more isn’t always better.',
+    thirdPerson: 'Ships more than almost anyone, but more isn’t always better.',
     strength: 'Ships constantly',
     failureMode: 'Output gets mistaken for outcomes, and the product sprawls',
     openingQuestion: 'What did you ship last quarter that you’d remove if you could?',
@@ -52,6 +60,7 @@ export const ARCHETYPES = {
     name: 'Committee',
     descriptor: 'The team that needs everyone to agree',
     teaser: 'You rarely ship the wrong thing. You often ship the right thing late.',
+    thirdPerson: 'Rarely ships the wrong thing, but often ships the right thing late.',
     strength: 'Alignment, low risk',
     failureMode: 'Decisions stall, and designs get averaged into mush',
     openingQuestion: 'Which decision has been open the longest right now?',
@@ -60,6 +69,7 @@ export const ARCHETYPES = {
     name: 'Engineering-Led',
     descriptor: 'The team that builds it right before it builds it usable',
     teaser: 'Your product is built to last, and built like the database underneath it.',
+    thirdPerson: 'The product is built to hold up under pressure — just like the database underneath it.',
     strength: 'Solid, scalable tech',
     failureMode: 'The UI mirrors the data model, and UX is an afterthought',
     openingQuestion: 'How long does it take a new customer to get value, and who trains them?',
@@ -68,6 +78,7 @@ export const ARCHETYPES = {
     name: 'Sales-Driven',
     descriptor: 'The team that never says no to a customer',
     teaser: 'You’re closer to revenue than most teams, and your roadmap shows it.',
+    thirdPerson: 'Closer to revenue than most teams, and your roadmap shows it — all over the place.',
     strength: 'Close to revenue',
     failureMode: 'The roadmap is the last big deal, so there are one-off features everywhere',
     openingQuestion: 'Walk me through the last feature you built for one customer. Who else uses it?',
@@ -76,6 +87,7 @@ export const ARCHETYPES = {
     name: 'Firefighter',
     descriptor: 'The team that is always one escalation behind',
     teaser: 'You’re great in a crisis. Trouble is, it’s always a crisis.',
+    thirdPerson: 'Great in a crisis. But the problem is, there’s always another crisis.',
     strength: 'Responds fast',
     failureMode: 'No room for planned work, so debt compounds',
     openingQuestion: 'What would you work on with 1 quiet month?',
@@ -84,7 +96,10 @@ export const ARCHETYPES = {
   name: string;
   /** One line under the name, like a job title. Persona, not prose. */
   descriptor: string;
+  /** Second person — for a reader who has been told this is their own team. */
   teaser: string;
+  /** Third person — for a surface that publishes more than one archetype. */
+  thirdPerson: string;
   strength: string;
   failureMode: string;
   /** Opening question for the first call, sent in the internal notification. */
