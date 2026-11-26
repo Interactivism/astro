@@ -8,7 +8,8 @@
  *   description — meta description + OG description (falls back to site default)
  *   ogImage     — OG image path from public/ root (falls back to /og-default.png)
  *   ogType      — 'website' (default) or 'article' (blog posts, case studies)
- *   canonical   — explicit canonical URL (falls back to current page URL)
+ *   canonical   — overrides this page's self-referencing canonical, for a post
+ *                 republished from another platform
  *   noindex     — keep this page out of search results (per-token report pages)
  *   analyticsPath — report this path to GA4 instead of the real URL
  */
@@ -131,7 +132,24 @@ const serviceNames = serviceEntries
 
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
-    {canonical && <link rel="canonical" href={canonical} />}
+    <!--
+      Self-referencing by default. `pageUrl` is the explicit canonical when a
+      page supplies one, otherwise this page's own URL — the same value og:url
+      has always used, so it is already proven correct across the build.
+
+      Why it is worth emitting at all: slash, host and scheme variants are
+      already 301'd by Netlify, but query strings are not. /blog/?utm_source=x
+      answers 200 with identical content, and this site puts tagged links in
+      outbound email, so the variants exist. The canonical consolidates them.
+
+      Suppressed on noindex pages. A canonical pointing from a page that must
+      not be indexed to one that should is a contradictory signal.
+
+      The failure mode is severe and silent — a wrong value here deindexes
+      pages, with nothing visible in the UI — so tests/canonical.test.ts
+      asserts every built page's canonical against its own served URL.
+    -->
+    {!noindex && <link rel="canonical" href={pageUrl} />}
     {noindex && <meta name="robots" content="noindex, nofollow" />}
 
     <!-- Open Graph -->
