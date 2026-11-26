@@ -507,6 +507,32 @@ export default config({
                 'The five Product Velocity Profile archetypes \u2014 name, descriptor and teaser line. Generated at build time; nothing to fill in.',
               schema: {},
             }),
+            // A block rather than a wrapper: a wrapper would put the editor's
+            // paragraph inside the anchor. The label is a field instead.
+            CtaButton: block({
+              label: 'CTA button',
+              description: 'One button on its own line \u2014 the action the post is asking for.',
+              schema: {
+                label: fields.text({
+                  label: 'Button text',
+                  description: 'Sentence case, like every other CTA on the site.',
+                  validation: { isRequired: true },
+                }),
+                href: fields.text({
+                  label: 'Link',
+                  description: 'Internal paths keep the trailing slash, e.g. /velocity-profile/',
+                  validation: { isRequired: true },
+                }),
+                variant: fields.select({
+                  label: 'Style',
+                  options: [
+                    { label: 'Primary (brand yellow)', value: 'primary' },
+                    { label: 'Dark', value: 'dark' },
+                  ],
+                  defaultValue: 'primary',
+                }),
+              },
+            }),
           },
         }),
       },

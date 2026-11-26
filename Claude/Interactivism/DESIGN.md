@@ -423,6 +423,27 @@ The five Product Velocity Profile archetypes, rendered as a bordered list with e
 
 Content is derived from `src/data/velocity-profile.ts` at build time — never hand-copied. Two containment rules it has to keep: archetype **tags** (the single letters carried by answer options) never appear in the markup as an id, class, or data attribute, and nothing it imports may reach a client bundle. Rendering all five marks here is fine; doing it on the quiz page would not be, since the quiz page is kept clean of anything that reveals the answer set.
 
+### CTA button in prose
+
+One button on its own line inside body copy, for the single action a post is
+asking for. Lives at `src/components/ui/CtaButton.astro` and is available inside
+blog post MDX as `<CtaButton href="…" label="…" />`.
+
+- Wraps `ui/Button.astro` rather than restyling it, so the CTA inherits the
+  site's one button treatment. `variant` is `primary` (brand yellow) or `dark`.
+- `not-prose my-8 lg:my-10` on the wrapper, like every other MDX body component.
+- **`not-prose` is load-bearing, not decoration.** Without it the prose link rule
+  underlines the button text — measured, not assumed: removing the class in the
+  browser flips `text-decoration-line` from `none` to `underline` while the
+  background and color stay put, which is exactly the kind of half-applied
+  styling that reads as intentional.
+- It is a Keystatic `block`, so the label is a field. A `wrapper` would nest the
+  editor's paragraph inside the anchor.
+
+Before this existed, a post used `<Aside>` with a bold markdown link inside it
+to do the same job. That renders as a yellow-ruled callout containing an
+underlined link, which is a note, not an action.
+
 ### Icons
 
 Single icon library: **Lucide** (`lucide-astro` or `lucide-react` for interactive contexts).

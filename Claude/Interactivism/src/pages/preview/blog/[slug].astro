@@ -25,6 +25,7 @@ import ImageWithCaption from '../../../components/case-study/ImageWithCaption.as
 import PullQuote from '../../../components/case-study/PullQuote.astro';
 import Aside from '../../../components/case-study/Aside.astro';
 import ArchetypeList from '../../../components/ui/ArchetypeList.astro';
+import CtaButton from '../../../components/ui/CtaButton.astro';
 import { formatPublishedDate } from '../../../lib/publishedDate';
 import { getLogoVariantForEntry, type LogoVariant } from '../../../lib/imageBrightness';
 
@@ -192,7 +193,7 @@ const credit = buildCredit(photoCredit);
             draft renders here and publishes as nothing — the one failure a
             preview route exists to catch.
           -->
-          <Content components={{ Slideshow, YouTube, ImageWithCaption, PullQuote, Aside, ArchetypeList }} />
+          <Content components={{ Slideshow, YouTube, ImageWithCaption, PullQuote, Aside, ArchetypeList, CtaButton }} />
         </div>
 
       </div>

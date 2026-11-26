@@ -1,0 +1,40 @@
+---
+/**
+ * A standalone call to action inside prose — one button on its own line.
+ *
+ * Exists because `<Button>` cannot be dropped into MDX body copy on its own.
+ * Two reasons, and both are the reason this file is a wrapper rather than a
+ * prop on Button:
+ *
+ * 1. **Prose would style it.** Every MDX body component in this repo opens with
+ *    `not-prose my-*` for the same reason — inside `.prose` an `<a>` picks up
+ *    the link treatment (underline, inherited color) and a bare element gets no
+ *    block margin. Button is also used outside prose, where carrying those
+ *    would be wrong.
+ * 2. **Keystatic needs a block, and a block is self-closing.** A `wrapper`
+ *    would put the editor's paragraph *inside* the anchor, giving `<a><p>`.
+ *    So the label is a field, not children — which Button has no prop for.
+ *
+ * Usage in MDX:
+ *   <CtaButton href="/velocity-profile/" label="Take the Product Velocity Quiz" />
+ *
+ * Not for a link inside a sentence — that is an ordinary markdown link. This is
+ * for the one action a post is asking the reader to take.
+ */
+import Button from './Button.astro';
+
+interface Props {
+  /** Where it goes. Internal paths keep the site's trailing slash. */
+  href: string;
+  /** The text on the button. Sentence case, like every other CTA on the site. */
+  label: string;
+  /** `primary` is brand yellow; `dark` is the secondary action on light surfaces. */
+  variant?: 'primary' | 'dark';
+}
+
+const { href, label, variant = 'primary' } = Astro.props;
+---
+
+<div class="not-prose my-8 lg:my-10">
+  <Button href={href} variant={variant}>{label}</Button>
+</div>

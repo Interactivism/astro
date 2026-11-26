@@ -11,6 +11,7 @@ import ImageWithCaption from '../../components/case-study/ImageWithCaption.astro
 import PullQuote from '../../components/case-study/PullQuote.astro';
 import Aside from '../../components/case-study/Aside.astro';
 import ArchetypeList from '../../components/ui/ArchetypeList.astro';
+import CtaButton from '../../components/ui/CtaButton.astro';
 import PhotoCredit from '../../components/layout/PhotoCredit.astro';
 import { formatPublishedDate } from '../../lib/publishedDate';
 
@@ -214,7 +215,7 @@ const articleJsonLd = {
 
         <!-- Body prose -->
         <div class="py-12 lg:py-16 prose prose-lg lg:prose-xl">
-          <Content components={{ Slideshow, YouTube, ImageWithCaption, PullQuote, Aside, ArchetypeList }} />
+          <Content components={{ Slideshow, YouTube, ImageWithCaption, PullQuote, Aside, ArchetypeList, CtaButton }} />
         </div>
 
 
