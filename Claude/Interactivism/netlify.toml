@@ -180,6 +180,17 @@
   status = 410
 
 # ============================================================
+# Blog — slug changes
+# ============================================================
+
+# Published at the singular slug, renamed to the plural a short time later.
+# The old URL was live and in the sitemap, so it redirects rather than 404s.
+[[redirects]]
+  from = "/blog/five-kinds-of-product-team/"
+  to = "/blog/five-kinds-of-product-teams/"
+  status = 301
+
+# ============================================================
 # Blog — unmigrated posts
 # ============================================================
 
