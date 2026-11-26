@@ -77,8 +77,8 @@ export const ARCHETYPES = {
   S: {
     name: 'Sales-Driven',
     descriptor: 'The team that never says no to a customer',
-    teaser: 'You’re closer to revenue than most teams, and your roadmap shows it — all over the place.',
-    thirdPerson: 'Closer to revenue than most teams, and your roadmap shows it — all over the place.',
+    teaser: 'You’re closer to revenue than most teams, and the roadmap shows it — all over the place.',
+    thirdPerson: 'Closer to revenue than most teams, and the roadmap shows it — all over the place.',
     strength: 'Close to revenue',
     failureMode: 'The roadmap is the last big deal, so there are one-off features everywhere',
     openingQuestion: 'Walk me through the last feature you built for one customer. Who else uses it?',
