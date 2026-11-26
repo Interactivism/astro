@@ -183,11 +183,22 @@
 # Blog — slug changes
 # ============================================================
 
-# Published at the singular slug, renamed to the plural a short time later.
-# The old URL was live and in the sitemap, so it redirects rather than 404s.
+# This post went out at "five-kinds-of-product-team", was renamed to the plural
+# minutes later, and renamed again to "types" to match its own title. Both
+# earlier URLs were live and in the sitemap, so both redirect.
+#
+# Each points straight at the final URL rather than at the next rename. A chain
+# resolves for a browser but costs a hop and dilutes the signal a 301 passes,
+# and the chain would grow with every future rename. Point new rules here at
+# wherever the post actually lives, and repoint the existing ones with it.
 [[redirects]]
   from = "/blog/five-kinds-of-product-team/"
-  to = "/blog/five-kinds-of-product-teams/"
+  to = "/blog/five-types-of-product-teams/"
+  status = 301
+
+[[redirects]]
+  from = "/blog/five-kinds-of-product-teams/"
+  to = "/blog/five-types-of-product-teams/"
   status = 301
 
 # ============================================================
